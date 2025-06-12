@@ -4,11 +4,12 @@ This repository is a curated collection of course materials and books intended t
 
 ## Content
 
-### [Foundations in Mathematics](./Mat-R-Refresher/)
-- Linear Algebra  
-- Multivariable Calculus  
-- Probability & Statistics  
-- Econometrics  
+### Foundations
+- [Linear Algebra](./Mat-R-Refresher/)
+- [Multivariable Calculus](./Mat-R-Refresher/)  
+- [Probability & Statistics](./Mat-R-Refresher/)  
+- [Econometrics](./Mat-R-Refresher/)  
+- [Research Design](./Sci-RD-ResearchDesign)
 
 ### Computer Science Core
 - [Algorithms](./CS-A-Algo/)
