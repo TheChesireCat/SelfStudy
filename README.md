@@ -28,12 +28,12 @@ This repository is a curated collection of course materials and books intended t
 
 ## Misc Aids
 
-Creating Books :
+### Creating Books :
 
 1. [jupyter-book](https://jupyterbook.org/en/stable/intro.html)
 2. [quarto](https://quarto.org/docs/books/)
 
-Library Aids :
+### Library Aids :
 
 1. [JuliaDynamics](https://juliadynamics.github.io/JuliaDynamics/)
 2. [numpy cheatsheet](https://gist.github.com/pourmand1376/aa6a8bc4fddda31fecbdf73b2535af21)
