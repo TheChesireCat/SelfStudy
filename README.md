@@ -7,8 +7,9 @@ This repository is a curated collection of course materials and books intended t
 ### Foundations
 - [Linear Algebra](./Mat-R-Refresher/)
 - [Multivariable Calculus](./Mat-R-Refresher/)  
-- [Probability & Statistics](./Mat-R-Refresher/)  
-- [Econometrics](./Mat-R-Refresher/)  
+- [Probability & Statistics](./Mat-R-Refresher/pdfs/william_mendenhall_robert_j-_beaver_barbara_m-_bookfi-org.pdf)  
+- [Econometrics](./Mat-R-Refresher/pdfs/Econometrics-James-H.-Stock-Mark-W.-Watson-Introduction-to-Econometrics-Global-Edition-Pearson-Education-Limited-2020.pdf)  
+- [Numerical Methods](./Mat-R-Refresher/pdfs/William%20H.%20Press,%20Saul%20A.%20Teukolsky,%20William%20T.%20Vetterling,%20Bria%20-%20Numerical%20recipes_%20the%20art%20of%20scientific%20computing%20(2007,%20Cambridge%20University%20Press)%20-%20libgen.li.pdf)
 - [Research Design](./Sci-RD-ResearchDesign)
 
 ### Computer Science Core
@@ -17,7 +18,8 @@ This repository is a curated collection of course materials and books intended t
 
 ### Network Science and Complex Systems
 - [Complex Networks](./Net-CN-ComplexNetworks/)
-- [Machine Learning on Graphs](./CSNet-MLoG-MachieLearningOnGraphs/)  
+- [Machine Learning on Graphs](./CSNet-MLoG-MachieLearningOnGraphs/) 
+- [Geometric Deep Learning](https://geometricdeeplearning.com/lectures/) 
 - [Nonlinear Dynamics and Chaos](./Net-NDaC-NonlinearDynamicsAndChaos/)  
 
 ### Interdisciplinary Applications
