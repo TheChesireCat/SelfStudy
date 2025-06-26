@@ -39,3 +39,7 @@ This repository is a curated collection of course materials and books intended t
 
 1. [JuliaDynamics](https://juliadynamics.github.io/JuliaDynamics/)
 2. [numpy cheatsheet](https://gist.github.com/pourmand1376/aa6a8bc4fddda31fecbdf73b2535af21)
+
+### Suggestions :
+
+1. [COSMO](https://cosmo-notes.github.io/)
