@@ -15,6 +15,8 @@ This repository is a curated collection of course materials and books intended t
 ### Computer Science Core
 - [Algorithms](./CS-A-Algo/)
 - [System Design](./CS-SD-SystemDesign/)
+- [Alice's Experiments in a Differentiable World](https://arxiv.org/pdf/2404.17625)
+- [Dive Into Deep Learning](https://d2l.ai)
 
 ### Network Science and Complex Systems
 - [Complex Networks](./Net-CN-ComplexNetworks/)
