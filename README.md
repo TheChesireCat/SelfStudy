@@ -8,80 +8,80 @@ This repository is a curated collection of course materials and books intended t
 
 #### Mathematics
 - **Calculus**
-  - [Vector Calculus 2](./01-Foundations/Mathematics/Calculus/Vec_Cal2.pdf)
-  - [Multivariable Calculus](./01-Foundations/Mathematics/Calculus/multivariable.pdf)
+  - [Crash Course in Vector Calculus](./01-Foundations/Mathematics/Calculus/Crash-Course-in-Vector-Calculus.pdf)
+  - [Single and Multivariable Calculus: Early Transcendentals](./01-Foundations/Mathematics/Calculus/Single-and-Multivariable-Calculus-Early-Transcendentals.pdf)
   
 - **Linear Algebra**
-  - [Linear Algebra & Multivariable Calculus (LAMV)](./01-Foundations/Mathematics/Linear-Algebra/LinearAlgebraMultiVar-lamv.pdf)
-  - [Linear Algebra (Guest)](./01-Foundations/Mathematics/Linear-Algebra/linear-guest.pdf)
-  - [Matrix Book](./01-Foundations/Mathematics/Linear-Algebra/matrix-book.pdf)
+  - [Linear Algebra and Multivariable Calculus - MIT 18.02 (Evan Chen)](./01-Foundations/Mathematics/Linear-Algebra/Linear-Algebra-and-Multivariable-Calculus-Chen-MIT-18.02.pdf)
+  - [Linear Algebra (Cherney, Denton, Thomas, Waldron)](./01-Foundations/Mathematics/Linear-Algebra/Linear-Algebra-Cherney-Denton-Thomas-Waldron.pdf)
+  - [Topics in Random Matrix Theory (Terence Tao)](./01-Foundations/Mathematics/Linear-Algebra/Topics-in-Random-Matrix-Theory-Tao.pdf)
   
 - **Probability & Statistics**
-  - [All of Statistics (Wasserman)](./01-Foundations/Mathematics/Probability-Statistics/2004%20-%20wasserman%20-%20all%20of%20statistics.pdf)
-  - [Probability Cheatsheet](./01-Foundations/Mathematics/Probability-Statistics/cheatsheet-probability.pdf)
-  - [Statistics Cheatsheet](./01-Foundations/Mathematics/Probability-Statistics/cheatsheet-statistics.pdf)
-  - [Introduction to Probability Models (Ross)](./01-Foundations/Mathematics/Probability-Statistics/introduction-to-probability-model-s.ross-math-cs.blog_.ir_.pdf)
-  - [Probability & Statistics (Mendenhall, Beaver)](./01-Foundations/Mathematics/Probability-Statistics/william_mendenhall_robert_j-_beaver_barbara_m-_bookfi-org.pdf)
-  - [Statistics Book 2](./01-Foundations/Mathematics/Probability-Statistics/statbook2.pdf)
-  - [Econometrics (Stock & Watson)](./01-Foundations/Mathematics/Probability-Statistics/Econometrics-James-H.-Stock-Mark-W.-Watson-Introduction-to-Econometrics-Global-Edition-Pearson-Education-Limited-2020.pdf)
+  - [All of Statistics (Wasserman, 2004)](./01-Foundations/Mathematics/Probability-Statistics/All-of-Statistics-Wasserman-2004.pdf)
+  - [Introduction to Probability Models (Ross)](./01-Foundations/Mathematics/Probability-Statistics/Introduction-to-Probability-Models-Ross.pdf)
+  - [Introduction to Mathematical Statistics, 8th Ed (Hogg)](./01-Foundations/Mathematics/Probability-Statistics/Introduction-to-Mathematical-Statistics-8th-Ed-Hogg.pdf)
+  - [Introduction to Probability and Statistics (Mendenhall, Beaver)](./01-Foundations/Mathematics/Probability-Statistics/Introduction-to-Probability-and-Statistics-Mendenhall-Beaver.pdf)
+  - [Introduction to Econometrics (Stock & Watson, 2020)](./01-Foundations/Mathematics/Probability-Statistics/Introduction-to-Econometrics-Stock-Watson-2020.pdf)
+  - [Probability Cheatsheet - CME106 Stanford (Amidi)](./01-Foundations/Mathematics/Probability-Statistics/Probability-Cheatsheet-CME106-Amidi.pdf)
+  - [Statistics Cheatsheet - CME106 Stanford (Amidi)](./01-Foundations/Mathematics/Probability-Statistics/Statistics-Cheatsheet-CME106-Amidi.pdf)
   
 - **Numerical Methods**
-  - [Numerical Recipes: The Art of Scientific Computing (Press et al.)](./01-Foundations/Mathematics/Numerical-Methods/William%20H.%20Press,%20Saul%20A.%20Teukolsky,%20William%20T.%20Vetterling,%20Bria%20-%20Numerical%20recipes_%20the%20art%20of%20scientific%20computing%20(2007,%20Cambridge%20University%20Press)%20-%20libgen.li.pdf)
+  - [Numerical Recipes: The Art of Scientific Computing (Press et al., 2007)](./01-Foundations/Mathematics/Numerical-Methods/Numerical-Recipes-Press-et-al-2007.pdf)
 
 #### Computer Science
 - **Algorithms**
-  - [Introduction to Algorithms, 4th Edition (CLRS)](./01-Foundations/Computer-Science/Algorithms/Introduction.to.Algorithms.4th.Leiserson.Stein.Rivest.Cormen.MIT.Press.pdf)
+  - [Introduction to Algorithms, 4th Edition (CLRS)](./01-Foundations/Computer-Science/Algorithms/Introduction-to-Algorithms-4th-Ed-CLRS.pdf)
   
 - **System Design**
-  - [System Design Interview: An Insider's Guide (Alex Xu)](./01-Foundations/Computer-Science/System-Design/System%20Design%20Interview%20An%20Insider's%20Guide%20by%20Alex%20Xu%20(z-lib.org).pdf)
+  - [System Design Interview: An Insider's Guide (Alex Xu)](./01-Foundations/Computer-Science/System-Design/System-Design-Interview-Xu.pdf)
 
 ### 02-Network-Science
 
 - **Graph Theory**
-  - [Graph Theory (Narsingh DEO)](./02-Network-Science/Graph-Theory/Graph%20Theory%20Narsingh%20DEO.pdf)
+  - [Graph Theory (Narsingh Deo)](./02-Network-Science/Graph-Theory/Graph-Theory-Deo.pdf)
 
 - **Complex Networks**
-  - [Introduction to the Modeling and Analysis of Complex Systems (Sayama)](./02-Network-Science/Complex-Networks/Introduction%20to%20the%20Modeling%20and%20Analysis%20of%20Complex%20Systems.pdf)
-  - [Networks (Mark Newman, 2018)](./02-Network-Science/Complex-Networks/Mark%20Newman%20-%20Networks%20(2018,%20Oxford%20University%20Press).pdf)
-  - [Networks (Newman - Alternative Edition)](./02-Network-Science/Complex-Networks/Newman_Networks.pdf)
-  - [Networks, Crowds, and Markets (Easley & Kleinberg)](./02-Network-Science/Complex-Networks/Networks,%20Crowds,%20and%20Markets%20(Easley%20and%20Kleinberg).pdf)
-  - [Network Science (Barabási)](./02-Network-Science/Complex-Networks/vdoc.pub_network-science.pdf)
+  - [Modeling and Analysis of Complex Systems (Sayama)](./02-Network-Science/Complex-Networks/Modeling-and-Analysis-of-Complex-Systems-Sayama.pdf)
+  - [Networks (Mark Newman, 2018)](./02-Network-Science/Complex-Networks/Networks-Newman-2018.pdf)
+  - [Networks - Alternative Edition (Newman)](./02-Network-Science/Complex-Networks/Networks-Newman-Alt-Edition.pdf)
+  - [Networks, Crowds, and Markets (Easley & Kleinberg)](./02-Network-Science/Complex-Networks/Networks-Crowds-and-Markets-Easley-Kleinberg.pdf)
+  - [Network Science (Barabási)](./02-Network-Science/Complex-Networks/Network-Science-Barabasi.pdf)
   - [Modeling Notes](./02-Network-Science/Complex-Networks/01-sayama-modeling.md)
 
 - **Machine Learning on Graphs**
-  - [CS224W: Machine Learning with Graphs](./02-Network-Science/Machine-Learning-on-Graphs/CS224w.pdf)
+  - [CS224W: Machine Learning with Graphs (Stanford)](./02-Network-Science/Machine-Learning-on-Graphs/CS224W-Machine-Learning-with-Graphs-Stanford.pdf)
   - [Course README](./02-Network-Science/Machine-Learning-on-Graphs/README.md)
   - [Geometric Deep Learning](https://geometricdeeplearning.com/lectures/) 🔗
 
 - **Network Dynamics**
-  - [Dynamical Processes on Complex Networks (Barrat et al., 2008)](./02-Network-Science/Network-Dynamics/Barrat_et_al_2008_Dynamical_Processes_on_Complex_Networks.pdf)
+  - [Dynamical Processes on Complex Networks (Barrat et al., 2008)](./02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008.pdf)
 
 ### 03-Complex-Systems
 
 - **Nonlinear Dynamics & Chaos**
-  - [Nonlinear Dynamics and Chaos (Strogatz, 2024)](./03-Complex-Systems/Nonlinear-Dynamics-Chaos/)
-  - [Student Solutions Manual (Dichter & Strogatz, 2024)](./03-Complex-Systems/Nonlinear-Dynamics-Chaos/)
+  - [Nonlinear Dynamics and Chaos (Strogatz, 2024)](./03-Complex-Systems/Nonlinear-Dynamics-Chaos/Nonlinear-Dynamics-and-Chaos-Strogatz-2024.pdf)
+  - [Nonlinear Dynamics and Chaos - Solutions Manual (Strogatz, 2024)](./03-Complex-Systems/Nonlinear-Dynamics-Chaos/Nonlinear-Dynamics-and-Chaos-Solutions-Manual-Strogatz-2024.pdf)
   - [Study Notes](./03-Complex-Systems/Nonlinear-Dynamics-Chaos/notes/)
 
 - **Urban Science**
-  - [Introduction to Urban Science: Evidence and Theory of Cities as Complex Systems (Bettencourt, 2021)](./03-Complex-Systems/Urban-Science/)
+  - [Introduction to Urban Science: Evidence and Theory of Cities as Complex Systems (Bettencourt, 2021)](./03-Complex-Systems/Urban-Science/Introduction-to-Urban-Science-Bettencourt-2021.pdf)
 
 - **General Complexity** *(Books will be added here)*
 
 ### 04-Applied-Methods
 
 - **Epidemiology**
-  - [Mathematics of Epidemics on Networks](./04-Applied-Methods/Epidemiology/Mathematics%20of%20Epidemics%20on%20Networks.pdf)
+  - [Mathematics of Epidemics on Networks (Kiss, Miller, Simon)](./04-Applied-Methods/Epidemiology/Mathematics-of-Epidemics-on-Networks-Kiss-Miller-Simon.pdf)
   - [Code Experiments (TSIR Simulation)](./04-Applied-Methods/Epidemiology/code-experiments/)
 
 - **Research Design**
-  - [Research Design and Methods: A Process Approach (Bordens & Abbott, 2022)](./04-Applied-Methods/Research-Design/)
+  - [Research Design and Methods: A Process Approach (Bordens & Abbott, 2022)](./04-Applied-Methods/Research-Design/Research-Design-and-Methods-Bordens-Abbott-2022.pdf)
 
 ### 05-General-Reading
 
-- [Complexity: A Guided Tour (Melanie Mitchell)](./05-General-Reading/Complexity_%20A%20Guided%20Tour%20-%20Melanie%20Mitchell.pdf)
-- [Scale (Geoffrey West)](./05-General-Reading/Scale%20-%20Geoffrey%20West.pdf)
-- [The Nature of Computation (Christopher Moore)](./05-General-Reading/The%20Nature%20of%20Computation%20--%20Cristopher%20Mo%20-%20Unknown.pdf)
+- [Complexity: A Guided Tour (Melanie Mitchell)](./05-General-Reading/Complexity-A-Guided-Tour-Mitchell.pdf)
+- [Scale (Geoffrey West)](./05-General-Reading/Scale-West.pdf)
+- [The Nature of Computation (Moore & Mertens)](./05-General-Reading/The-Nature-of-Computation-Moore-Mertens.pdf)
 
 ---
 
