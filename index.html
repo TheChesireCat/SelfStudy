@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SelfStudy Library</title>
+    
+    <!-- PDF.js Viewer CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/pdf.js-viewer@0.2.8/viewer.min.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        #sidebar {
+            width: 320px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s ease;
+        }
+
+        #header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        #header h1 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        #header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        #file-tree {
+            padding: 15px;
+            flex: 1;
+        }
+
+        .category {
+            margin-bottom: 10px;
+        }
+
+        .category-header {
+            padding: 8px 10px;
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: #333;
+            background: #f8f9fa;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .category-header:hover {
+            background: #e9ecef;
+        }
+
+        .category-icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .category-content {
+            margin-left: 15px;
+            margin-top: 5px;
+            display: none;
+            padding-left: 10px;
+            border-left: 2px solid #e9ecef;
+        }
+
+        .category-content.open {
+            display: block;
+        }
+
+        .subcategory {
+            margin-bottom: 8px;
+        }
+
+        .subcategory-header {
+            padding: 6px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 12px;
+            color: #555;
+            transition: background 0.2s;
+        }
+
+        .subcategory-header:hover {
+            background: #f8f9fa;
+        }
+
+        .file-list {
+            margin-left: 10px;
+            margin-top: 3px;
+            display: none;
+        }
+
+        .file-list.open {
+            display: block;
+        }
+
+        .file {
+            padding: 6px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: #666;
+            transition: all 0.2s;
+            margin: 2px 0;
+        }
+
+        .file:hover {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+
+        .file.selected {
+            background: #667eea;
+            color: white;
+            font-weight: 500;
+        }
+
+        .file-icon {
+            margin-right: 6px;
+            font-size: 12px;
+        }
+
+        /* PDF Viewer Container */
+        #viewer-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: #f5f6f8;
+            min-height: 0;
+        }
+        #pdfjs-viewer {
+            width: 100%;
+            height: 100%;
+        }
+
+        #placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            background: #f5f5f5;
+            color: #999;
+        }
+
+        #placeholder-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        #placeholder-text {
+            font-size: 18px;
+        }
+
+        #sidebar-toggle {
+            display: none;
+        }
+
+        #sidebar-backdrop {
+            display: none;
+        }
+
+        @media (max-width: 960px) {
+            #sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                max-width: 80vw;
+                width: 280px;
+                transform: translateX(-100%);
+                border-right: none;
+                border-bottom: none;
+                box-shadow: 2px 0 16px rgba(0, 0, 0, 0.25);
+                z-index: 1000;
+            }
+
+            #sidebar.open {
+                transform: translateX(0);
+            }
+
+            #sidebar-toggle {
+                position: fixed;
+                top: 16px;
+                right: 16px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 10px 14px;
+                border: none;
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.85);
+                color: #333;
+                font-weight: 600;
+                font-size: 14px;
+                box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+                z-index: 1100;
+            }
+
+            #sidebar-toggle:focus-visible {
+                outline: 2px solid rgba(102, 126, 234, 0.7);
+                outline-offset: 2px;
+            }
+
+            #sidebar-toggle.active {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: #fff;
+            }
+
+            #sidebar-backdrop {
+                position: fixed;
+                inset: 0;
+                background: rgba(17, 24, 39, 0.35);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.25s ease;
+                display: block;
+                z-index: 900;
+            }
+
+            #sidebar-backdrop.visible {
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            #viewer-container {
+                height: 100vh;
+                width: 100%;
+            }
+
+            #pdfjs-viewer {
+                height: calc(100vh);
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <button id="sidebar-toggle" type="button" aria-label="Toggle library navigation" aria-controls="sidebar" aria-expanded="false">
+        ☰ Library
+    </button>
+    <!-- Sidebar with file tree -->
+    <div id="sidebar">
+        <div id="header">
+            <h1>📚 SelfStudy Library</h1>
+            <p>Network Science & Complex Systems</p>
+        </div>
+        <div id="file-tree">
+            <!-- 01-Foundations -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <span class="category-icon">📁</span>
+                    <span>01-Foundations</span>
+                </div>
+                <div class="category-content">
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Mathematics
+                        </div>
+                        <div class="file-list">
+                            <div class="subcategory-header" onclick="toggleSubcategory(this)" style="margin-left: 10px;">
+                                Calculus
+                            </div>
+                            <div class="file-list" style="margin-left: 20px;">
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Calculus/Crash-Course-in-Vector-Calculus.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Crash Course in Vector Calculus</span>
+                                </div>
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Calculus/Single-and-Multivariable-Calculus-Early-Transcendentals.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Single & Multivariable Calculus</span>
+                                </div>
+                            </div>
+
+                            <div class="subcategory-header" onclick="toggleSubcategory(this)" style="margin-left: 10px;">
+                                Linear Algebra
+                            </div>
+                            <div class="file-list" style="margin-left: 20px;">
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Linear-Algebra/Linear-Algebra-and-Multivariable-Calculus-Chen-MIT-18.02.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Linear Algebra - MIT 18.02 (Chen)</span>
+                                </div>
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Linear-Algebra/Linear-Algebra-Cherney-Denton-Thomas-Waldron.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Linear Algebra (Cherney et al.)</span>
+                                </div>
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Linear-Algebra/Topics-in-Random-Matrix-Theory-Tao.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Random Matrix Theory (Tao)</span>
+                                </div>
+                            </div>
+
+                            <div class="subcategory-header" onclick="toggleSubcategory(this)" style="margin-left: 10px;">
+                                Probability & Statistics
+                            </div>
+                            <div class="file-list" style="margin-left: 20px;">
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Probability-Statistics/All-of-Statistics-Wasserman-2004.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>All of Statistics (Wasserman)</span>
+                                </div>
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Probability-Statistics/Introduction-to-Econometrics-Stock-Watson-2020.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Econometrics (Stock & Watson)</span>
+                                </div>
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Probability-Statistics/Introduction-to-Mathematical-Statistics-8th-Ed-Hogg.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Mathematical Statistics (Hogg)</span>
+                                </div>
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Probability-Statistics/Introduction-to-Probability-Models-Ross.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Probability Models (Ross)</span>
+                                </div>
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Probability-Statistics/Introduction-to-Probability-and-Statistics-Mendenhall-Beaver.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Probability & Statistics (Mendenhall)</span>
+                                </div>
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Probability-Statistics/Probability-Cheatsheet-CME106-Amidi.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Probability Cheatsheet (CME106)</span>
+                                </div>
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Probability-Statistics/Statistics-Cheatsheet-CME106-Amidi.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Statistics Cheatsheet (CME106)</span>
+                                </div>
+                            </div>
+
+                            <div class="subcategory-header" onclick="toggleSubcategory(this)" style="margin-left: 10px;">
+                                Numerical Methods
+                            </div>
+                            <div class="file-list" style="margin-left: 20px;">
+                                <div class="file" onclick="loadPDF('01-Foundations/Mathematics/Numerical-Methods/Numerical-Recipes-Press-et-al-2007.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Numerical Recipes (Press et al.)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Computer Science
+                        </div>
+                        <div class="file-list">
+                            <div class="subcategory-header" onclick="toggleSubcategory(this)" style="margin-left: 10px;">
+                                Algorithms
+                            </div>
+                            <div class="file-list" style="margin-left: 20px;">
+                                <div class="file" onclick="loadPDF('01-Foundations/Computer-Science/Algorithms/Introduction-to-Algorithms-4th-Ed-CLRS.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Introduction to Algorithms (CLRS)</span>
+                                </div>
+                            </div>
+
+                            <div class="subcategory-header" onclick="toggleSubcategory(this)" style="margin-left: 10px;">
+                                System Design
+                            </div>
+                            <div class="file-list" style="margin-left: 20px;">
+                                <div class="file" onclick="loadPDF('01-Foundations/Computer-Science/System-Design/System-Design-Interview-Xu.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>System Design Interview (Xu)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 02-Network-Science -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <span class="category-icon">📁</span>
+                    <span>02-Network-Science</span>
+                </div>
+                <div class="category-content">
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Graph Theory
+                        </div>
+                        <div class="file-list">
+                            <div class="file" onclick="loadPDF('02-Network-Science/Graph-Theory/Graph-Theory-Deo.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Graph Theory (Deo)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Complex Networks
+                        </div>
+                        <div class="file-list">
+                            <div class="file" onclick="loadPDF('02-Network-Science/Complex-Networks/Modeling-and-Analysis-of-Complex-Systems-Sayama.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Complex Systems (Sayama)</span>
+                            </div>
+                            <div class="file" onclick="loadPDF('02-Network-Science/Complex-Networks/Networks-Newman-2018.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Networks (Newman 2018)</span>
+                            </div>
+                            <div class="file" onclick="loadPDF('02-Network-Science/Complex-Networks/Networks-Newman-Alt-Edition.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Networks (Newman Alt)</span>
+                            </div>
+                            <div class="file" onclick="loadPDF('02-Network-Science/Complex-Networks/Networks-Crowds-and-Markets-Easley-Kleinberg.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Networks, Crowds, Markets</span>
+                            </div>
+                            <div class="file" onclick="loadPDF('02-Network-Science/Complex-Networks/Network-Science-Barabasi.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Network Science (Barabási)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Machine Learning on Graphs
+                        </div>
+                        <div class="file-list">
+                            <div class="file" onclick="loadPDF('02-Network-Science/Machine-Learning-on-Graphs/CS224W-Machine-Learning-with-Graphs-Stanford.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>CS224W (Stanford)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Network Dynamics
+                        </div>
+                        <div class="file-list">
+                            <div class="file" onclick="loadPDF('02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Dynamical Processes (Barrat)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 03-Complex-Systems -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <span class="category-icon">📁</span>
+                    <span>03-Complex-Systems</span>
+                </div>
+                <div class="category-content">
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Nonlinear Dynamics & Chaos
+                        </div>
+                        <div class="file-list">
+                            <div class="file" onclick="loadPDF('03-Complex-Systems/Nonlinear-Dynamics-Chaos/Nonlinear-Dynamics-and-Chaos-Strogatz-2024.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Nonlinear Dynamics (Strogatz)</span>
+                            </div>
+                            <div class="file" onclick="loadPDF('03-Complex-Systems/Nonlinear-Dynamics-Chaos/Nonlinear-Dynamics-and-Chaos-Solutions-Manual-Strogatz-2024.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Solutions Manual (Strogatz)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Urban Science
+                        </div>
+                        <div class="file-list">
+                            <div class="file" onclick="loadPDF('03-Complex-Systems/Urban-Science/Introduction-to-Urban-Science-Bettencourt-2021.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Urban Science (Bettencourt)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 04-Applied-Methods -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <span class="category-icon">📁</span>
+                    <span>04-Applied-Methods</span>
+                </div>
+                <div class="category-content">
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Epidemiology
+                        </div>
+                        <div class="file-list">
+                            <div class="file" onclick="loadPDF('04-Applied-Methods/Epidemiology/Mathematics-of-Epidemics-on-Networks-Kiss-Miller-Simon.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Epidemics on Networks</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Research Design
+                        </div>
+                        <div class="file-list">
+                            <div class="file" onclick="loadPDF('04-Applied-Methods/Research-Design/Research-Design-and-Methods-Bordens-Abbott-2022.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Research Design & Methods</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 05-General-Reading -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <span class="category-icon">📁</span>
+                    <span>05-General-Reading</span>
+                </div>
+                <div class="category-content">
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Popular Science
+                        </div>
+                        <div class="file-list">
+                            <div class="file" onclick="loadPDF('05-General-Reading/Complexity-A-Guided-Tour-Mitchell.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Complexity: A Guided Tour</span>
+                            </div>
+                            <div class="file" onclick="loadPDF('05-General-Reading/Scale-West.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Scale (West)</span>
+                            </div>
+                            <div class="file" onclick="loadPDF('05-General-Reading/The-Nature-of-Computation-Moore-Mertens.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>The Nature of Computation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sidebar-backdrop" aria-hidden="true"></div>
+
+    <!-- PDF Viewer Container -->
+    <div id="viewer-container">
+        <div id="placeholder">
+            <div id="placeholder-icon">📄</div>
+            <div id="placeholder-text">Select a PDF from the sidebar to start reading</div>
+        </div>
+        <iframe id="pdfjs-viewer" style="display: none;" frameborder="0"></iframe>
+    </div>
+
+    <script>
+        function toggleCategory(header) {
+            const content = header.nextElementSibling;
+            content.classList.toggle('open');
+            const icon = header.querySelector('.category-icon');
+            icon.textContent = content.classList.contains('open') ? '📂' : '📁';
+        }
+
+        function toggleSubcategory(header) {
+            const content = header.nextElementSibling;
+            if (content && content.classList.contains('file-list')) {
+                content.classList.toggle('open');
+            }
+        }
+
+        const placeholder = document.getElementById('placeholder');
+        const viewer = document.getElementById('pdfjs-viewer');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const mobileQuery = window.matchMedia('(max-width: 960px)');
+        const isFileProtocol = window.location.protocol === 'file:';
+        const messageTargetOrigin = isFileProtocol ? '*' : window.location.origin;
+        let viewerReady = false;
+        let pendingFile = null;
+
+        function setSidebarOpen(open) {
+            if (!sidebar) {
+                return;
+            }
+            if (open) {
+                sidebar.classList.add('open');
+                if (sidebarBackdrop) {
+                    sidebarBackdrop.classList.add('visible');
+                }
+                if (sidebarToggle) {
+                    sidebarToggle.classList.add('active');
+                    sidebarToggle.setAttribute('aria-expanded', 'true');
+                }
+            } else {
+                sidebar.classList.remove('open');
+                if (sidebarBackdrop) {
+                    sidebarBackdrop.classList.remove('visible');
+                }
+                if (sidebarToggle) {
+                    sidebarToggle.classList.remove('active');
+                    sidebarToggle.setAttribute('aria-expanded', 'false');
+                }
+            }
+        }
+
+        function handleViewportChange(event) {
+            if (event.matches) {
+                setSidebarOpen(false);
+            } else {
+                setSidebarOpen(false);
+                if (sidebarBackdrop) {
+                    sidebarBackdrop.classList.remove('visible');
+                }
+            }
+        }
+
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', () => {
+                if (!mobileQuery.matches) {
+                    return;
+                }
+                const isOpen = sidebar.classList.contains('open');
+                setSidebarOpen(!isOpen);
+            });
+        }
+
+        if (sidebarBackdrop) {
+            sidebarBackdrop.addEventListener('click', () => setSidebarOpen(false));
+        }
+
+        if (mobileQuery.addEventListener) {
+            mobileQuery.addEventListener('change', handleViewportChange);
+        } else if (mobileQuery.addListener) {
+            mobileQuery.addListener(handleViewportChange);
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && mobileQuery.matches) {
+                setSidebarOpen(false);
+            }
+        });
+
+        function ensureViewerLoaded() {
+            if (!viewer.src) {
+                viewer.src = 'viewer.html';
+            }
+        }
+
+        function postOpenRequest(filePath) {
+            if (!viewer.contentWindow) {
+                return;
+            }
+            viewer.contentWindow.postMessage(
+                { type: 'openFile', payload: { url: filePath } },
+                messageTargetOrigin
+            );
+        }
+
+        window.addEventListener('message', (event) => {
+            if (!isFileProtocol && event.origin !== window.location.origin) {
+                return;
+            }
+            if (event.data && event.data.type === 'viewerReady') {
+                viewerReady = true;
+                if (pendingFile) {
+                    postOpenRequest(pendingFile);
+                    pendingFile = null;
+                }
+            }
+        });
+
+        function openDocument(path, triggerElement) {
+            // Remove previous selection
+            document.querySelectorAll('.file').forEach(f => f.classList.remove('selected'));
+            if (triggerElement) {
+                triggerElement.classList.add('selected');
+            }
+
+            placeholder.style.display = 'none';
+            viewer.style.display = 'block';
+
+            ensureViewerLoaded();
+
+            if (mobileQuery.matches) {
+                setSidebarOpen(false);
+            }
+
+            const pdfPath = path.replace(/^\/+/, '');
+            if (viewerReady && viewer.contentWindow) {
+                postOpenRequest(pdfPath);
+            } else {
+                pendingFile = pdfPath;
+            }
+        }
+
+        // Auto-expand first category on load
+        window.addEventListener('load', () => {
+            setSidebarOpen(false);
+            const firstCategory = document.querySelector('.category-header');
+            if (firstCategory) {
+                firstCategory.click();
+            }
+        });
+
+        window.toggleCategory = toggleCategory;
+        window.toggleSubcategory = toggleSubcategory;
+        window.loadPDF = openDocument;
+    </script>
+</body>
+</html>
