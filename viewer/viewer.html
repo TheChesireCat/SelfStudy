@@ -39,6 +39,14 @@ See https://github.com/adobe-type-tools/cmap-resources
   <script>
     const isFileProtocol = window.location.protocol === 'file:';
     const parentOrigin = isFileProtocol ? '*' : window.location.origin;
+    let pageChangeListenerRegistered = false;
+
+    function postMessageToParent(message) {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage(message, parentOrigin);
+      }
+    }
+
 
     function withViewerReady(callback) {
       if (window.PDFViewerApplication?.initializedPromise) {
@@ -49,17 +57,85 @@ See https://github.com/adobe-type-tools/cmap-resources
     }
 
     function signalReady() {
-      if (window.parent && window.parent !== window) {
-        window.parent.postMessage({ type: 'viewerReady' }, parentOrigin);
-      }
+      postMessageToParent({ type: 'viewerReady' });
     }
 
     function openRequestedFile(request) {
       if (!request) {
         return;
       }
-      const args = typeof request === "string" ? { url: request } : request;
-      window.PDFViewerApplication.open(args);
+      const args = typeof request === "string" ? { url: request } : { ...request };
+      const { pageNumber } = args;
+      const openArgs = { ...args };
+      delete openArgs.pageNumber;
+      if (!openArgs.url) {
+        return;
+      }
+
+      const numericPage = Number(pageNumber);
+      const openPromise = window.PDFViewerApplication.open(openArgs);
+      if (Number.isFinite(numericPage) && numericPage > 0) {
+        const targetPage = Math.floor(numericPage);
+        const applyPage = () => {
+          window.PDFViewerApplication.page = targetPage;
+        };
+        if (openPromise && typeof openPromise.then === 'function') {
+          openPromise.then(applyPage).catch(applyPage);
+        } else {
+          applyPage();
+        }
+      }
+    }
+
+    function respondWithCurrentPage(requestPayload) {
+      const app = window.PDFViewerApplication;
+      const pageFromApp = app && typeof app.page === 'number' ? app.page : null;
+      const pageFromViewer = app && app.pdfViewer && typeof app.pdfViewer.currentPageNumber === 'number'
+        ? app.pdfViewer.currentPageNumber
+        : null;
+      const currentPage = pageFromApp || pageFromViewer || null;
+      const fallbackUrl = requestPayload && requestPayload.url ? requestPayload.url : null;
+      const currentUrl = app && app.url ? app.url : fallbackUrl;
+      const response = {
+        type: 'currentPage',
+        payload: {
+          pageNumber: currentPage,
+          url: currentUrl || null
+        }
+      };
+      postMessageToParent(response);
+    }
+
+    function emitPageChanged(pageNumber) {
+      const numericPage = Number(pageNumber);
+      if (!Number.isFinite(numericPage) || numericPage <= 0) {
+        return;
+      }
+      const app = window.PDFViewerApplication;
+      const response = {
+        type: 'pageChanged',
+        payload: {
+          pageNumber: numericPage,
+          url: app && app.url ? app.url : null
+        }
+      };
+      postMessageToParent(response);
+    }
+
+    function registerPageChangeListener() {
+      if (pageChangeListenerRegistered) {
+        return;
+      }
+      const app = window.PDFViewerApplication;
+      const eventBus = app && app.eventBus;
+      if (!eventBus || typeof eventBus.on !== 'function') {
+        return;
+      }
+      pageChangeListenerRegistered = true;
+      eventBus.on('pagechanging', event => {
+        emitPageChanged(event?.pageNumber);
+      });
+      emitPageChanged(app && typeof app.page === 'number' ? app.page : null);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -67,6 +143,7 @@ See https://github.com/adobe-type-tools/cmap-resources
       const fileParam = params.get('file');
 
       withViewerReady(() => {
+        registerPageChangeListener();
         signalReady();
         if (fileParam) {
           openRequestedFile({ url: fileParam });
@@ -80,11 +157,17 @@ See https://github.com/adobe-type-tools/cmap-resources
       }
 
       const { type, payload } = event.data || {};
-      if (type !== 'openFile' || !payload) {
+      if (!type) {
         return;
       }
-
-      withViewerReady(() => openRequestedFile(payload));
+      if (type === 'openFile' && payload) {
+        withViewerReady(() => {
+          registerPageChangeListener();
+          openRequestedFile(payload);
+        });
+      } else if (type === 'requestCurrentPage') {
+        withViewerReady(() => respondWithCurrentPage(payload));
+      }
     });
   </script>
   </head>

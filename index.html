@@ -148,6 +148,61 @@
             font-size: 12px;
         }
 
+        
+        #bookmark-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 18px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #fff;
+        }
+
+        #bookmark-controls .bookmark-header {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .bookmark-button {
+            padding: 6px 10px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            background: #f8f9fa;
+            color: #333;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            text-align: left;
+        }
+
+        .bookmark-button:hover:not(:disabled) {
+            background: #667eea;
+            color: #fff;
+            border-color: #667eea;
+        }
+
+        .bookmark-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #bookmark-status {
+            font-size: 13px;
+            color: #667eea;
+            min-height: 1em;
+            transition: opacity 0.2s ease;
+            opacity: 0;
+        }
+
+        #bookmark-status.visible {
+            opacity: 1;
+        }
+
+        #bookmark-status:not(.visible) {
+            pointer-events: none;
+        }
+
         /* PDF Viewer Container */
         #viewer-container {
             flex: 1;
@@ -157,6 +212,7 @@
             background: #f5f6f8;
             min-height: 0;
         }
+
         #pdfjs-viewer {
             width: 100%;
             height: 100%;
@@ -274,6 +330,13 @@
         <div id="header">
             <h1>📚 SelfStudy Library</h1>
             <p>Network Science & Complex Systems</p>
+        </div>
+        <div id="bookmark-controls" role="region" aria-label="Bookmark controls">
+            <div class="bookmark-header">Reading Progress</div>
+            <button type="button" class="bookmark-button bookmark-save">Bookmark Page</button>
+            <button type="button" class="bookmark-button bookmark-resume">Resume Bookmark</button>
+            <button type="button" class="bookmark-button bookmark-clear">Clear Bookmark</button>
+            <div id="bookmark-status" aria-live="polite"></div>
         </div>
         <div id="file-tree">
             <!-- 01-Foundations -->
@@ -594,6 +657,7 @@
             }
         }
 
+        
         const placeholder = document.getElementById('placeholder');
         const viewer = document.getElementById('pdfjs-viewer');
         const sidebar = document.getElementById('sidebar');
@@ -602,8 +666,238 @@
         const mobileQuery = window.matchMedia('(max-width: 960px)');
         const isFileProtocol = window.location.protocol === 'file:';
         const messageTargetOrigin = isFileProtocol ? '*' : window.location.origin;
+
+        const bookmarkControls = document.getElementById('bookmark-controls');
+        const bookmarkSaveButton = bookmarkControls ? bookmarkControls.querySelector('.bookmark-save') : null;
+        const bookmarkResumeButton = bookmarkControls ? bookmarkControls.querySelector('.bookmark-resume') : null;
+        const bookmarkClearButton = bookmarkControls ? bookmarkControls.querySelector('.bookmark-clear') : null;
+        const bookmarkStatus = document.getElementById('bookmark-status');
+        const STORAGE_KEY = 'pdfBookmarks';
+        const LAST_DOCUMENT_KEY = 'pdfLastDocument';
+        const AUTO_SAVE_DEBOUNCE_MS = 2000;
+        const AUTO_SAVE_IDLE_TIMEOUT_MS = 5000;
+
         let viewerReady = false;
         let pendingFile = null;
+        let currentDocumentUrl = null;
+        let currentViewerSource = null;
+        let bookmarkStatusTimer = null;
+        let currentDocumentKey = null;
+
+        let bookmarks = loadBookmarks();
+        let lastDocument = loadLastDocument();
+        let pendingAutoSave = null;
+        let autoSaveTimeoutId = null;
+        let autoSaveIdleCallbackId = null;
+        let lastAutoSaved = { url: null, pageNumber: null };
+
+        initializeFileMetadata();
+        updateBookmarkUI();
+
+        function loadBookmarks() {
+            try {
+                const raw = window.localStorage ? localStorage.getItem(STORAGE_KEY) : null;
+                if (!raw) {
+                    return {};
+                }
+                const parsed = JSON.parse(raw);
+                return sanitizeBookmarkStore(parsed);
+            } catch (error) {
+                console.warn('Unable to access bookmark storage:', error);
+                return {};
+            }
+        }
+
+        function sanitizeBookmarkStore(store) {
+            const result = {};
+            if (!store || typeof store !== 'object') {
+                return result;
+            }
+            for (const [url, value] of Object.entries(store)) {
+                const entry = normalizeBookmarkEntry(value);
+                if (!entry) {
+                    continue;
+                }
+                const key = normalizePDFPath(url);
+                if (key) {
+                    result[key] = entry;
+                }
+            }
+            return result;
+        }
+
+        function normalizeBookmarkEntry(value) {
+            if (typeof value === 'number') {
+                const page = Math.floor(value);
+                if (Number.isInteger(page) && page > 0) {
+                    return { pageNumber: page, updatedAt: Date.now() };
+                }
+                return null;
+            }
+            if (value && typeof value === 'object') {
+                const page = Math.floor(Number(value.pageNumber));
+                if (Number.isInteger(page) && page > 0) {
+                    const timestamp = Number.isFinite(Number(value.updatedAt)) ? Number(value.updatedAt) : Date.now();
+                    return { pageNumber: page, updatedAt: timestamp };
+                }
+            }
+            return null;
+        }
+
+        function persistBookmarks() {
+            try {
+                if (window.localStorage) {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
+                }
+            } catch (error) {
+                console.warn('Unable to persist bookmark:', error);
+            }
+        }
+
+        function loadLastDocument() {
+            try {
+                const raw = window.localStorage ? localStorage.getItem(LAST_DOCUMENT_KEY) : null;
+                if (!raw) {
+                    return null;
+                }
+                const parsed = JSON.parse(raw);
+                if (!parsed || typeof parsed !== 'object') {
+                    return null;
+                }
+                const url = parsed.url ? normalizePDFPath(parsed.url) : null;
+                if (!url) {
+                    return null;
+                }
+                const page = Math.floor(Number(parsed.pageNumber));
+                const updatedAt = Number.isFinite(Number(parsed.updatedAt)) ? Number(parsed.updatedAt) : Date.now();
+                return {
+                    url,
+                    pageNumber: Number.isInteger(page) && page > 0 ? page : null,
+                    updatedAt
+                };
+            } catch (error) {
+                console.warn('Unable to load last document state:', error);
+                return null;
+            }
+        }
+
+        function persistLastDocument() {
+            try {
+                if (window.localStorage) {
+                    localStorage.setItem(LAST_DOCUMENT_KEY, JSON.stringify(lastDocument));
+                }
+            } catch (error) {
+                console.warn('Unable to persist last document state:', error);
+            }
+        }
+
+        function rememberLastDocument(url, pageNumber) {
+            if (!url) {
+                return;
+            }
+            const normalizedUrl = normalizePDFPath(url);
+            if (!normalizedUrl) {
+                return;
+            }
+            const sanitizedPage = Number.isInteger(pageNumber) && pageNumber > 0 ? Math.floor(pageNumber) : null;
+            lastDocument = {
+                url: normalizedUrl,
+                pageNumber: sanitizedPage,
+                updatedAt: Date.now()
+            };
+            persistLastDocument();
+        }
+
+        function resolveBookmarkKey(url) {
+            return url ? normalizePDFPath(url) : null;
+        }
+
+        function getBookmark(url) {
+            const key = resolveBookmarkKey(url);
+            return key && Object.prototype.hasOwnProperty.call(bookmarks, key) ? bookmarks[key] : undefined;
+        }
+
+        function getBookmarkPage(entry) {
+            if (!entry || typeof entry !== 'object') {
+                return null;
+            }
+            const page = Math.floor(Number(entry.pageNumber));
+            return Number.isInteger(page) && page > 0 ? page : null;
+        }
+
+        function cancelPendingAutoSave() {
+            if (autoSaveTimeoutId) {
+                clearTimeout(autoSaveTimeoutId);
+                autoSaveTimeoutId = null;
+            }
+            if (autoSaveIdleCallbackId && typeof window.cancelIdleCallback === 'function') {
+                cancelIdleCallback(autoSaveIdleCallbackId);
+                autoSaveIdleCallbackId = null;
+            }
+            pendingAutoSave = null;
+        }
+
+        function commitAutoSave() {
+            if (!pendingAutoSave) {
+                return;
+            }
+            const { url, pageNumber } = pendingAutoSave;
+            pendingAutoSave = null;
+            if (!url || !Number.isInteger(pageNumber) || pageNumber <= 0) {
+                return;
+            }
+            const previous = getBookmark(url);
+            const previousPage = getBookmarkPage(previous);
+            if (previousPage === pageNumber) {
+                lastAutoSaved = { url, pageNumber };
+                return;
+            }
+            if (saveBookmark(url, pageNumber, { silent: true })) {
+                lastAutoSaved = { url, pageNumber };
+            }
+        }
+
+        function flushPendingAutoSave() {
+            commitAutoSave();
+            cancelPendingAutoSave();
+        }
+
+        function scheduleAutoSave(url, pageNumber) {
+            if (!Number.isInteger(pageNumber) || pageNumber <= 0) {
+                return;
+            }
+            const key = url ? resolveBookmarkKey(url) : currentDocumentKey;
+            if (!key || key !== currentDocumentKey) {
+                return;
+            }
+            const normalizedPage = Math.floor(pageNumber);
+            if (lastAutoSaved.url === key && lastAutoSaved.pageNumber === normalizedPage) {
+                return;
+            }
+
+            pendingAutoSave = { url: key, pageNumber: normalizedPage };
+
+            if (autoSaveTimeoutId) {
+                clearTimeout(autoSaveTimeoutId);
+                autoSaveTimeoutId = null;
+            }
+            if (autoSaveIdleCallbackId && typeof window.cancelIdleCallback === 'function') {
+                cancelIdleCallback(autoSaveIdleCallbackId);
+                autoSaveIdleCallbackId = null;
+            }
+
+            if (typeof window.requestIdleCallback === 'function') {
+                autoSaveIdleCallbackId = requestIdleCallback(() => {
+                    autoSaveIdleCallbackId = null;
+                    commitAutoSave();
+                }, { timeout: AUTO_SAVE_IDLE_TIMEOUT_MS });
+            } else {
+                autoSaveTimeoutId = setTimeout(() => {
+                    autoSaveTimeoutId = null;
+                    commitAutoSave();
+                }, AUTO_SAVE_DEBOUNCE_MS);
+            }
+        }
 
         function setSidebarOpen(open) {
             if (!sidebar) {
@@ -667,36 +961,10 @@
             }
         });
 
-        function ensureViewerLoaded() {
-            if (!viewer.src) {
-                viewer.src = 'viewer/viewer.html';
-            }
-        }
-
-        function postOpenRequest(filePath) {
-            if (!viewer.contentWindow) {
-                return;
-            }
-            viewer.contentWindow.postMessage(
-                { type: 'openFile', payload: { url: filePath } },
-                messageTargetOrigin
-            );
-        }
-
-        window.addEventListener('message', (event) => {
-            if (!isFileProtocol && event.origin !== window.location.origin) {
-                return;
-            }
-            if (event.data && event.data.type === 'viewerReady') {
-                viewerReady = true;
-                if (pendingFile) {
-                    postOpenRequest(pendingFile);
-                    pendingFile = null;
-                }
-            }
-        });
-
         function normalizePDFPath(path) {
+            if (!path) {
+                return null;
+            }
             if (!/^https?:\/\//i.test(path)) {
                 return path;
             }
@@ -734,37 +1002,371 @@
             }
         }
 
-        function openDocument(path, triggerElement) {
-            // Remove previous selection
-            document.querySelectorAll('.file').forEach(f => f.classList.remove('selected'));
-            if (triggerElement) {
-                triggerElement.classList.add('selected');
+        function ensureViewerLoaded() {
+            if (!viewer.src) {
+                viewer.src = 'viewer/viewer.html';
             }
+        }
+
+        function postOpenRequest(request) {
+            if (!viewer.contentWindow) {
+                return;
+            }
+            const payload = typeof request === 'string' ? { url: request } : request;
+            viewer.contentWindow.postMessage(
+                { type: 'openFile', payload },
+                messageTargetOrigin
+            );
+        }
+
+        function sendOpenRequest(options = {}) {
+            if (!currentViewerSource) {
+                return;
+            }
+            ensureViewerLoaded();
+            const request = { url: currentViewerSource };
+            if (options && options.pageNumber != null) {
+                const pageNumber = Number(options.pageNumber);
+                if (Number.isFinite(pageNumber) && pageNumber > 0) {
+                    request.pageNumber = Math.floor(pageNumber);
+                }
+            }
+            if (viewerReady && viewer.contentWindow) {
+                postOpenRequest(request);
+            } else {
+                pendingFile = { ...request };
+            }
+        }
+
+        function updateBookmarkUI() {
+            const hasDocument = Boolean(currentDocumentUrl);
+            const bookmarkEntry = hasDocument ? getBookmark(currentDocumentUrl) : null;
+            const hasBookmark = getBookmarkPage(bookmarkEntry) !== null;
+            if (bookmarkSaveButton) {
+                bookmarkSaveButton.disabled = !hasDocument;
+            }
+            if (bookmarkResumeButton) {
+                bookmarkResumeButton.disabled = !hasBookmark;
+            }
+            if (bookmarkClearButton) {
+                bookmarkClearButton.disabled = !hasBookmark;
+            }
+        }
+
+        function showBookmarkStatus(message) {
+            if (!bookmarkStatus) {
+                return;
+            }
+            if (bookmarkStatusTimer) {
+                clearTimeout(bookmarkStatusTimer);
+                bookmarkStatusTimer = null;
+            }
+            if (message) {
+                bookmarkStatus.textContent = message;
+                bookmarkStatus.classList.add('visible');
+                bookmarkStatusTimer = setTimeout(() => {
+                    bookmarkStatus.textContent = '';
+                    bookmarkStatus.classList.remove('visible');
+                }, 4000);
+            } else {
+                bookmarkStatus.textContent = '';
+                bookmarkStatus.classList.remove('visible');
+            }
+        }
+
+        function saveBookmark(url, pageNumber, options = {}) {
+            const { silent = false } = options;
+            const key = resolveBookmarkKey(url);
+            if (!key || !Number.isInteger(pageNumber) || pageNumber <= 0) {
+                return false;
+            }
+            const normalizedPage = Math.floor(pageNumber);
+            bookmarks[key] = {
+                pageNumber: normalizedPage,
+                updatedAt: Date.now()
+            };
+            persistBookmarks();
+            rememberLastDocument(key, normalizedPage);
+            updateBookmarkUI();
+            lastAutoSaved = { url: key, pageNumber: normalizedPage };
+            if (!silent) {
+                showBookmarkStatus(`Bookmark saved at page ${normalizedPage}`);
+            }
+            return true;
+        }
+
+        function clearBookmark(url) {
+            const key = resolveBookmarkKey(url);
+            if (!key || !Object.prototype.hasOwnProperty.call(bookmarks, key)) {
+                return false;
+            }
+            delete bookmarks[key];
+            persistBookmarks();
+            rememberLastDocument(key, null);
+            updateBookmarkUI();
+            if (lastAutoSaved.url === key) {
+                lastAutoSaved = { url: key, pageNumber: null };
+            }
+            if (currentDocumentKey === key) {
+                cancelPendingAutoSave();
+            }
+            return true;
+        }
+
+        function requestCurrentPage() {
+            if (!viewerReady || !viewer.contentWindow || !currentViewerSource) {
+                showBookmarkStatus('Open the PDF before bookmarking.');
+                return;
+            }
+            viewer.contentWindow.postMessage(
+                { type: 'requestCurrentPage', payload: { url: currentViewerSource } },
+                messageTargetOrigin
+            );
+        }
+
+        function handleBookmarkMessage(payload) {
+            if (!payload) {
+                return;
+            }
+            const rawPage = Math.floor(Number(payload.pageNumber));
+            if (!Number.isInteger(rawPage) || rawPage <= 0) {
+                return;
+            }
+            const sourceUrl = payload.url || currentViewerSource;
+            if (sourceUrl && currentViewerSource && sourceUrl !== currentViewerSource) {
+                return;
+            }
+            if (!currentDocumentUrl) {
+                return;
+            }
+            saveBookmark(currentDocumentUrl, rawPage);
+        }
+
+        function handleAutoSaveMessage(payload) {
+            if (!payload) {
+                return;
+            }
+            const rawPage = Math.floor(Number(payload.pageNumber));
+            const sourceUrl = payload.url || currentDocumentUrl;
+            if (!Number.isInteger(rawPage) || rawPage <= 0) {
+                return;
+            }
+            if (!currentDocumentKey) {
+                return;
+            }
+            scheduleAutoSave(sourceUrl, rawPage);
+        }
+
+        function initializeFileMetadata() {
+            document.querySelectorAll('.file').forEach((element) => {
+                const onclickValue = element.getAttribute('onclick') || '';
+                const match = onclickValue.match(/loadPDF\('(.*?)'/);
+                if (!match) {
+                    return;
+                }
+                const originalPath = match[1];
+                const normalized = normalizePDFPath(originalPath);
+                if (!normalized) {
+                    return;
+                }
+                const viewerPath = normalized.startsWith('http') ? normalized : normalized.replace(/^\/+/, '');
+                element.dataset.pdfUrl = normalized;
+                element.dataset.viewerPath = viewerPath;
+            });
+        }
+
+        function findFileElementByUrl(url) {
+            if (!url) {
+                return null;
+            }
+            const normalized = normalizePDFPath(url);
+            if (!normalized) {
+                return null;
+            }
+            return Array.from(document.querySelectorAll('.file')).find(el => el.dataset.pdfUrl === normalized) || null;
+        }
+
+        function updateCategoryIcon(header, isOpen) {
+            if (!header) {
+                return;
+            }
+            const icon = header.querySelector('.category-icon');
+            if (icon) {
+                icon.textContent = isOpen ? '📂' : '📁';
+            }
+        }
+
+        function expandParents(element) {
+            let parent = element ? element.parentElement : null;
+            while (parent) {
+                if (parent.classList.contains('file-list')) {
+                    parent.classList.add('open');
+                    const header = parent.previousElementSibling;
+                    if (header && header.classList.contains('subcategory-header')) {
+                        header.classList.add('open');
+                    }
+                }
+                if (parent.classList.contains('category-content')) {
+                    parent.classList.add('open');
+                    const categoryHeader = parent.previousElementSibling;
+                    if (categoryHeader && categoryHeader.classList.contains('category-header')) {
+                        updateCategoryIcon(categoryHeader, true);
+                    }
+                }
+                parent = parent.parentElement;
+            }
+        }
+
+        function selectFileElement(element) {
+            document.querySelectorAll('.file').forEach(f => f.classList.remove('selected'));
+            if (element) {
+                element.classList.add('selected');
+                expandParents(element);
+            }
+        }
+
+        window.addEventListener('message', (event) => {
+            if (!isFileProtocol && event.origin !== window.location.origin) {
+                return;
+            }
+            const { type, payload } = event.data || {};
+            if (!type) {
+                return;
+            }
+            if (type === 'viewerReady') {
+                viewerReady = true;
+                if (pendingFile) {
+                    postOpenRequest(pendingFile);
+                    pendingFile = null;
+                }
+                return;
+            }
+            if (type === 'currentPage') {
+                handleBookmarkMessage(payload);
+                return;
+            }
+            if (type === 'pageChanged') {
+                handleAutoSaveMessage(payload);
+            }
+        });
+
+        function openDocument(path, triggerElement, options = {}) {
+            const normalizedPath = normalizePDFPath(path);
+            if (!normalizedPath) {
+                return;
+            }
+            const viewerPath = normalizedPath.startsWith('http') ? normalizedPath : normalizedPath.replace(/^\/+/, '');
+
+            flushPendingAutoSave();
+
+            currentDocumentUrl = normalizedPath;
+            currentDocumentKey = resolveBookmarkKey(normalizedPath) || normalizedPath;
+            currentViewerSource = viewerPath;
+
+            selectFileElement(triggerElement || findFileElementByUrl(currentDocumentUrl));
 
             placeholder.style.display = 'none';
             viewer.style.display = 'block';
-
-            ensureViewerLoaded();
 
             if (mobileQuery.matches) {
                 setSidebarOpen(false);
             }
 
-            const normalizedPath = normalizePDFPath(path);
-            const pdfPath = normalizedPath.replace(/^\/+/, '');
-            if (viewerReady && viewer.contentWindow) {
-                postOpenRequest(pdfPath);
-            } else {
-                pendingFile = pdfPath;
-            }
+            const requestedPage = options && options.pageNumber != null ? Math.floor(Number(options.pageNumber)) : null;
+            const bookmarkEntry = getBookmark(currentDocumentUrl);
+            const savedPage = getBookmarkPage(bookmarkEntry);
+            const targetPage = Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : savedPage;
+
+            lastAutoSaved = { url: currentDocumentKey, pageNumber: targetPage || null };
+            rememberLastDocument(currentDocumentUrl, targetPage);
+            updateBookmarkUI();
+            showBookmarkStatus('');
+
+            sendOpenRequest(targetPage != null ? { pageNumber: targetPage } : {});
         }
 
-        // Auto-expand first category on load
+        if (bookmarkSaveButton) {
+            bookmarkSaveButton.addEventListener('click', () => {
+                if (!currentDocumentUrl) {
+                    return;
+                }
+                requestCurrentPage();
+            });
+        }
+
+        if (bookmarkResumeButton) {
+            bookmarkResumeButton.addEventListener('click', () => {
+                if (!currentDocumentUrl) {
+                    return;
+                }
+                const entry = getBookmark(currentDocumentUrl);
+                const savedPage = getBookmarkPage(entry);
+                if (!Number.isInteger(savedPage) || savedPage <= 0) {
+                    showBookmarkStatus('No bookmark saved for this PDF.');
+                    return;
+                }
+                rememberLastDocument(currentDocumentUrl, savedPage);
+                lastAutoSaved = { url: currentDocumentKey, pageNumber: savedPage };
+                sendOpenRequest({ pageNumber: savedPage });
+                showBookmarkStatus(`Opening bookmark at page ${savedPage}`);
+            });
+        }
+
+        if (bookmarkClearButton) {
+            bookmarkClearButton.addEventListener('click', () => {
+                if (!currentDocumentUrl) {
+                    return;
+                }
+                const entry = getBookmark(currentDocumentUrl);
+                if (!getBookmarkPage(entry)) {
+                    showBookmarkStatus('No bookmark to clear.');
+                    return;
+                }
+                if (clearBookmark(currentDocumentUrl)) {
+                    showBookmarkStatus('Bookmark cleared.');
+                }
+            });
+        }
+
+        function restoreLastDocument() {
+            if (!lastDocument || !lastDocument.url) {
+                return false;
+            }
+            const normalizedUrl = normalizePDFPath(lastDocument.url);
+            if (!normalizedUrl) {
+                return false;
+            }
+            const entry = getBookmark(normalizedUrl);
+            const savedPage = lastDocument.pageNumber != null ? lastDocument.pageNumber : getBookmarkPage(entry);
+            const fileElement = findFileElementByUrl(normalizedUrl);
+            openDocument(normalizedUrl, fileElement || null, savedPage != null ? { pageNumber: savedPage } : {});
+            return true;
+        }
+
+        function sendInitialBookmarkState() {
+            updateBookmarkUI();
+        }
+
+        sendInitialBookmarkState();
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                flushPendingAutoSave();
+            }
+        });
+
+        window.addEventListener('beforeunload', () => {
+            flushPendingAutoSave();
+        });
+
         window.addEventListener('load', () => {
             setSidebarOpen(false);
-            const firstCategory = document.querySelector('.category-header');
-            if (firstCategory) {
-                firstCategory.click();
+            const restored = restoreLastDocument();
+            if (!restored) {
+                const firstCategory = document.querySelector('.category-header');
+                if (firstCategory) {
+                    firstCategory.click();
+                }
             }
         });
 
