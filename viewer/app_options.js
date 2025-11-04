@@ -5,6 +5,22 @@ const defaultOptions = {
   defaultUrl: {
     value: "",  // Empty string - no default PDF
     kind: 0  // OptionKind.VIEWER
+  },
+  cMapUrl: {
+    value: "./cmaps/",
+    kind: 0
+  },
+  standardFontDataUrl: {
+    value: "./standard_fonts/",
+    kind: 0
+  },
+  workerSrc: {
+    value: "./build/pdf.worker.mjs",
+    kind: 0
+  },
+  sandboxBundleSrc: {
+    value: "./build/pdf.sandbox.mjs",
+    kind: 0
   }
 };
 
