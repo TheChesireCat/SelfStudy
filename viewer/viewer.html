@@ -40,6 +40,7 @@ See https://github.com/adobe-type-tools/cmap-resources
     const isFileProtocol = window.location.protocol === 'file:';
     const parentOrigin = isFileProtocol ? '*' : window.location.origin;
     let pageChangeListenerRegistered = false;
+    let lastSelectionText = '';
 
     function postMessageToParent(message) {
       if (window.parent && window.parent !== window) {
@@ -138,6 +139,90 @@ See https://github.com/adobe-type-tools/cmap-resources
       emitPageChanged(app && typeof app.page === 'number' ? app.page : null);
     }
 
+    function getSelectedText() {
+      const selection = typeof window.getSelection === 'function' ? window.getSelection() : null;
+      return selection ? selection.toString() : '';
+    }
+
+    function respondWithSelectionText() {
+      const app = window.PDFViewerApplication;
+      const text = getSelectedText() || lastSelectionText;
+      if (!text || !text.trim()) {
+        console.debug('[Viewer TTS] No selection text available');
+      } else {
+        console.debug('[Viewer TTS] Sending selection text', {
+          length: text.length,
+          preview: text.slice(0, 80)
+        });
+      }
+      const response = {
+        type: 'selectionText',
+        payload: {
+          text,
+          url: app && app.url ? app.url : null,
+          pageNumber: app && typeof app.page === 'number' ? app.page : null
+        }
+      };
+      postMessageToParent(response);
+    }
+
+    async function extractPageText(pageNumber) {
+      const app = window.PDFViewerApplication;
+      if (!app || !app.pdfDocument || !Number.isInteger(pageNumber) || pageNumber <= 0) {
+        return '';
+      }
+      try {
+        const page = await app.pdfDocument.getPage(pageNumber);
+        const content = await page.getTextContent({ normalizeWhitespace: true });
+        const strings = (content && Array.isArray(content.items))
+          ? content.items.map(item => item.str).filter(Boolean)
+          : [];
+        return strings.join(' ');
+      } catch (error) {
+        console.warn('[Viewer TTS] Failed to extract page text', error);
+        return '';
+      }
+    }
+
+    async function respondWithPageText() {
+      const app = window.PDFViewerApplication;
+      const pageNumber = app && typeof app.page === 'number' ? app.page : null;
+      const url = app && app.url ? app.url : null;
+      let text = '';
+      if (pageNumber) {
+        text = await extractPageText(pageNumber);
+      }
+      text = (text || '').trim();
+      if (!text || !text.trim()) {
+        console.debug('[Viewer TTS] No text extracted for page', pageNumber);
+      } else {
+        console.debug('[Viewer TTS] Sending page text', {
+          pageNumber,
+          length: text.length,
+          preview: text.slice(0, 80)
+        });
+      }
+      postMessageToParent({
+        type: 'pageText',
+        payload: {
+          text,
+          pageNumber,
+          url
+        }
+      });
+    }
+
+    document.addEventListener('selectionchange', () => {
+      const current = getSelectedText();
+      if (current && current.trim()) {
+        lastSelectionText = current.trim().slice(0, 5000);
+        console.debug('[Viewer TTS] Cached selection text', {
+          length: lastSelectionText.length,
+          preview: lastSelectionText.slice(0, 80)
+        });
+      }
+    });
+
     window.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
       const fileParam = params.get('file');
@@ -167,6 +252,23 @@ See https://github.com/adobe-type-tools/cmap-resources
         });
       } else if (type === 'requestCurrentPage') {
         withViewerReady(() => respondWithCurrentPage(payload));
+      } else if (type === 'requestSelectionText') {
+        withViewerReady(() => respondWithSelectionText());
+      } else if (type === 'requestPageText') {
+        withViewerReady(() => {
+          respondWithPageText().catch(error => {
+            console.error('[Viewer TTS] Failed to send page text', error);
+            postMessageToParent({
+              type: 'pageText',
+              payload: {
+                text: '',
+                pageNumber: null,
+                url: null,
+                error: error && error.message ? String(error.message) : 'Unknown error'
+              }
+            });
+          });
+        });
       }
     });
   </script>
