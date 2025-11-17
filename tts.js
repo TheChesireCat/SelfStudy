@@ -1428,6 +1428,16 @@ TTS.initKokoro = async function() {
         // Use the same WebGPU detection as the working version
         const device = (await detectWebGPU()) ? "webgpu" : "wasm";
         //console.log("Kokoro TTS using device:", device);
+
+        const emitKokoroProgress = (detail) => {
+            if (typeof TTS.onKokoroDownloadProgress === 'function') {
+                try {
+                    TTS.onKokoroDownloadProgress(detail || {});
+                } catch (error) {
+                    console.warn('Kokoro progress handler error:', error);
+                }
+            }
+        };
         
         // Store the device type for checking later
         TTS.kokoroDevice = device;
@@ -1476,8 +1486,20 @@ TTS.initKokoro = async function() {
             //console.log("Downloading model...");
             const modelUrl = 'https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/main/onnx/model.onnx';
             const response = await fetch(modelUrl);
-            const total = +response.headers.get('Content-Length');
+            const totalHeader = response.headers.get('Content-Length');
+            const total = totalHeader ? Number(totalHeader) : NaN;
+            const hasKnownTotal = Number.isFinite(total) && total > 0;
+            const fallbackTotal = 82 * 1024 * 1024; // Approximate Kokoro model size in bytes
+            const effectiveTotal = hasKnownTotal ? total : fallbackTotal;
             let loaded = 0;
+            
+            emitKokoroProgress({
+                loaded: 0,
+                total: hasKnownTotal ? total : undefined,
+                percent: 0,
+                stage: 'download',
+                estimatedTotal: effectiveTotal
+            });
             
             const reader = response.body.getReader();
             const chunks = [];
@@ -1489,8 +1511,14 @@ TTS.initKokoro = async function() {
                 chunks.push(value);
                 loaded += value.length;
                 
-                const percentage = (loaded / total) * 100;
-                //console.log(`Downloading model: ${percentage.toFixed(1)}%`);
+                const percentage = Math.min(100, (loaded / effectiveTotal) * 100);
+                emitKokoroProgress({
+                    loaded,
+                    total: hasKnownTotal ? total : undefined,
+                    percent: percentage,
+                    stage: 'download',
+                    estimatedTotal: effectiveTotal
+                });
             }
             
             const modelBlob = new Blob(chunks);
@@ -1498,8 +1526,25 @@ TTS.initKokoro = async function() {
             
             //console.log("Caching model...");
             await cacheModel(modelData);
+
+            emitKokoroProgress({
+                loaded: hasKnownTotal ? loaded : effectiveTotal,
+                total: hasKnownTotal ? total : undefined,
+                percent: 100,
+                stage: 'download',
+                estimatedTotal: effectiveTotal
+            });
         } else {
             //console.log("Loading model from cache");
+            const cachedSize = modelData.length || (modelData.byteLength || 0);
+            emitKokoroProgress({
+                loaded: cachedSize,
+                total: cachedSize,
+                percent: 100,
+                stage: 'cache',
+                cached: true,
+                estimatedTotal: cachedSize
+            });
         }
         
         //console.log("Initializing Kokoro TTS...");

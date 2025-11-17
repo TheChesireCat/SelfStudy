@@ -359,16 +359,27 @@
             display: none;
         }
 
-        #viewer-tts-controls {
+        #tts-floating-controls {
             position: absolute;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: calc(24px + env(safe-area-inset-top, 0px));
+            right: calc(24px + env(safe-area-inset-right, 0px));
             display: flex;
+            flex-direction: column;
+            align-items: flex-end;
             gap: 12px;
             z-index: 1100;
-            align-items: center;
             pointer-events: none;
+            width: clamp(220px, 28vw, 420px);
+        }
+
+        #viewer-tts-controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            pointer-events: auto;
+            flex-wrap: wrap;
+            width: 100%;
         }
 
         #viewer-tts-controls button {
@@ -377,7 +388,7 @@
             justify-content: center;
             gap: 6px;
             padding: 12px 18px;
-            min-width: 160px;
+            min-width: 148px;
             border: none;
             border-radius: 999px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -389,6 +400,97 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
             pointer-events: auto;
             white-space: nowrap;
+        }
+
+        #viewer-tts-controls button.is-busy {
+            opacity: 0.75;
+            cursor: wait;
+            box-shadow: 0 4px 14px rgba(102, 126, 234, 0.2);
+        }
+
+        .tts-label-compact {
+            display: none;
+        }
+
+        #tts-status-banner {
+            display: none;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.82);
+            color: #f8fafc;
+            font-size: 13px;
+            font-weight: 500;
+            pointer-events: none;
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(10px);
+            transition: opacity 0.2s ease;
+            max-width: 100%;
+            width: 100%;
+            text-align: left;
+        }
+
+        #tts-status-banner.visible {
+            display: flex;
+        }
+
+        #tts-status-banner[data-variant="success"] {
+            background: rgba(34, 197, 94, 0.9);
+            color: #f0fdf4;
+        }
+
+        #tts-status-banner[data-variant="error"] {
+            background: rgba(239, 68, 68, 0.92);
+            color: #fff5f5;
+        }
+
+        .tts-status-spinner {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid rgba(248, 250, 252, 0.5);
+            border-top-color: #f8fafc;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        #tts-status-banner.busy .tts-status-spinner {
+            display: inline-block;
+        }
+
+        .tts-status-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tts-status-progress {
+            width: 100%;
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.16);
+            overflow: hidden;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .tts-status-progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6 0%, #6366f1 100%);
+            transition: width 0.25s ease;
+        }
+
+        #tts-status-banner[data-show-progress="true"] .tts-status-progress {
+            display: block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         #viewer-tts-controls button:hover:not(:disabled) {
@@ -454,14 +556,39 @@
                 color: #fff;
             }
 
-            #viewer-tts-controls {
-                bottom: 16px;
-                flex-direction: column;
+            #tts-floating-controls {
+                top: calc(16px + env(safe-area-inset-top, 0px));
+                right: calc(16px + env(safe-area-inset-right, 0px) + 60px);
+                width: min(280px, calc(100% - 88px));
                 gap: 10px;
-                width: min(280px, calc(100% - 32px));
+                align-items: stretch;
+            }
+
+            #viewer-tts-controls {
+                justify-content: flex-start;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
             }
 
             #viewer-tts-controls button {
+                flex: 1 1 auto;
+                min-width: 0;
+                width: 100%;
+            }
+
+            #tts-status-banner {
+                text-align: center;
+                justify-content: center;
+                align-items: center;
+            }
+
+            #tts-status-banner .tts-status-line {
+                justify-content: center;
+                width: 100%;
+            }
+
+            #tts-status-banner .tts-status-progress {
                 width: 100%;
             }
 
@@ -488,6 +615,29 @@
 
             #pdfjs-viewer {
                 height: calc(100vh);
+            }
+        }
+
+        @media (max-width: 600px) {
+            #viewer-tts-controls {
+                gap: 8px;
+            }
+
+            #viewer-tts-controls button {
+                padding: 10px 14px;
+                font-size: 13px;
+                flex: 0 1 auto;
+                min-width: 118px;
+            }
+
+            .tts-label-full {
+                display: none;
+            }
+
+            .tts-label-compact {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
             }
         }
 
@@ -620,6 +770,10 @@
                                 <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/01-Foundations/Computer-Science/Algorithms/Introduction-to-Algorithms-4th-Ed-CLRS.pdf', this)">
                                     <span class="file-icon">📄</span>
                                     <span>Introduction to Algorithms (CLRS)</span>
+                                </div>
+                                <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/01-Foundations/Computer-Science/Algorithms/Algorithms-JeffE.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Algorithms (Jeff Erickson)</span>
                                 </div>
                             </div>
 
@@ -819,13 +973,26 @@
             <div id="placeholder-text">Select a PDF from the sidebar to start reading</div>
         </div>
         <iframe id="pdfjs-viewer" style="display: none;" frameborder="0"></iframe>
-        <div id="viewer-tts-controls" role="group" aria-label="Narration controls">
-            <button id="tts-read-selection-button" type="button" aria-label="Read selected text" disabled>
-                🔊 Read Selection
-            </button>
-            <button id="tts-read-page-button" type="button" aria-label="Read current page" disabled>
-                📖 Read Page
-            </button>
+        <div id="tts-floating-controls">
+            <div id="viewer-tts-controls" role="group" aria-label="Narration controls">
+                <button id="tts-read-selection-button" type="button" aria-label="Read selected text" disabled>
+                    <span class="tts-label-full">🔊 Read Selection</span>
+                    <span class="tts-label-compact" aria-hidden="true">Select 🔊</span>
+                </button>
+                <button id="tts-read-page-button" type="button" aria-label="Read current page" disabled>
+                    <span class="tts-label-full">📖 Read Page</span>
+                    <span class="tts-label-compact" aria-hidden="true">Page 🔊</span>
+                </button>
+            </div>
+            <div id="tts-status-banner" role="status" aria-live="polite" aria-atomic="true">
+                <div class="tts-status-line">
+                    <span class="tts-status-spinner" aria-hidden="true"></span>
+                    <span id="tts-status-text"></span>
+                </div>
+                <div class="tts-status-progress" id="tts-status-progress" aria-hidden="true">
+                    <div class="tts-status-progress-fill" id="tts-status-progress-fill"></div>
+                </div>
+            </div>
         </div>
     </div>
     <div id="tts-overlay" role="dialog" aria-live="polite" aria-label="Narration player">
@@ -883,6 +1050,10 @@
         const ttsOverlayProgress = document.getElementById('tts-overlay-progress');
         const ttsOverlayPlay = document.getElementById('tts-overlay-play');
         const ttsOverlayStop = document.getElementById('tts-overlay-stop');
+        const ttsStatusBanner = document.getElementById('tts-status-banner');
+        const ttsStatusText = document.getElementById('tts-status-text');
+        const ttsStatusProgress = document.getElementById('tts-status-progress');
+        const ttsStatusProgressFill = document.getElementById('tts-status-progress-fill');
         const STORAGE_KEY = 'pdfBookmarks';
         const LAST_DOCUMENT_KEY = 'pdfLastDocument';
         const TTS_SPEED_KEY = 'ttsNarrationSpeed';
@@ -921,6 +1092,9 @@
         let playbackCancelled = false;
         let ttsPlaybackSpeed = DEFAULT_TTS_SPEED;
         let ttsNarrationSpeed = loadStoredSpeed();
+        let kokoroInitPromise = null;
+        let ttsStatusHideTimer = null;
+        let ttsStatusProgressValue = 0;
 
         initializeFileMetadata();
         updateBookmarkUI();
@@ -1548,25 +1722,305 @@
         async function ensureTTSReady() {
             if (typeof window.TTS === 'undefined') {
                 console.debug('[TTS] window.TTS missing');
+                setTTSStatus('Text-to-speech is unavailable in this session.', {
+                    variant: 'error',
+                    timeout: 6000
+                });
                 throw new Error('TTS library not available');
             }
-            if (!ttsInitialized) {
+            if (ttsInitialized && TTS.kokoroTtsInstance) {
+                applySpeedToTTS();
+                return;
+            }
+
+            TTS.TTSProvider = 'kokoro';
+            TTS.rate = ttsNarrationSpeed;
+            TTS.pitch = 1.0;
+
+            if (!kokoroInitPromise) {
                 console.debug('[TTS] Initializing Kokoro provider');
-                TTS.TTSProvider = 'kokoro';
-                TTS.rate = ttsNarrationSpeed;
-                TTS.pitch = 1.0;
-                if (typeof TTS.initKokoro === 'function') {
-                    console.debug('[TTS] Calling TTS.initKokoro()');
-                    await TTS.initKokoro();
+                setTTSButtonsBusy(true);
+                setTTSStatus('Downloading voice model…', {
+                    variant: 'info',
+                    busy: true,
+                    persist: true,
+                    showProgress: true,
+                    progress: 0
+                });
+                kokoroInitPromise = startKokoroInitialization();
+            } else {
+                setTTSButtonsBusy(true);
+                setTTSStatus('Downloading voice model…', {
+                    variant: 'info',
+                    busy: true,
+                    persist: true,
+                    showProgress: true
+                });
+            }
+
+            try {
+                await kokoroInitPromise;
+                if (!TTS.kokoroTtsInstance) {
+                    throw new Error('Kokoro TTS instance missing after initialization.');
                 }
                 ttsInitialized = true;
                 console.debug('[TTS] Initialization complete');
+                setTTSStatus('Voice ready', {
+                    variant: 'success',
+                    timeout: 2400
+                });
+            } catch (error) {
+                console.error('[TTS] Initialization failed:', error);
+                setTTSStatus('Unable to load the voice. Check your connection and try again.', {
+                    variant: 'error',
+                    timeout: 5200
+                });
+                throw error;
+            } finally {
+                setTTSButtonsBusy(false);
+                applySpeedToTTS();
             }
-            applySpeedToTTS();
         }
 
         function delay(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function waitForCondition(predicate, options = {}) {
+            const { timeout = 60000, interval = 200 } = options;
+            const start = Date.now();
+            while (true) {
+                try {
+                    if (predicate()) {
+                        return true;
+                    }
+                } catch (error) {
+                    // Predicate may throw while dependency loads; retry until timeout.
+                }
+                if (Date.now() - start >= timeout) {
+                    throw new Error('Timed out waiting for condition');
+                }
+                await delay(interval);
+            }
+        }
+
+        function formatMB(bytes) {
+            if (!Number.isFinite(bytes) || bytes <= 0) {
+                return '0.0';
+            }
+            return (bytes / (1024 * 1024)).toFixed(1);
+        }
+
+        function setTTSProgressValue(value) {
+            if (!ttsStatusProgressFill) {
+                return;
+            }
+            const numeric = Number(value);
+            if (!Number.isFinite(numeric)) {
+                ttsStatusProgressFill.style.width = '0%';
+                ttsStatusProgressValue = 0;
+                return;
+            }
+            const clamped = Math.max(0, Math.min(100, numeric));
+            ttsStatusProgressFill.style.width = `${clamped}%`;
+            ttsStatusProgressValue = clamped;
+        }
+
+        function clearTTSProgress() {
+            if (ttsStatusBanner) {
+                ttsStatusBanner.removeAttribute('data-show-progress');
+            }
+            setTTSProgressValue(0);
+        }
+
+        function clearTTSStatus() {
+            if (!ttsStatusBanner) {
+                return;
+            }
+            if (ttsStatusHideTimer) {
+                clearTimeout(ttsStatusHideTimer);
+                ttsStatusHideTimer = null;
+            }
+            ttsStatusBanner.classList.remove('visible', 'busy');
+            ttsStatusBanner.removeAttribute('data-variant');
+            if (ttsStatusText) {
+                ttsStatusText.textContent = '';
+            }
+            clearTTSProgress();
+        }
+
+        function setTTSStatus(message, options = {}) {
+            if (!ttsStatusBanner) {
+                return;
+            }
+            const {
+                variant = 'info',
+                busy = false,
+                persist = false,
+                timeout = null,
+                showProgress = false,
+                progress = null
+            } = options;
+
+            if (ttsStatusHideTimer) {
+                clearTimeout(ttsStatusHideTimer);
+                ttsStatusHideTimer = null;
+            }
+
+            if (!message) {
+                clearTTSStatus();
+                return;
+            }
+
+            if (ttsStatusText) {
+                ttsStatusText.textContent = message;
+            }
+
+            ttsStatusBanner.dataset.variant = variant || 'info';
+
+            if (busy) {
+                ttsStatusBanner.classList.add('busy');
+            } else {
+                ttsStatusBanner.classList.remove('busy');
+            }
+
+            if (showProgress) {
+                if (ttsStatusBanner) {
+                    ttsStatusBanner.dataset.showProgress = 'true';
+                }
+                const progressValue = progress == null ? ttsStatusProgressValue : progress;
+                setTTSProgressValue(progressValue);
+            } else {
+                clearTTSProgress();
+            }
+
+            ttsStatusBanner.classList.add('visible');
+
+            if (!persist) {
+                const fallback = variant === 'success' ? 2200 : 4200;
+                const delayMs = typeof timeout === 'number' ? timeout : fallback;
+                ttsStatusHideTimer = setTimeout(() => {
+                    clearTTSStatus();
+                }, delayMs);
+            }
+        }
+
+        function setTTSButtonsBusy(isBusy) {
+            const buttons = [ttsReadSelectionButton, ttsReadPageButton].filter(Boolean);
+            buttons.forEach(button => {
+                if (!button) {
+                    return;
+                }
+                if (isBusy) {
+                    if (!button.dataset.busySnapshot) {
+                        button.dataset.busySnapshot = button.disabled ? 'disabled' : 'enabled';
+                    }
+                    button.disabled = true;
+                    button.classList.add('is-busy');
+                } else {
+                    if (button.dataset.busySnapshot === 'enabled') {
+                        button.disabled = false;
+                    }
+                    delete button.dataset.busySnapshot;
+                    button.classList.remove('is-busy');
+                }
+            });
+
+            if (!isBusy) {
+                updateBookmarkUI();
+            }
+        }
+
+        function startKokoroInitialization() {
+            if (!window.TTS || typeof TTS.initKokoro !== 'function') {
+                return Promise.reject(new Error('Kokoro initialization is unavailable.'));
+            }
+
+            const previousProgressHandler = typeof TTS.onKokoroDownloadProgress === 'function'
+                ? TTS.onKokoroDownloadProgress
+                : null;
+
+            const handleProgress = (detail = {}) => {
+                const rawTotal = Number(detail.total);
+                const hasKnownTotal = Number.isFinite(rawTotal) && rawTotal > 0;
+                const rawLoaded = Number(detail.loaded);
+                const loadedBytes = Number.isFinite(rawLoaded) && rawLoaded >= 0 ? rawLoaded : 0;
+                const estimatedTotalBytesRaw = Number(detail.estimatedTotal);
+                const fallbackTotalBytes = hasKnownTotal
+                    ? rawTotal
+                    : (Number.isFinite(estimatedTotalBytesRaw) && estimatedTotalBytesRaw > 0
+                        ? estimatedTotalBytesRaw
+                        : 82 * 1024 * 1024);
+                const totalBytesForDisplay = hasKnownTotal ? rawTotal : fallbackTotalBytes;
+                let percent = Number(detail.percent);
+
+                if (!Number.isFinite(percent)) {
+                    percent = hasKnownTotal
+                        ? (loadedBytes / rawTotal) * 100
+                        : (loadedBytes / fallbackTotalBytes) * 100;
+                }
+
+                const clamped = Math.max(0, Math.min(100, percent));
+                const downloadedDisplay = Math.min(Math.max(0, loadedBytes), totalBytesForDisplay);
+                let message;
+
+                if (hasKnownTotal) {
+                    const downloaded = formatMB(downloadedDisplay);
+                    const total = formatMB(totalBytesForDisplay);
+                    message = `Downloading voice model… ${clamped.toFixed(0)}% (${downloaded} / ${total} MB)`;
+                } else {
+                    const downloaded = formatMB(downloadedDisplay);
+                    const total = formatMB(totalBytesForDisplay);
+                    message = `Downloading voice model… ${clamped.toFixed(0)}% (${downloaded} / ${total} MB)`;
+                }
+
+                setTTSStatus(message, {
+                    variant: 'info',
+                    busy: true,
+                    persist: true,
+                    showProgress: true,
+                    progress: clamped
+                });
+
+                if (previousProgressHandler && previousProgressHandler !== handleProgress) {
+                    try {
+                        previousProgressHandler(detail);
+                    } catch (error) {
+                        console.warn('Forwarded Kokoro progress handler error:', error);
+                    }
+                }
+            };
+
+            TTS.onKokoroDownloadProgress = handleProgress;
+
+            const basePromise = (async () => {
+                const initResult = TTS.initKokoro();
+                if (initResult && typeof initResult.then === 'function') {
+                    await initResult;
+                } else if (initResult === false && !TTS.kokoroTtsInstance) {
+                    await waitForCondition(() => Boolean(TTS.kokoroTtsInstance));
+                }
+
+                if (!TTS.kokoroTtsInstance) {
+                    await waitForCondition(() => Boolean(TTS.kokoroTtsInstance));
+                }
+
+                return true;
+            })();
+
+            const wrappedPromise = basePromise.finally(() => {
+                if (typeof previousProgressHandler === 'function') {
+                    TTS.onKokoroDownloadProgress = previousProgressHandler;
+                } else if (TTS.onKokoroDownloadProgress === handleProgress) {
+                    delete TTS.onKokoroDownloadProgress;
+                }
+
+                if (kokoroInitPromise === wrappedPromise) {
+                    kokoroInitPromise = null;
+                }
+            });
+
+            return wrappedPromise;
         }
 
         function findActiveTTSPlayer() {
@@ -1639,8 +2093,11 @@
             });
         }
 
-        async function speakText(text) {
-            await ensureTTSReady();
+        async function speakText(text, options = {}) {
+            const { ensure = true } = options;
+            if (ensure) {
+                await ensureTTSReady();
+            }
             if (typeof TTS.stop === 'function') {
                 try {
                     TTS.stop();
@@ -1776,6 +2233,7 @@
             });
             try {
                 abortActiveSpeech();
+                await ensureTTSReady();
                 const estimateMs = estimateSpeechDurationMs(normalizedText, ttsNarrationSpeed);
                 const selectionPage = payload && Number.isFinite(Number(payload.pageNumber))
                     ? Math.max(1, Math.floor(Number(payload.pageNumber)))
@@ -1785,7 +2243,7 @@
                     statusLabel: 'selection',
                     overlayLabel
                 });
-                const { playbackPromise, player } = await speakText(normalizedText);
+                const { playbackPromise, player } = await speakText(normalizedText, { ensure: false });
                 if (player) {
                     await playbackPromise.catch(() => {});
                 } else {
@@ -1795,6 +2253,10 @@
                 stopPlaybackProgress({ success: true });
             } catch (error) {
                 console.error('TTS playback failed:', error);
+                setTTSStatus('Unable to read the selected text right now.', {
+                    variant: 'error',
+                    timeout: 5200
+                });
                 stopPlaybackProgress({ success: false, message: 'Unable to read selection right now.' });
             }
         }
@@ -1834,11 +2296,12 @@
             });
             try {
                 abortActiveSpeech();
+                await ensureTTSReady();
                 const estimateMs = estimateSpeechDurationMs(normalizedText, ttsNarrationSpeed);
                 const statusLabel = pageNumber ? `page ${pageNumber}` : 'page';
                 const overlayLabel = pageNumber ? `Page ${pageNumber}` : 'Page';
                 startPlaybackProgress(normalizedText, estimateMs, { statusLabel, overlayLabel });
-                const { playbackPromise, player } = await speakText(normalizedText);
+                const { playbackPromise, player } = await speakText(normalizedText, { ensure: false });
                 if (player) {
                     await playbackPromise.catch(() => {});
                 } else {
@@ -1848,6 +2311,10 @@
                 stopPlaybackProgress({ success: true });
             } catch (error) {
                 console.error('TTS page playback failed:', error);
+                setTTSStatus('Unable to read this page right now.', {
+                    variant: 'error',
+                    timeout: 5200
+                });
                 stopPlaybackProgress({ success: false, message: 'Unable to read this page right now.' });
             }
         }
