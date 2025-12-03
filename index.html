@@ -595,6 +595,13 @@
             height: 100%;
         }
 
+        #external-viewer {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: var(--theme-panel);
+        }
+
         #placeholder {
             display: flex;
             flex-direction: column;
@@ -1191,6 +1198,57 @@
                     </div>
                 </div>
             </div>
+            <!-- External Links -->
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(this)">
+                    <span class="category-icon">📁</span>
+                    <span>External Links</span>
+                </div>
+                <div class="category-content">
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Courses & Notes
+                        </div>
+                        <div class="file-list">
+                            <div class="file external-link" onclick="loadExternal('https://arxiv.org/pdf/2404.17625', this)">
+                                <span class="file-icon">🌐</span>
+                                <span>Alice's Experiments in a Differentiable World (PDF)</span>
+                            </div>
+                            <div class="file external-link" onclick="loadExternal('https://d2l.ai', this)">
+                                <span class="file-icon">🌐</span>
+                                <span>Dive Into Deep Learning (site)</span>
+                            </div>
+                            <div class="file external-link" onclick="loadExternal('https://cosmo-notes.github.io/', this)">
+                                <span class="file-icon">🌐</span>
+                                <span>COSMO: Complex Systems Modeling</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Tools & References
+                        </div>
+                        <div class="file-list">
+                            <div class="file external-link" onclick="loadExternal('https://jupyterbook.org/en/stable/intro.html', this)">
+                                <span class="file-icon">🧰</span>
+                                <span>jupyter-book</span>
+                            </div>
+                            <div class="file external-link" onclick="loadExternal('https://quarto.org/docs/books/', this)">
+                                <span class="file-icon">🧰</span>
+                                <span>Quarto Books</span>
+                            </div>
+                            <div class="file external-link" onclick="loadExternal('https://juliadynamics.github.io/JuliaDynamics/', this)">
+                                <span class="file-icon">🧰</span>
+                                <span>JuliaDynamics</span>
+                            </div>
+                            <div class="file external-link" onclick="loadExternal('https://gist.github.com/pourmand1376/aa6a8bc4fddda31fecbdf73b2535af21', this)">
+                                <span class="file-icon">🧰</span>
+                                <span>NumPy Cheatsheet</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         </aside>
 
@@ -1214,6 +1272,7 @@
             <div id="placeholder-text">Select a PDF from the sidebar to start reading</div>
         </div>
         <iframe id="pdfjs-viewer" style="display: none;" frameborder="0"></iframe>
+        <iframe id="external-viewer" style="display: none;" frameborder="0"></iframe>
                 <div id="tts-floating-controls">
                     <div id="tts-status-banner" role="status" aria-live="polite" aria-atomic="true">
                         <div class="tts-status-line">
@@ -1323,6 +1382,7 @@
         
         const placeholder = document.getElementById('placeholder');
         const viewer = document.getElementById('pdfjs-viewer');
+        const externalViewer = document.getElementById('external-viewer');
         const sidebar = document.getElementById('sidebar');
         const sidebarBackdrop = document.getElementById('sidebar-backdrop');
         const sidebarToggle = document.getElementById('sidebar-toggle');
@@ -3158,8 +3218,20 @@
             }
         }
 
+        function clearSelections() {
+            document.querySelectorAll('.file, .external-link').forEach(el => el.classList.remove('selected'));
+        }
+
         function selectFileElement(element) {
-            document.querySelectorAll('.file').forEach(f => f.classList.remove('selected'));
+            clearSelections();
+            if (element) {
+                element.classList.add('selected');
+                expandParents(element);
+            }
+        }
+
+        function selectExternalElement(element) {
+            clearSelections();
             if (element) {
                 element.classList.add('selected');
                 expandParents(element);
@@ -3211,6 +3283,15 @@
             abortActiveSpeech();
             hideOverlay();
 
+            if (externalViewer) {
+                externalViewer.style.display = 'none';
+                try {
+                    externalViewer.src = 'about:blank';
+                } catch (error) {
+                    console.debug('[external] Unable to clear external viewer', error);
+                }
+            }
+
             currentDocumentUrl = normalizedPath;
             currentDocumentKey = resolveBookmarkKey(normalizedPath) || normalizedPath;
             currentViewerSource = viewerPath;
@@ -3235,6 +3316,60 @@
             showBookmarkStatus('');
 
             sendOpenRequest(targetPage != null ? { pageNumber: targetPage } : {});
+        }
+
+        function isPdfLikeUrl(url) {
+            if (!url) {
+                return false;
+            }
+            try {
+                const normalized = String(url).split('#')[0].toLowerCase();
+                return normalized.includes('.pdf');
+            } catch (error) {
+                return /\.pdf/i.test(url);
+            }
+        }
+
+        function openExternalResource(url, triggerElement) {
+            const target = (url || '').trim();
+            if (!target) {
+                return;
+            }
+            if (isPdfLikeUrl(target)) {
+                openDocument(target, triggerElement);
+                return;
+            }
+
+            flushPendingAutoSave();
+            abortActiveSpeech();
+            hideOverlay();
+
+            currentDocumentUrl = null;
+            currentDocumentKey = null;
+            currentViewerSource = null;
+            pendingFile = null;
+
+            selectExternalElement(triggerElement || null);
+
+            placeholder.style.display = 'none';
+            if (viewer) {
+                viewer.style.display = 'none';
+            }
+            if (externalViewer) {
+                externalViewer.style.display = 'block';
+                try {
+                    externalViewer.src = target;
+                } catch (error) {
+                    console.warn('[external] Unable to load external URL', target, error);
+                }
+            }
+
+            if (tabletQuery.matches) {
+                setSidebarOpen(false);
+            }
+
+            updateBookmarkUI();
+            showBookmarkStatus('');
         }
 
         if (bookmarkSaveButton) {
@@ -3416,6 +3551,7 @@
         window.toggleCategory = toggleCategory;
         window.toggleSubcategory = toggleSubcategory;
         window.loadPDF = openDocument;
+        window.loadExternal = openExternalResource;
     </script>
 </body>
 </html>
