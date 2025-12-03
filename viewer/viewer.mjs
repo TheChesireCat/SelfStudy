@@ -14746,6 +14746,75 @@ const AppConstants = {
   ScrollMode: _ui_utils_js__WEBPACK_IMPORTED_MODULE_2__.ScrollMode,
   SpreadMode: _ui_utils_js__WEBPACK_IMPORTED_MODULE_2__.SpreadMode
 };
+const THEME_STORAGE_KEY = "pdfjs-theme";
+function getStoredTheme() {
+  try {
+    const stored = localStorage.getItem(THEME_STORAGE_KEY);
+    return stored === "light" || stored === "dark" ? stored : null;
+  } catch (error) {
+    console.debug("[pdfjs-theme] Unable to read stored theme", error);
+    return null;
+  }
+}
+function resolveThemePreference() {
+  const stored = getStoredTheme();
+  if (stored) {
+    return stored;
+  }
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+function applyThemePreference(theme) {
+  const applied = theme === "dark" ? "dark" : "light";
+  const root = document.documentElement;
+  root.dataset.theme = applied;
+  root.classList.toggle("is-dark", applied === "dark");
+  root.classList.toggle("is-light", applied === "light");
+  return applied;
+}
+function persistThemePreference(theme) {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch (error) {
+    console.debug("[pdfjs-theme] Unable to persist theme", error);
+  }
+}
+function initThemeToggle(initialTheme = null) {
+  const toggleButton = document.getElementById("themeToggle");
+  const syncToggle = theme => {
+    if (!toggleButton) {
+      return;
+    }
+    toggleButton.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+    toggleButton.classList.toggle("toggled", theme === "dark");
+    toggleButton.title = theme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+  };
+  const resolved = applyThemePreference(initialTheme ?? resolveThemePreference());
+  syncToggle(resolved);
+  if (toggleButton) {
+    toggleButton.addEventListener("click", () => {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      const applied = applyThemePreference(nextTheme);
+      persistThemePreference(applied);
+      syncToggle(applied);
+    });
+  }
+  const stored = getStoredTheme();
+  if (!stored && window.matchMedia) {
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    media?.addEventListener("change", event => {
+      if (getStoredTheme()) {
+        return;
+      }
+      const theme = event.matches ? "dark" : "light";
+      const applied = applyThemePreference(theme);
+      syncToggle(applied);
+    });
+  }
+}
+const initialViewerTheme = applyThemePreference(resolveThemePreference());
+document.addEventListener("DOMContentLoaded", () => {
+  initThemeToggle(initialViewerTheme);
+}, true);
 window.PDFViewerApplication = _app_js__WEBPACK_IMPORTED_MODULE_5__.PDFViewerApplication;
 window.PDFViewerApplicationConstants = AppConstants;
 window.PDFViewerApplicationOptions = _app_options_js__WEBPACK_IMPORTED_MODULE_3__.AppOptions;

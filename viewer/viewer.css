@@ -2370,6 +2370,7 @@
   --toolbarButton-viewLayers-icon:url(images/toolbarButton-viewLayers.svg);
   --toolbarButton-currentOutlineItem-icon:url(images/toolbarButton-currentOutlineItem.svg);
   --toolbarButton-search-icon:url(images/toolbarButton-search.svg);
+  --toolbarButton-themeToggle-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M12.5 3a1 1 0 0 0-.9.6 7.5 7.5 0 1 0 9.3 9.3 1 1 0 0 0-.33-1.13A9 9 0 0 1 12.5 3Zm0 2.1a7 7 0 1 1-2.95 13.38 9 9 0 0 0 8.35-8.35A7 7 0 0 1 12.5 5.1Z'/%3E%3C/svg%3E");
   --findbarButton-previous-icon:url(images/findbarButton-previous.svg);
   --findbarButton-next-icon:url(images/findbarButton-next.svg);
   --secondaryToolbarButton-firstPage-icon:url(images/secondaryToolbarButton-firstPage.svg);
@@ -3278,6 +3279,11 @@ body{
           mask-image:var(--toolbarButton-download-icon);
 }
 
+#themeToggle::before{
+  -webkit-mask-image:var(--toolbarButton-themeToggle-icon);
+          mask-image:var(--toolbarButton-themeToggle-icon);
+}
+
 a.secondaryToolbarButton{
   padding-top:5px;
   text-decoration:none;
@@ -3829,6 +3835,261 @@ dialog :link{
 
 .visibleMediumView{
   display:none;
+}
+
+/* Minimal dual-theme styling */
+:root{
+  --theme-surface:#f8f9fb;
+  --theme-panel:#ffffff;
+  --theme-muted:#eef1f5;
+  --theme-border:#d7dce3;
+  --theme-text:#0f172a;
+  --theme-text-muted:#475569;
+  --theme-accent:#2563eb;
+  --theme-accent-foreground:#f8fafc;
+  --theme-overlay:rgba(15 23 42 / 0.55);
+  --theme-shadow-soft:0 12px 32px rgba(15, 23, 42, 0.08);
+  --theme-radius:10px;
+  --theme-focus:0 0 0 2px rgba(37, 99, 235, 0.35);
+}
+:root:is([data-theme="light"], .is-light){
+  --theme-surface:#f8f9fb;
+  --theme-panel:#ffffff;
+  --theme-muted:#eef1f5;
+  --theme-border:#d7dce3;
+  --theme-text:#0f172a;
+  --theme-text-muted:#475569;
+  --theme-accent:#2563eb;
+  --theme-accent-foreground:#f8fafc;
+  --theme-overlay:rgba(15 23 42 / 0.55);
+  --theme-shadow-soft:0 12px 32px rgba(15, 23, 42, 0.08);
+  --theme-focus:0 0 0 2px rgba(37, 99, 235, 0.35);
+}
+:root:is([data-theme="dark"], .is-dark){
+  --theme-surface:#0b0f19;
+  --theme-panel:#111827;
+  --theme-muted:#1f2937;
+  --theme-border:#2e384d;
+  --theme-text:#e5e7eb;
+  --theme-text-muted:#9ca3af;
+  --theme-accent:#94a3b8;
+  --theme-accent-foreground:#0b0f19;
+  --theme-overlay:rgba(0 0 0 / 0.7);
+  --theme-shadow-soft:0 12px 32px rgba(0, 0, 0, 0.45);
+  --theme-focus:0 0 0 2px rgba(148, 163, 184, 0.5);
+}
+:root{
+  --body-bg-color:var(--theme-surface);
+  --main-color:var(--theme-text);
+  --toolbar-bg-color:var(--theme-panel);
+  --toolbar-border-color:var(--theme-border);
+  --toolbar-border-bottom:1px solid var(--theme-border);
+  --toolbar-box-shadow:var(--theme-shadow-soft);
+  --sidebar-toolbar-bg-color:var(--theme-panel);
+  --sidebar-narrow-bg-color:var(--theme-panel);
+  --toolbarSidebar-border-bottom:1px solid var(--theme-border);
+  --toolbarSidebar-box-shadow:var(--theme-shadow-soft);
+  --button-hover-color:var(--theme-muted);
+  --toggled-btn-color:var(--theme-accent-foreground);
+  --toggled-btn-bg-color:var(--theme-accent);
+  --toggled-hover-active-btn-color:var(--theme-accent);
+  --toggled-hover-btn-outline:1px solid var(--theme-accent);
+  --dropdown-btn-bg-color:var(--theme-panel);
+  --dropdown-btn-border:1px solid var(--theme-border);
+  --separator-color:var(--theme-border);
+  --field-color:var(--theme-text);
+  --field-bg-color:var(--theme-panel);
+  --field-border-color:var(--theme-border);
+  --treeitem-color:var(--theme-text);
+  --treeitem-bg-color:var(--theme-muted);
+  --treeitem-hover-color:var(--theme-accent);
+  --treeitem-selected-color:var(--theme-accent-foreground);
+  --treeitem-selected-bg-color:var(--theme-accent);
+  --thumbnail-hover-color:var(--theme-muted);
+  --thumbnail-selected-color:var(--theme-accent);
+  --doorhanger-bg-color:var(--theme-panel);
+  --doorhanger-border-color:var(--theme-border);
+  --doorhanger-hover-color:var(--theme-text);
+  --doorhanger-hover-bg-color:var(--theme-muted);
+  --doorhanger-separator-color:var(--theme-border);
+  --dialog-button-bg-color:var(--theme-muted);
+  --dialog-button-hover-bg-color:var(--theme-accent);
+  --dialog-button-hover-color:var(--theme-accent-foreground);
+  --dialog-button-border:1px solid var(--theme-border);
+  --progressBar-color:var(--theme-accent);
+  --progressBar-bg-color:var(--theme-muted);
+  --progressBar-blend-color:var(--theme-accent);
+  --scrollbar-color:var(--theme-muted);
+  --scrollbar-bg-color:var(--theme-panel);
+  --toolbar-icon-bg-color:var(--theme-text);
+  --toolbar-icon-hover-bg-color:var(--theme-accent);
+  --editor-toolbar-bg-color:var(--theme-panel);
+  --editor-toolbar-fg-color:var(--theme-text);
+  --editor-toolbar-border-color:var(--theme-border);
+  --editor-toolbar-hover-bg-color:var(--theme-muted);
+  --editor-toolbar-hover-fg-color:var(--theme-text);
+  --editor-toolbar-focus-outline-color:var(--theme-accent);
+  --editor-toolbar-shadow:var(--theme-shadow-soft);
+}
+
+html,
+body{
+  color:var(--theme-text);
+}
+
+#outerContainer{
+  background-color:var(--theme-surface);
+}
+
+#toolbarContainer,
+.findbar,
+.secondaryToolbar,
+.editorParamsToolbar{
+  background-color:var(--theme-panel);
+  border-bottom:1px solid var(--theme-border);
+  box-shadow:var(--theme-shadow-soft);
+}
+
+#toolbarSidebar{
+  background-color:var(--theme-panel);
+  border-bottom:1px solid var(--theme-border);
+}
+
+#sidebarContainer,
+#sidebarContent{
+  background-color:var(--theme-panel);
+}
+
+.toolbarButton,
+.secondaryToolbarButton,
+.dialogButton,
+.dropdownToolbarButton,
+.toolbarField,
+.toolbarLabel{
+  border-radius:8px;
+}
+
+.toolbarButton,
+.secondaryToolbarButton,
+.dialogButton,
+.dropdownToolbarButton{
+  transition:background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+
+.toolbarButton:is(:hover, :focus-visible),
+.secondaryToolbarButton:is(:hover, :focus-visible),
+.dropdownToolbarButton:is(:hover, :focus-visible){
+  background-color:var(--theme-muted);
+  color:var(--theme-text);
+  box-shadow:0 0 0 1px var(--theme-border);
+}
+
+.toolbarButton.toggled,
+.secondaryToolbarButton.toggled{
+  background-color:var(--theme-accent);
+  color:var(--theme-accent-foreground);
+}
+
+.toolbarButton.toggled::before,
+.secondaryToolbarButton.toggled::before{
+  background-color:var(--theme-accent-foreground);
+}
+
+.toolbarButton.toggled:hover,
+.secondaryToolbarButton.toggled:hover{
+  box-shadow:0 0 0 1px var(--theme-accent);
+}
+
+.toolbarField{
+  border-color:var(--theme-border);
+  background-color:var(--theme-panel);
+  color:var(--theme-text);
+  box-shadow:none;
+}
+
+.toolbarField:focus,
+.toolbarField:focus-visible{
+  border-color:var(--theme-accent);
+  box-shadow:var(--theme-focus);
+}
+
+.toolbarField:focus-visible{
+  outline:none;
+}
+
+.dropdownToolbarButton > select{
+  border-radius:8px;
+  border:1px solid var(--theme-border);
+}
+
+.dropdownToolbarButton > select:is(:hover, :focus-visible){
+  background-color:var(--theme-muted);
+  color:var(--theme-text);
+}
+
+.verticalToolbarSeparator,
+.horizontalToolbarSeparator{
+  background-color:var(--theme-border);
+}
+
+.doorHanger,
+.doorHangerRight{
+  border-radius:12px;
+  border:1px solid var(--theme-border);
+  box-shadow:var(--theme-shadow-soft);
+}
+:is(.doorHanger, .doorHangerRight)::after{
+  border-bottom-color:var(--theme-panel);
+}
+:is(.doorHanger, .doorHangerRight)::before{
+  border-bottom-color:var(--theme-border);
+}
+
+.secondaryToolbar,
+.editorParamsToolbar{
+  border:1px solid var(--theme-border);
+}
+
+dialog{
+  background-color:var(--theme-panel);
+  color:var(--theme-text);
+  border:1px solid var(--theme-border);
+  border-radius:12px;
+  box-shadow:var(--theme-shadow-soft);
+}
+
+#findResultsCount{
+  background-color:var(--theme-muted);
+  color:var(--theme-text-muted);
+  border-radius:999px;
+}
+
+#findMsg[data-status="notFound"]{
+  color:var(--theme-accent);
+}
+
+.overlayButton,
+.dialogButton{
+  box-shadow:none;
+}
+
+.dialogButton:is(:hover, :focus-visible){
+  color:var(--theme-accent-foreground);
+}
+
+.page{
+  background-color:var(--theme-panel);
+  box-shadow:0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius:var(--theme-radius);
+}
+
+.thumbnail:not(.selected):hover .thumbnailImage{
+  box-shadow:0 0 0 1px var(--theme-border);
+}
+
+:is(.toolbarButton, .secondaryToolbarButton, .dialogButton):focus-visible{
+  outline:2px solid var(--theme-accent);
+  outline-offset:2px;
 }
 
 @media all and (max-width: 900px){

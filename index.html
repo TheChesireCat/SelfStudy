@@ -3,14 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SelfStudy Library</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <title>catCafe</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext x='12' y='48' font-size='48'%3E%F0%9F%90%B1%3C/text%3E%3C/svg%3E">
     <script src="https://tts.rocks/tts.js" defer></script>
     
     <!-- PDF.js Viewer CSS -->
     <link href="https://cdn.jsdelivr.net/npm/pdf.js-viewer@0.2.8/viewer.min.css" rel="stylesheet">
     
     <style>
+        /* Minimal dual-theme tokens shared with viewer */
+        :root {
+            --theme-surface: #f8f9fb;
+            --theme-panel: #ffffff;
+            --theme-muted: #eef1f5;
+            --theme-border: #d7dce3;
+            --theme-text: #0f172a;
+            --theme-text-muted: #475569;
+            --theme-accent: #2563eb;
+            --theme-accent-foreground: #f8fafc;
+            --theme-overlay: rgba(15, 23, 42, 0.55);
+            --theme-shadow-soft: 0 12px 32px rgba(15, 23, 42, 0.08);
+            --theme-radius: 10px;
+            --theme-focus: 0 0 0 2px rgba(37, 99, 235, 0.35);
+            --theme-focus-strong: 0 0 0 2px rgba(96, 165, 250, 0.5);
+        }
+
+        :root[data-theme="light"],
+        :root.is-light {
+            --theme-surface: #f8f9fb;
+            --theme-panel: #ffffff;
+            --theme-muted: #eef1f5;
+            --theme-border: #d7dce3;
+            --theme-text: #0f172a;
+            --theme-text-muted: #475569;
+            --theme-accent: #2563eb;
+            --theme-accent-foreground: #f8fafc;
+            --theme-overlay: rgba(15, 23, 42, 0.55);
+            --theme-shadow-soft: 0 12px 32px rgba(15, 23, 42, 0.08);
+            --theme-focus: 0 0 0 2px rgba(37, 99, 235, 0.35);
+            --theme-focus-strong: 0 0 0 2px rgba(37, 99, 235, 0.5);
+        }
+
+        :root[data-theme="dark"],
+        :root.is-dark {
+            --theme-surface: #0b0f19;
+            --theme-panel: #111827;
+            --theme-muted: #1f2937;
+            --theme-border: #2e384d;
+            --theme-text: #e5e7eb;
+            --theme-text-muted: #9ca3af;
+            --theme-accent: #94a3b8;
+            --theme-accent-foreground: #0b0f19;
+            --theme-overlay: rgba(0, 0, 0, 0.7);
+            --theme-shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.45);
+            --theme-focus: 0 0 0 2px rgba(148, 163, 184, 0.45);
+            --theme-focus-strong: 0 0 0 2px rgba(148, 163, 184, 0.6);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -20,40 +69,240 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             display: flex;
-            height: 100vh;
+            flex-direction: column;
+            min-height: 100vh;
             overflow: hidden;
+            color: var(--theme-text);
+            background: var(--theme-surface);
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .app-shell {
+            display: grid;
+            grid-template-columns: 280px 1fr 260px;
+            grid-template-rows: 1fr;
+            grid-template-areas: "sidebar reader tools";
+            height: 100vh;
+            width: 100%;
+            flex: 1 1 auto;
+        }
+
+        .pane {
+            background: var(--theme-panel);
+            min-height: 0;
+        }
+
+        .pane-left {
+            grid-area: sidebar;
+            border-right: 1px solid var(--theme-border);
+        }
+
+        .pane-right {
+            grid-area: tools;
+            border-left: 1px solid var(--theme-border);
+            box-shadow: var(--theme-shadow-soft);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 16px;
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        #reader-pane {
+            grid-area: reader;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            background: var(--theme-surface);
+            position: relative;
+            min-height: 0;
+        }
+
+        .reader-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--theme-panel);
+            border-bottom: 1px solid var(--theme-border);
+            position: sticky;
+            top: 0;
+            z-index: 30;
+        }
+
+        .reader-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--theme-muted);
+            color: var(--theme-text);
+            border: 1px solid var(--theme-border);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: default;
+        }
+
+        .pill.primary {
+            cursor: pointer;
+            background: var(--theme-accent);
+            color: var(--theme-accent-foreground);
+            border-color: var(--theme-accent);
+            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+            transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+
+        .pill.primary:disabled {
+            background: var(--theme-muted);
+            color: var(--theme-text-muted);
+            border-color: var(--theme-border);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .pill.ghost {
+            cursor: pointer;
+            background: transparent;
+            border-color: var(--theme-border);
+        }
+
+        .tools-card {
+            background: var(--theme-panel);
+            border: 1px solid var(--theme-border);
+            border-radius: var(--theme-radius);
+            padding: 14px 14px 16px;
+            box-shadow: var(--theme-shadow-soft);
+            margin-bottom: 8px;
+        }
+
+        .tools-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .tools-card-title {
+            font-weight: 700;
+            color: var(--theme-text);
+        }
+
+        .tools-card-subtitle {
+            font-size: 13px;
+            color: var(--theme-text-muted);
+        }
+
+        .tools-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .muted-text {
+            color: var(--theme-text-muted);
+            font-size: 13px;
+            line-height: 1.5;
         }
 
         /* Sidebar Styles */
         #sidebar {
-            width: 320px;
-            background: white;
-            border-right: 1px solid #e0e0e0;
-            overflow-y: auto;
+            width: 280px;
+            background: var(--theme-panel);
+            border-right: 1px solid var(--theme-border);
             display: flex;
             flex-direction: column;
+            height: 100%;
+            min-height: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            flex-shrink: 0;
+            scrollbar-gutter: stable;
+            overscroll-behavior: contain;
             transition: transform 0.25s ease;
         }
 
         #header {
             padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: var(--theme-panel);
+            color: var(--theme-text);
+            border-bottom: 1px solid var(--theme-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        #header .header-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         #header h1 {
             font-size: 22px;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
+            font-family: "SFMono-Regular", "Menlo", "Consolas", "Liberation Mono", monospace;
+            letter-spacing: 0.01em;
         }
 
         #header p {
             font-size: 13px;
-            opacity: 0.9;
+            color: var(--theme-text-muted);
+        }
+
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--theme-border);
+            background: var(--theme-muted);
+            color: var(--theme-text);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: var(--theme-shadow-soft);
+            transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .theme-toggle.toggled {
+            background: var(--theme-accent);
+            color: var(--theme-accent-foreground);
+            border-color: var(--theme-accent);
+            box-shadow: 0 10px 26px rgba(37, 99, 235, 0.25);
+        }
+
+        .theme-toggle:focus-visible {
+            outline: none;
+            box-shadow: var(--theme-focus-strong);
+            transform: translateY(-1px);
+        }
+
+        .theme-toggle.alt {
+            padding: 6px 10px;
         }
 
         #file-tree {
             padding: 15px;
-            flex: 1;
+            flex: 1 1 0;
+            min-height: 0;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+            background: var(--theme-panel);
+            margin-top: 8px;
         }
 
         .category {
@@ -67,14 +316,14 @@
             display: flex;
             align-items: center;
             font-weight: 600;
-            color: #333;
-            background: #f8f9fa;
+            color: var(--theme-text);
+            background: var(--theme-muted);
             font-size: 13px;
             transition: background 0.2s;
         }
 
         .category-header:hover {
-            background: #e9ecef;
+            background: var(--theme-border);
         }
 
         .category-icon {
@@ -87,7 +336,7 @@
             margin-top: 5px;
             display: none;
             padding-left: 10px;
-            border-left: 2px solid #e9ecef;
+            border-left: 2px solid var(--theme-border);
         }
 
         .category-content.open {
@@ -104,12 +353,12 @@
             border-radius: 4px;
             font-weight: 500;
             font-size: 12px;
-            color: #555;
+            color: var(--theme-text);
             transition: background 0.2s;
         }
 
         .subcategory-header:hover {
-            background: #f8f9fa;
+            background: var(--theme-muted);
         }
 
         .file-list {
@@ -129,19 +378,19 @@
             display: flex;
             align-items: center;
             font-size: 13px;
-            color: #666;
+            color: var(--theme-text-muted);
             transition: all 0.2s;
             margin: 2px 0;
         }
 
         .file:hover {
-            background: #f0f0f0;
-            color: #667eea;
+            background: var(--theme-muted);
+            color: var(--theme-text);
         }
 
         .file.selected {
-            background: #667eea;
-            color: white;
+            background: var(--theme-accent);
+            color: var(--theme-accent-foreground);
             font-weight: 500;
         }
 
@@ -155,23 +404,24 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            padding: 18px;
-            border-bottom: 1px solid #e0e0e0;
-            background: #fff;
+            padding: 0;
+            background: transparent;
+            flex-shrink: 0;
+            margin-top: 8px;
         }
 
         #bookmark-controls .bookmark-header {
             font-weight: 600;
-            color: #333;
+            color: var(--theme-text);
             font-size: 14px;
         }
 
         .bookmark-button {
             padding: 6px 10px;
-            border: 1px solid #d0d0d0;
+            border: 1px solid var(--theme-border);
             border-radius: 4px;
-            background: #f8f9fa;
-            color: #333;
+            background: var(--theme-muted);
+            color: var(--theme-text);
             font-size: 13px;
             cursor: pointer;
             transition: background 0.2s, color 0.2s, border-color 0.2s;
@@ -179,9 +429,9 @@
         }
 
         .bookmark-button:hover:not(:disabled) {
-            background: #667eea;
-            color: #fff;
-            border-color: #667eea;
+            background: var(--theme-accent);
+            color: var(--theme-accent-foreground);
+            border-color: var(--theme-accent);
         }
 
         .bookmark-button:disabled {
@@ -191,7 +441,7 @@
 
         #bookmark-status {
             font-size: 13px;
-            color: #667eea;
+            color: var(--theme-accent);
             min-height: 1em;
             transition: opacity 0.2s ease;
             opacity: 0;
@@ -210,9 +460,9 @@
             flex-direction: column;
             gap: 6px;
             padding: 10px;
-            border: 1px solid #e5e7f3;
+            border: 1px solid var(--theme-border);
             border-radius: 8px;
-            background: #f7f8ff;
+            background: var(--theme-muted);
         }
 
         .tts-speed-control label {
@@ -220,18 +470,18 @@
             justify-content: space-between;
             align-items: center;
             font-size: 13px;
-            color: #394166;
+            color: var(--theme-text);
             font-weight: 600;
         }
 
         #tts-speed-value {
             font-size: 12px;
-            color: #667eea;
+            color: var(--theme-accent);
         }
 
         #tts-speed-slider {
             width: 100%;
-            accent-color: #667eea;
+            accent-color: var(--theme-accent);
         }
 
         #tts-overlay {
@@ -239,17 +489,17 @@
             right: 24px;
             bottom: 24px;
             width: 280px;
-            background: rgba(32, 35, 51, 0.95);
-            color: #f8f9ff;
+            background: var(--theme-panel);
+            color: var(--theme-text);
             border-radius: 14px;
-            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35);
+            box-shadow: var(--theme-shadow-soft);
             padding: 16px 18px;
             display: none;
             flex-direction: column;
             gap: 12px;
             z-index: 1200;
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(99, 102, 241, 0.4);
+            border: 1px solid var(--theme-border);
         }
 
         #tts-overlay.show {
@@ -267,14 +517,14 @@
 
         .tts-overlay-meta {
             font-size: 12px;
-            color: rgba(226, 232, 240, 0.75);
+            color: var(--theme-text-muted);
         }
 
         .tts-overlay-progress {
             position: relative;
             width: 100%;
             height: 6px;
-            background: rgba(148, 163, 184, 0.35);
+            background: var(--theme-muted);
             border-radius: 999px;
             overflow: hidden;
         }
@@ -282,7 +532,7 @@
         .tts-overlay-progress-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            background: linear-gradient(135deg, var(--theme-accent) 0%, #a855f7 100%);
             border-radius: inherit;
             transition: width 0.2s ease;
         }
@@ -295,20 +545,29 @@
         }
 
         .tts-overlay-controls button {
-            background: rgba(99, 102, 241, 0.2);
-            border: 1px solid rgba(99, 102, 241, 0.4);
-            color: #f8f9ff;
+            background: var(--theme-accent);
+            border: 1px solid var(--theme-accent);
+            color: var(--theme-accent-foreground);
             font-size: 13px;
             font-weight: 500;
             border-radius: 999px;
             padding: 6px 14px;
             cursor: pointer;
             transition: all 0.2s ease;
+            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
         }
 
         .tts-overlay-controls button:hover:not(:disabled) {
-            background: rgba(129, 140, 248, 0.3);
+            background: linear-gradient(135deg, var(--theme-accent) 0%, #3b82f6 100%);
             transform: translateY(-1px);
+            box-shadow: 0 12px 26px rgba(37, 99, 235, 0.28);
+        }
+
+        .tts-overlay-controls button:disabled {
+            background: var(--theme-muted);
+            color: var(--theme-text-muted);
+            border-color: var(--theme-border);
+            box-shadow: none;
         }
 
         .tts-overlay-controls button:disabled {
@@ -326,8 +585,9 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            background: #f5f6f8;
+            background: var(--theme-surface);
             min-height: 0;
+            width: 100%;
         }
 
         #pdfjs-viewer {
@@ -341,14 +601,14 @@
             align-items: center;
             justify-content: center;
             height: 100%;
-            background: #f5f5f5;
-            color: #999;
+            background: var(--theme-muted);
+            color: var(--theme-text-muted);
         }
 
         #placeholder-icon {
             font-size: 64px;
             margin-bottom: 20px;
-            opacity: 0.5;
+            opacity: 0.6;
         }
 
         #placeholder-text {
@@ -372,46 +632,6 @@
             width: clamp(220px, 28vw, 420px);
         }
 
-        #viewer-tts-controls {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 10px;
-            pointer-events: auto;
-            flex-wrap: wrap;
-            width: 100%;
-        }
-
-        #viewer-tts-controls button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 12px 18px;
-            min-width: 148px;
-            border: none;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            font-weight: 600;
-            font-size: 14px;
-            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.35);
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-            pointer-events: auto;
-            white-space: nowrap;
-        }
-
-        #viewer-tts-controls button.is-busy {
-            opacity: 0.75;
-            cursor: wait;
-            box-shadow: 0 4px 14px rgba(102, 126, 234, 0.2);
-        }
-
-        .tts-label-compact {
-            display: none;
-        }
-
         #tts-status-banner {
             display: none;
             flex-direction: column;
@@ -419,13 +639,13 @@
             gap: 8px;
             padding: 8px 18px;
             border-radius: 999px;
-            background: rgba(15, 23, 42, 0.82);
-            color: #f8fafc;
+            background: var(--theme-panel);
+            color: var(--theme-text);
+            border: 1px solid var(--theme-border);
             font-size: 13px;
             font-weight: 500;
             pointer-events: none;
-            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(10px);
+            box-shadow: var(--theme-shadow-soft);
             transition: opacity 0.2s ease;
             max-width: 100%;
             width: 100%;
@@ -437,13 +657,15 @@
         }
 
         #tts-status-banner[data-variant="success"] {
-            background: rgba(34, 197, 94, 0.9);
-            color: #f0fdf4;
+            background: rgba(34, 197, 94, 0.12);
+            color: var(--theme-text);
+            border-color: rgba(34, 197, 94, 0.35);
         }
 
         #tts-status-banner[data-variant="error"] {
-            background: rgba(239, 68, 68, 0.92);
-            color: #fff5f5;
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--theme-text);
+            border-color: rgba(239, 68, 68, 0.4);
         }
 
         .tts-status-spinner {
@@ -493,180 +715,179 @@
             }
         }
 
-        #viewer-tts-controls button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 16px 32px rgba(102, 126, 234, 0.45);
-        }
-
-        #viewer-tts-controls button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
         #sidebar-backdrop {
             display: none;
         }
 
-        @media (max-width: 960px) {
+        #tools-pane {
+            width: 260px;
+            height: 100%;
+        }
+
+        #tools-bottom-bar {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 12px;
+            display: none;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            background: var(--theme-panel);
+            border: 1px solid var(--theme-border);
+            box-shadow: var(--theme-shadow-soft);
+            z-index: 1200;
+        }
+
+        body.tools-sheet-open #tools-bottom-bar {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #tools-bottom-bar button {
+            border: none;
+            background: transparent;
+            color: var(--theme-text);
+            font-size: 18px;
+            padding: 6px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        #tools-bottom-bar button:hover:not(:disabled) {
+            background: var(--theme-muted);
+        }
+
+        #tools-sheet-backdrop {
+            position: fixed;
+            inset: 0;
+            background: var(--theme-overlay);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 1190;
+            display: none;
+        }
+
+        @media (max-width: 1023px) {
+            .app-shell {
+                grid-template-columns: 1fr 240px;
+                grid-template-areas: "reader tools";
+            }
+
             #sidebar {
                 position: fixed;
                 top: 0;
                 left: 0;
                 height: 100vh;
-                max-width: 80vw;
                 width: 280px;
                 transform: translateX(-100%);
                 border-right: none;
                 border-bottom: none;
                 box-shadow: 2px 0 16px rgba(0, 0, 0, 0.25);
-                z-index: 1000;
+                z-index: 1300;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                display: none;
             }
 
             #sidebar.open {
+                display: block;
                 transform: translateX(0);
             }
 
             #sidebar-toggle {
-                position: fixed;
-                top: 16px;
-                right: 16px;
-                display: flex;
+                display: inline-flex;
                 align-items: center;
                 gap: 6px;
-                padding: 10px 14px;
-                border: none;
-                border-radius: 999px;
-                background: rgba(255, 255, 255, 0.85);
-                color: #333;
+                padding: 8px 12px;
+                border: 1px solid var(--theme-border);
+                border-radius: 10px;
+                background: var(--theme-muted);
+                color: var(--theme-text);
                 font-weight: 600;
                 font-size: 14px;
-                box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
-                z-index: 1100;
-            }
-
-            #sidebar-toggle:focus-visible {
-                outline: 2px solid rgba(102, 126, 234, 0.7);
-                outline-offset: 2px;
-            }
-
-            #sidebar-toggle.active {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: #fff;
-            }
-
-            #tts-floating-controls {
-                top: calc(16px + env(safe-area-inset-top, 0px));
-                right: calc(16px + env(safe-area-inset-right, 0px) + 60px);
-                width: min(280px, calc(100% - 88px));
-                gap: 10px;
-                align-items: stretch;
-            }
-
-            #viewer-tts-controls {
-                justify-content: flex-start;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 8px;
-            }
-
-            #viewer-tts-controls button {
-                flex: 1 1 auto;
-                min-width: 0;
-                width: 100%;
-            }
-
-            #tts-status-banner {
-                text-align: center;
-                justify-content: center;
-                align-items: center;
-            }
-
-            #tts-status-banner .tts-status-line {
-                justify-content: center;
-                width: 100%;
-            }
-
-            #tts-status-banner .tts-status-progress {
-                width: 100%;
+                box-shadow: var(--theme-shadow-soft);
             }
 
             #sidebar-backdrop {
                 position: fixed;
                 inset: 0;
-                background: rgba(17, 24, 39, 0.35);
+                background: var(--theme-overlay);
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.25s ease;
                 display: block;
-                z-index: 900;
+                z-index: 1200;
             }
 
             #sidebar-backdrop.visible {
                 opacity: 1;
                 pointer-events: all;
             }
-
-            #viewer-container {
-                height: 100vh;
-                width: 100%;
-            }
-
-            #pdfjs-viewer {
-                height: calc(100vh);
-            }
         }
 
-        @media (max-width: 600px) {
-            #viewer-tts-controls {
-                gap: 8px;
+        @media (max-width: 767px) {
+            .app-shell {
+                grid-template-columns: 1fr;
+                grid-template-areas: "reader";
             }
 
-            #viewer-tts-controls button {
-                padding: 10px 14px;
-                font-size: 13px;
-                flex: 0 1 auto;
-                min-width: 118px;
-            }
-
-            .tts-label-full {
+            #tools-pane {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                max-height: 75vh;
+                transform: translateY(100%);
+                border-left: none;
+                border-right: none;
+                border-top: 1px solid var(--theme-border);
+                box-shadow: 0 -18px 32px rgba(15, 23, 42, 0.25);
+                z-index: 1290;
+                background: var(--theme-panel);
+                transition: transform 0.25s ease;
                 display: none;
             }
 
-            .tts-label-compact {
+            body.tools-sheet-open #tools-pane {
+                transform: translateY(0);
+                display: flex;
+            }
+
+            #tools-bottom-bar {
                 display: inline-flex;
-                align-items: center;
-                gap: 4px;
+            }
+
+            #tools-sheet-backdrop {
+                display: block;
+            }
+
+            body.tools-sheet-open #tools-sheet-backdrop {
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            #tools-pane .tools-card {
+                margin-bottom: 12px;
             }
         }
 
     </style>
 </head>
+
 <body>
-    <button id="sidebar-toggle" type="button" aria-label="Toggle library navigation" aria-controls="sidebar" aria-expanded="false">
-        ☰ Library
-    </button>
-    <!-- Sidebar with file tree -->
-    <div id="sidebar">
-        <div id="header">
-            <h1>📚 SelfStudy Library</h1>
-            <p>Network Science & Complex Systems</p>
-        </div>
-        <div id="bookmark-controls" role="region" aria-label="Bookmark controls">
-            <div class="bookmark-header">Reading Progress</div>
-            <button type="button" class="bookmark-button bookmark-save">Bookmark Page</button>
-            <button type="button" class="bookmark-button bookmark-resume">Resume Bookmark</button>
-            <button type="button" class="bookmark-button bookmark-clear">Clear Bookmark</button>
-            <div id="bookmark-status" aria-live="polite"></div>
-            <div class="tts-speed-control">
-                <label for="tts-speed-slider">
-                    Narration Speed
-                    <span id="tts-speed-value">1.0×</span>
-                </label>
-                <input type="range" id="tts-speed-slider" min="0.6" max="3" step="0.05" value="1">
+    <div class="app-shell">
+        <aside id="sidebar" class="pane pane-left">
+
+            <div id="header">
+                <div class="header-text">
+                    <h1>🐱 catCafe</h1>
+                    <p style="font-family: 'SFMono-Regular', 'Menlo', 'Consolas', 'Liberation Mono', monospace;">walruses hubs whiskers knots; complex systems network science and beyond</p>
+                </div>
             </div>
-        </div>
         <div id="file-tree">
             <!-- 01-Foundations -->
             <div class="category">
@@ -835,6 +1056,14 @@
                                 <span class="file-icon">📄</span>
                                 <span>Network Science (Barabási)</span>
                             </div>
+                            <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/02-Network-Science/Complex-Networks/Networks-Newman-2018-%20random%20graphs.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Networks (Newman 2018) - Random Graphs</span>
+                            </div>
+                            <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/02-Network-Science/Complex-Networks/Handbook%20of%20Graph%20Drawing%20and%20Visualization_%20Draft%20of%202013%20--%20Tamassia%20R_%20%28Ed_%29%20--%202013%20--%20d6e78ba7a942e1219d1be5b603984547%20--%20Anna%E2%80%99s%20Archive.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Handbook of Graph Drawing & Visualization (Tamassia)</span>
+                            </div>
                         </div>
                     </div>
 
@@ -963,39 +1192,104 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div id="sidebar-backdrop" aria-hidden="true"></div>
+        </aside>
 
-    <!-- PDF Viewer Container -->
+        <main id="reader-pane">
+            <div class="reader-topbar">
+                <div class="reader-topbar-left">
+                    <button id="sidebar-toggle" type="button" aria-label="Toggle library drawer" aria-controls="sidebar" aria-expanded="false">☰ Library</button>
+                </div>
+                <div class="reader-topbar-right">
+                    <button id="tools-sheet-toggle" type="button" class="pill ghost" aria-label="Toggle tools panel" aria-expanded="false">Tools</button>
+                    <button id="theme-toggle" class="theme-toggle alt" type="button" aria-pressed="false" aria-label="Toggle theme">
+                        <span class="theme-icon" aria-hidden="true">🌗</span>
+                        <span class="theme-label">Toggle</span>
+                    </button>
+                </div>
+            </div>
+<!-- PDF Viewer Container -->
     <div id="viewer-container">
         <div id="placeholder">
             <div id="placeholder-icon">📄</div>
             <div id="placeholder-text">Select a PDF from the sidebar to start reading</div>
         </div>
         <iframe id="pdfjs-viewer" style="display: none;" frameborder="0"></iframe>
-        <div id="tts-floating-controls">
-            <div id="viewer-tts-controls" role="group" aria-label="Narration controls">
-                <button id="tts-read-selection-button" type="button" aria-label="Read selected text" disabled>
-                    <span class="tts-label-full">🔊 Read Selection</span>
-                    <span class="tts-label-compact" aria-hidden="true">Select 🔊</span>
-                </button>
-                <button id="tts-read-page-button" type="button" aria-label="Read current page" disabled>
-                    <span class="tts-label-full">📖 Read Page</span>
-                    <span class="tts-label-compact" aria-hidden="true">Page 🔊</span>
-                </button>
-            </div>
-            <div id="tts-status-banner" role="status" aria-live="polite" aria-atomic="true">
-                <div class="tts-status-line">
-                    <span class="tts-status-spinner" aria-hidden="true"></span>
-                    <span id="tts-status-text"></span>
+                <div id="tts-floating-controls">
+                    <div id="tts-status-banner" role="status" aria-live="polite" aria-atomic="true">
+                        <div class="tts-status-line">
+                            <span class="tts-status-spinner" aria-hidden="true"></span>
+                            <span id="tts-status-text"></span>
+                        </div>
+                        <div class="tts-status-progress" id="tts-status-progress" aria-hidden="true">
+                            <div class="tts-status-progress-fill" id="tts-status-progress-fill"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="tts-status-progress" id="tts-status-progress" aria-hidden="true">
-                    <div class="tts-status-progress-fill" id="tts-status-progress-fill"></div>
-                </div>
-            </div>
-        </div>
     </div>
-    <div id="tts-overlay" role="dialog" aria-live="polite" aria-label="Narration player">
+    
+        </main>
+
+        <aside id="tools-pane" class="pane pane-right">
+            <div class="tools-card">
+                <div class="tools-card-header">
+                    <div>
+                        <div class="tools-card-title">Bookmarks</div>
+                        <div class="tools-card-subtitle">Save or resume your spot</div>
+                    </div>
+                </div>
+<div id="bookmark-controls" role="region" aria-label="Bookmark controls">
+            <div class="bookmark-header">Reading Progress</div>
+            <button type="button" class="bookmark-button bookmark-save">Bookmark Page</button>
+            <button type="button" class="bookmark-button bookmark-resume">Resume Bookmark</button>
+            <button type="button" class="bookmark-button bookmark-clear">Clear Bookmark</button>
+            <div id="bookmark-status" aria-live="polite"></div>
+        </div>
+            </div>
+
+            <div class="tools-card">
+                <div class="tools-card-header">
+                    <div>
+                        <div class="tools-card-title">Narration</div>
+                        <div class="tools-card-subtitle">Read aloud and control speed</div>
+                    </div>
+                </div>
+                <div class="tools-actions">
+                    <button id="tts-read-selection-button-pane" type="button" class="pill primary" aria-label="Read selected text" disabled>Read Selection</button>
+                    <button id="tts-read-page-button-pane" type="button" class="pill primary" aria-label="Read current page" disabled>Read Page</button>
+                </div>
+                <div class="tts-speed-control">
+                    <label for="tts-speed-slider">
+                        Narration Speed
+                        <span id="tts-speed-value">1.0×</span>
+                    </label>
+                    <input type="range" id="tts-speed-slider" min="0.6" max="3" step="0.05" value="1">
+                </div>
+            </div>
+
+            <div class="tools-card">
+                <div class="tools-card-header">
+                    <div>
+                        <div class="tools-card-title">Notes & Highlights</div>
+                        <div class="tools-card-subtitle">Coming soon</div>
+                    </div>
+                </div>
+                <p class="muted-text">Use your viewer tools to annotate; this panel will aggregate highlights later.</p>
+            </div>
+        </aside>
+    </div>
+
+    <div id="sidebar-backdrop" aria-hidden="true"></div>
+
+    <div id="tools-bottom-bar" role="group" aria-label="Quick reading tools">
+        <button id="quick-bookmark-save" type="button" aria-label="Bookmark page">🔖</button>
+        <button id="quick-bookmark-resume" type="button" aria-label="Resume bookmark">⏩</button>
+        <button id="quick-tts-read-selection" type="button" aria-label="Read selection">🔊</button>
+        <button id="quick-tts-read-page" type="button" aria-label="Read page">📖</button>
+        <button id="tools-sheet-toggle-mobile" type="button" aria-label="Open tools sheet">⋯</button>
+    </div>
+
+    <div id="tools-sheet-backdrop" aria-hidden="true"></div>
+<div id="tts-overlay" role="dialog" aria-live="polite" aria-label="Narration player">
         <div class="tts-overlay-header">
             <span>Reading selection</span>
             <span class="tts-overlay-time" id="tts-overlay-time">0:00 / 0:00</span>
@@ -1010,7 +1304,8 @@
         </div>
     </div>
 
-    <script>
+    
+<script>
         function toggleCategory(header) {
             const content = header.nextElementSibling;
             content.classList.toggle('open');
@@ -1031,16 +1326,27 @@
         const sidebar = document.getElementById('sidebar');
         const sidebarBackdrop = document.getElementById('sidebar-backdrop');
         const sidebarToggle = document.getElementById('sidebar-toggle');
-        const mobileQuery = window.matchMedia('(max-width: 960px)');
+        const toolsPane = document.getElementById('tools-pane');
+        const toolsSheetToggle = document.getElementById('tools-sheet-toggle');
+        const toolsSheetToggleMobile = document.getElementById('tools-sheet-toggle-mobile');
+        const toolsSheetBackdrop = document.getElementById('tools-sheet-backdrop');
+        const toolsBottomBar = document.getElementById('tools-bottom-bar');
+        const tabletQuery = window.matchMedia('(max-width: 1023px)');
+        const mobileQuery = window.matchMedia('(max-width: 767px)');
         const isFileProtocol = window.location.protocol === 'file:';
         const messageTargetOrigin = isFileProtocol ? '*' : window.location.origin;
+        const themeToggleButtons = Array.from(document.querySelectorAll('#theme-toggle'));
 
         const bookmarkControls = document.getElementById('bookmark-controls');
         const bookmarkSaveButton = bookmarkControls ? bookmarkControls.querySelector('.bookmark-save') : null;
         const bookmarkResumeButton = bookmarkControls ? bookmarkControls.querySelector('.bookmark-resume') : null;
         const bookmarkClearButton = bookmarkControls ? bookmarkControls.querySelector('.bookmark-clear') : null;
-        const ttsReadSelectionButton = document.getElementById('tts-read-selection-button');
-        const ttsReadPageButton = document.getElementById('tts-read-page-button');
+        const ttsReadSelectionButton = document.getElementById('tts-read-selection-button-pane');
+        const ttsReadPageButton = document.getElementById('tts-read-page-button-pane');
+        const quickBookmarkSave = document.getElementById('quick-bookmark-save');
+        const quickBookmarkResume = document.getElementById('quick-bookmark-resume');
+        const quickTtsSelection = document.getElementById('quick-tts-read-selection');
+        const quickTtsPage = document.getElementById('quick-tts-read-page');
         const bookmarkStatus = document.getElementById('bookmark-status');
         const ttsSpeedSlider = document.getElementById('tts-speed-slider');
         const ttsSpeedValue = document.getElementById('tts-speed-value');
@@ -1056,6 +1362,7 @@
         const ttsStatusProgressFill = document.getElementById('tts-status-progress-fill');
         const STORAGE_KEY = 'pdfBookmarks';
         const LAST_DOCUMENT_KEY = 'pdfLastDocument';
+        const THEME_STORAGE_KEY = 'pdfjs-theme';
         const TTS_SPEED_KEY = 'ttsNarrationSpeed';
         const DEFAULT_TTS_SPEED = 1;
         const MIN_TTS_SPEED = 0.6;
@@ -1063,6 +1370,168 @@
         const TTS_SPEED_STEP = 0.05;
         const AUTO_SAVE_DEBOUNCE_MS = 2000;
         const AUTO_SAVE_IDLE_TIMEOUT_MS = 5000;
+
+        function getStoredThemePreference() {
+            try {
+                const stored = localStorage.getItem(THEME_STORAGE_KEY);
+                return stored === 'light' || stored === 'dark' ? stored : null;
+            } catch (error) {
+                console.debug('[theme] Unable to read stored theme', error);
+                return null;
+            }
+        }
+
+        function resolveThemePreference() {
+            const stored = getStoredThemePreference();
+            if (stored) {
+                return stored;
+            }
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            return prefersDark ? 'dark' : 'light';
+        }
+
+        function syncViewerTheme(theme) {
+            const applied = theme || document.documentElement.dataset.theme;
+            try {
+                if (viewer && viewer.contentDocument && viewer.contentDocument.documentElement) {
+                    const docEl = viewer.contentDocument.documentElement;
+                    docEl.dataset.theme = applied;
+                    docEl.classList.toggle('is-dark', applied === 'dark');
+                    docEl.classList.toggle('is-light', applied === 'light');
+                }
+            } catch (error) {
+                console.debug('[theme] Unable to sync theme to viewer iframe', error);
+            }
+        }
+
+        function applyThemePreference(theme, options = {}) {
+            const applied = theme === 'dark' ? 'dark' : 'light';
+            document.documentElement.dataset.theme = applied;
+            document.documentElement.classList.toggle('is-dark', applied === 'dark');
+            document.documentElement.classList.toggle('is-light', applied === 'light');
+            if (options.syncViewer !== false) {
+                syncViewerTheme(applied);
+            }
+            return applied;
+        }
+
+        function persistThemePreference(theme) {
+            try {
+                localStorage.setItem(THEME_STORAGE_KEY, theme);
+            } catch (error) {
+                console.debug('[theme] Unable to persist theme', error);
+            }
+        }
+
+        function syncThemeToggle(theme) {
+            themeToggleButtons.forEach(btn => {
+                if (!btn) {
+                    return;
+                }
+                const label = btn.querySelector('.theme-label');
+                const icon = btn.querySelector('.theme-icon');
+                btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+                btn.classList.toggle('toggled', theme === 'dark');
+                if (label) {
+                    label.textContent = theme === 'dark' ? 'Dark' : 'Light';
+                }
+                if (icon) {
+                    icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+                }
+            });
+            try {
+                if (viewer && viewer.contentDocument) {
+                    const toggle = viewer.contentDocument.getElementById('themeToggle');
+                    if (toggle) {
+                        toggle.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.debug('[theme] Unable to hide viewer toggle', error);
+            }
+        }
+
+        function initThemeControls() {
+            const initialTheme = applyThemePreference(resolveThemePreference(), { syncViewer: false });
+            syncThemeToggle(initialTheme);
+            syncViewerTheme(initialTheme);
+
+            themeToggleButtons.forEach(btn => {
+                if (!btn) {
+                    return;
+                }
+                btn.addEventListener('click', () => {
+                    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+                    const applied = applyThemePreference(next);
+                    persistThemePreference(applied);
+                    syncThemeToggle(applied);
+                    syncViewerTheme(applied);
+                });
+            });
+
+            if (!getStoredThemePreference() && window.matchMedia) {
+                const media = window.matchMedia('(prefers-color-scheme: dark)');
+                const handler = event => {
+                    if (getStoredThemePreference()) {
+                        return;
+                    }
+                    const applied = applyThemePreference(event.matches ? 'dark' : 'light');
+                    syncThemeToggle(applied);
+                    syncViewerTheme(applied);
+                };
+                if (media.addEventListener) {
+                    media.addEventListener('change', handler);
+                } else if (media.addListener) {
+                    media.addListener(handler);
+                }
+            }
+        }
+
+        function openToolsSheet() {
+            if (!mobileQuery.matches) {
+                return;
+            }
+            document.body.classList.add('tools-sheet-open');
+            if (toolsSheetToggle) {
+                toolsSheetToggle.setAttribute('aria-expanded', 'true');
+            }
+            if (toolsSheetToggleMobile) {
+                toolsSheetToggleMobile.setAttribute('aria-expanded', 'true');
+            }
+        }
+
+        function closeToolsSheet() {
+            document.body.classList.remove('tools-sheet-open');
+            if (toolsSheetToggle) {
+                toolsSheetToggle.setAttribute('aria-expanded', 'false');
+            }
+            if (toolsSheetToggleMobile) {
+                toolsSheetToggleMobile.setAttribute('aria-expanded', 'false');
+            }
+            if (toolsSheetBackdrop) {
+                toolsSheetBackdrop.setAttribute('aria-hidden', 'true');
+            }
+            if (toolsPane) {
+                toolsPane.setAttribute('aria-hidden', 'true');
+            }
+        }
+
+        function toggleToolsSheet() {
+            if (!mobileQuery.matches) {
+                return;
+            }
+            if (document.body.classList.contains('tools-sheet-open')) {
+                closeToolsSheet();
+            } else {
+                openToolsSheet();
+                if (toolsSheetBackdrop) {
+                    toolsSheetBackdrop.setAttribute('aria-hidden', 'false');
+                }
+                if (toolsPane) {
+                    toolsPane.setAttribute('aria-hidden', 'false');
+                }
+            }
+        }
 
         let viewerReady = false;
         let pendingFile = null;
@@ -1096,6 +1565,10 @@
         let ttsStatusHideTimer = null;
         let ttsStatusProgressValue = 0;
 
+        initThemeControls();
+        if (viewer) {
+            viewer.addEventListener('load', () => syncViewerTheme());
+        }
         initializeFileMetadata();
         updateBookmarkUI();
         updateSpeedUI();
@@ -2352,12 +2825,13 @@
                 if (sidebarBackdrop) {
                     sidebarBackdrop.classList.remove('visible');
                 }
+                closeToolsSheet();
             }
         }
 
         if (sidebarToggle) {
             sidebarToggle.addEventListener('click', () => {
-                if (!mobileQuery.matches) {
+                if (!tabletQuery.matches) {
                     return;
                 }
                 const isOpen = sidebar.classList.contains('open');
@@ -2367,17 +2841,37 @@
 
         if (sidebarBackdrop) {
             sidebarBackdrop.addEventListener('click', () => setSidebarOpen(false));
+            sidebarBackdrop.setAttribute('aria-hidden', 'true');
+        }
+
+        if (toolsSheetToggle) {
+            toolsSheetToggle.addEventListener('click', toggleToolsSheet);
+        }
+
+        if (toolsSheetToggleMobile) {
+            toolsSheetToggleMobile.addEventListener('click', toggleToolsSheet);
+        }
+
+        if (toolsSheetBackdrop) {
+            toolsSheetBackdrop.addEventListener('click', closeToolsSheet);
+        }
+
+        if (tabletQuery.addEventListener) {
+            tabletQuery.addEventListener('change', handleViewportChange);
+        } else if (tabletQuery.addListener) {
+            tabletQuery.addListener(handleViewportChange);
         }
 
         if (mobileQuery.addEventListener) {
-            mobileQuery.addEventListener('change', handleViewportChange);
+            mobileQuery.addEventListener('change', () => closeToolsSheet());
         } else if (mobileQuery.addListener) {
-            mobileQuery.addListener(handleViewportChange);
+            mobileQuery.addListener(() => closeToolsSheet());
         }
 
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && mobileQuery.matches) {
+            if (event.key === 'Escape') {
                 setSidebarOpen(false);
+                closeToolsSheet();
             }
         });
 
@@ -2476,6 +2970,27 @@
             }
             if (ttsReadPageButton) {
                 ttsReadPageButton.disabled = !hasDocument;
+            }
+            if (quickBookmarkSave) {
+                quickBookmarkSave.disabled = !hasDocument;
+            }
+            if (quickBookmarkResume) {
+                quickBookmarkResume.disabled = !hasBookmark;
+            }
+            if (quickTtsSelection) {
+                quickTtsSelection.disabled = !hasDocument;
+            }
+            if (quickTtsPage) {
+                quickTtsPage.disabled = !hasDocument;
+            }
+            if (hasDocument) {
+                const hasStatus = bookmarkEntry && getBookmarkPage(bookmarkEntry) !== null;
+                if (bookmarkControls) {
+                    bookmarkControls.setAttribute('aria-live', 'polite');
+                }
+                if (sidebarToggle) {
+                    sidebarToggle.setAttribute('aria-expanded', sidebar.classList.contains('open') ? 'true' : 'false');
+                }
             }
         }
 
@@ -2661,6 +3176,7 @@
             }
             if (type === 'viewerReady') {
                 viewerReady = true;
+                syncViewerTheme();
                 if (pendingFile) {
                     postOpenRequest(pendingFile);
                     pendingFile = null;
@@ -2704,7 +3220,7 @@
             placeholder.style.display = 'none';
             viewer.style.display = 'block';
 
-            if (mobileQuery.matches) {
+            if (tabletQuery.matches) {
                 setSidebarOpen(false);
             }
 
@@ -2764,6 +3280,22 @@
             });
         }
 
+        if (quickBookmarkSave) {
+            quickBookmarkSave.addEventListener('click', () => {
+                if (!quickBookmarkSave.disabled) {
+                    requestCurrentPage();
+                }
+            });
+        }
+
+        if (quickBookmarkResume) {
+            quickBookmarkResume.addEventListener('click', () => {
+                if (!quickBookmarkResume.disabled && bookmarkResumeButton) {
+                    bookmarkResumeButton.click();
+                }
+            });
+        }
+
         if (ttsSpeedSlider) {
             ttsSpeedSlider.addEventListener('input', event => {
                 const value = clampTtsSpeed(parseFloat(event.target.value));
@@ -2792,6 +3324,22 @@
         if (ttsReadPageButton) {
             ttsReadPageButton.addEventListener('click', () => {
                 if (!ttsReadPageButton.disabled) {
+                    requestPagePlayback();
+                }
+            });
+        }
+
+        if (quickTtsSelection) {
+            quickTtsSelection.addEventListener('click', () => {
+                if (!quickTtsSelection.disabled) {
+                    requestSelectionPlayback();
+                }
+            });
+        }
+
+        if (quickTtsPage) {
+            quickTtsPage.addEventListener('click', () => {
+                if (!quickTtsPage.disabled) {
                     requestPagePlayback();
                 }
             });
