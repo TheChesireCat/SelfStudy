@@ -12,6 +12,7 @@ This repository is a curated collection of course materials and books to build a
 - Library sidebar for quick browsing; mobile drawers and bottom shortcuts.
 - Bookmarks saved in `localStorage`, with auto-save on page changes and quick resume.
 - TTS: read current selection or entire page via tts.rocks, with speed control (0.6–3×) and a mini overlay player.
+- EPUB viewer: inline rendering via epub.js with simple prev/next controls; MOBI opens via an embedded external viewer (may be blocked by some hosts—download if it fails).
 - Theme sync between parent and PDF iframe (light/dark).
 
 ## What’s here
@@ -20,7 +21,7 @@ This repository is a curated collection of course materials and books to build a
 - `tts.js` – bundled copy of the tts.rocks helper (page currently pulls the CDN version; keep this if you want to self-host).
 - `01-Foundations` … `05-General-Reading` – subject folders with PDFs, notes, and supporting materials.
 - `instructions.md` – working notes on the TTS integration idea.
-- External links section in the sidebar: PDFs open in the viewer; non-PDF sites load in an embedded iframe (some sites may block embedding via X-Frame-Options).
+- External links section in the sidebar: PDFs open in the viewer; EPUBs open in the inline ebook reader; MOBIs try an embedded external viewer; non-PDF sites load in an embedded iframe (some sites may block embedding via X-Frame-Options).
 
 ## 📚 Library structure
 ### 01-Foundations
@@ -105,6 +106,6 @@ This repository is a curated collection of course materials and books to build a
 ## Organization and notes
 - Books are organized by domain (Foundations → General Reading). Each category mixes PDFs, study notes, and code experiments.
 - The viewer/parent messaging enables: page queries for bookmarks, selection/page text extraction for TTS, and theme syncing into the iframe.
-- Updating the library: the sidebar is hard-coded in `index.html`; add a new `<div class="file" onclick="loadPDF('URL.pdf', this)">Title</div>` entry under the desired category. Hosted URLs are supported; relative URLs work when served locally.
-- External links that point directly to PDFs already open in the viewer. Non-PDF web pages would need an additional iframe path in `index.html` if you want them embedded alongside PDFs.
+- Updating the library: the sidebar is hard-coded in `index.html`; add a new `<div class="file" onclick="loadPDF('URL.pdf', this)">Title</div>` entry under the desired category. The `loadPDF` handler now detects file type: PDFs use the PDF viewer, EPUBs load in the ebook reader, MOBIs try an external inline viewer, and everything else falls back to the general iframe loader. Hosted URLs are supported; relative URLs work when served locally.
+- External links that point directly to PDFs/EPUBs open in the viewer. Non-PDF web pages use the iframe loader; some sites block embedding via X-Frame-Options. MOBIs are best converted to EPUB/PDF if the inline external viewer is blocked.
 - Track progress in your own study log (repo previously referenced an `AA-MasterLog/` folder). 

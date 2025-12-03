@@ -6,6 +6,7 @@
     <title>catCafe</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext x='12' y='48' font-size='48'%3E%F0%9F%90%B1%3C/text%3E%3C/svg%3E">
     <script src="https://tts.rocks/tts.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/epubjs@0.3/dist/epub.min.js" defer></script>
     
     <!-- PDF.js Viewer CSS -->
     <link href="https://cdn.jsdelivr.net/npm/pdf.js-viewer@0.2.8/viewer.min.css" rel="stylesheet">
@@ -599,6 +600,85 @@
             width: 100%;
             height: 100%;
             border: 0;
+            background: var(--theme-panel);
+        }
+
+        #ebook-viewer {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            min-height: 0;
+            background: var(--theme-panel);
+            border: 1px solid var(--theme-border);
+            border-radius: var(--theme-radius);
+            overflow: hidden;
+            box-shadow: var(--theme-shadow-soft);
+        }
+
+        #ebook-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--theme-muted);
+            border-bottom: 1px solid var(--theme-border);
+        }
+
+        #ebook-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--theme-text);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ebook-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--theme-text-muted);
+        }
+
+        .ebook-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ebook-button {
+            border: 1px solid var(--theme-border);
+            background: var(--theme-panel);
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--theme-text);
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+        }
+
+        .ebook-button:hover:not(:disabled) {
+            background: var(--theme-muted);
+            transform: translateY(-1px);
+        }
+
+        .ebook-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #ebook-status {
+            font-size: 12px;
+            color: var(--theme-text-muted);
+        }
+
+        #ebook-container {
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+            overflow: auto;
             background: var(--theme-panel);
         }
 
@@ -1269,10 +1349,23 @@
     <div id="viewer-container">
         <div id="placeholder">
             <div id="placeholder-icon">📄</div>
-            <div id="placeholder-text">Select a PDF from the sidebar to start reading</div>
+            <div id="placeholder-text">Select a PDF, EPUB, MOBI, or link from the sidebar to start reading</div>
         </div>
         <iframe id="pdfjs-viewer" style="display: none;" frameborder="0"></iframe>
         <iframe id="external-viewer" style="display: none;" frameborder="0"></iframe>
+        <div id="ebook-viewer" role="region" aria-label="EPUB/MOBI viewer" style="display: none;">
+            <div id="ebook-toolbar">
+                <div id="ebook-title">eBook viewer</div>
+                <div class="ebook-meta">
+                    <span id="ebook-status">Select an EPUB or MOBI link</span>
+                    <div class="ebook-controls">
+                        <button id="ebook-prev" type="button" class="ebook-button" disabled>Prev</button>
+                        <button id="ebook-next" type="button" class="ebook-button" disabled>Next</button>
+                    </div>
+                </div>
+            </div>
+            <div id="ebook-container"></div>
+        </div>
                 <div id="tts-floating-controls">
                     <div id="tts-status-banner" role="status" aria-live="polite" aria-atomic="true">
                         <div class="tts-status-line">
@@ -1383,6 +1476,12 @@
         const placeholder = document.getElementById('placeholder');
         const viewer = document.getElementById('pdfjs-viewer');
         const externalViewer = document.getElementById('external-viewer');
+        const ebookViewer = document.getElementById('ebook-viewer');
+        const ebookContainer = document.getElementById('ebook-container');
+        const ebookTitle = document.getElementById('ebook-title');
+        const ebookStatus = document.getElementById('ebook-status');
+        const ebookPrev = document.getElementById('ebook-prev');
+        const ebookNext = document.getElementById('ebook-next');
         const sidebar = document.getElementById('sidebar');
         const sidebarBackdrop = document.getElementById('sidebar-backdrop');
         const sidebarToggle = document.getElementById('sidebar-toggle');
@@ -1624,6 +1723,10 @@
         let kokoroInitPromise = null;
         let ttsStatusHideTimer = null;
         let ttsStatusProgressValue = 0;
+        let currentEbook = null;
+        let currentEbookRendition = null;
+        let currentEbookUrl = null;
+        let currentEbookLocation = null;
 
         initThemeControls();
         if (viewer) {
@@ -3238,6 +3341,45 @@
             }
         }
 
+        function teardownEbook() {
+            try {
+                if (currentEbookRendition && typeof currentEbookRendition.destroy === 'function') {
+                    currentEbookRendition.destroy();
+                }
+            } catch (error) {
+                console.debug('[ebook] Unable to destroy rendition', error);
+            }
+            try {
+                if (currentEbook && typeof currentEbook.destroy === 'function') {
+                    currentEbook.destroy();
+                }
+            } catch (error) {
+                console.debug('[ebook] Unable to destroy book', error);
+            }
+            currentEbook = null;
+            currentEbookRendition = null;
+            currentEbookUrl = null;
+            currentEbookLocation = null;
+            if (ebookContainer) {
+                ebookContainer.innerHTML = '';
+            }
+            if (ebookTitle) {
+                ebookTitle.textContent = 'eBook viewer';
+            }
+            if (ebookStatus) {
+                ebookStatus.textContent = 'Select an EPUB or MOBI link';
+            }
+            if (ebookPrev) {
+                ebookPrev.disabled = true;
+            }
+            if (ebookNext) {
+                ebookNext.disabled = true;
+            }
+            if (ebookViewer) {
+                ebookViewer.style.display = 'none';
+            }
+        }
+
         window.addEventListener('message', (event) => {
             if (!isFileProtocol && event.origin !== window.location.origin) {
                 return;
@@ -3282,6 +3424,7 @@
             flushPendingAutoSave();
             abortActiveSpeech();
             hideOverlay();
+            teardownEbook();
 
             if (externalViewer) {
                 externalViewer.style.display = 'none';
@@ -3330,9 +3473,41 @@
             }
         }
 
+        function isEpubLikeUrl(url) {
+            if (!url) {
+                return false;
+            }
+            try {
+                const normalized = String(url).split('#')[0].toLowerCase();
+                return normalized.endsWith('.epub');
+            } catch (error) {
+                return /\.epub(?:$|\?|\#)/i.test(url);
+            }
+        }
+
+        function isMobiLikeUrl(url) {
+            if (!url) {
+                return false;
+            }
+            try {
+                const normalized = String(url).split('#')[0].toLowerCase();
+                return normalized.endsWith('.mobi');
+            } catch (error) {
+                return /\.mobi(?:$|\?|\#)/i.test(url);
+            }
+        }
+
+        function isEbookLikeUrl(url) {
+            return isEpubLikeUrl(url) || isMobiLikeUrl(url);
+        }
+
         function openExternalResource(url, triggerElement) {
             const target = (url || '').trim();
             if (!target) {
+                return;
+            }
+            if (isEbookLikeUrl(target)) {
+                openEbookResource(target, triggerElement);
                 return;
             }
             if (isPdfLikeUrl(target)) {
@@ -3343,6 +3518,7 @@
             flushPendingAutoSave();
             abortActiveSpeech();
             hideOverlay();
+            teardownEbook();
 
             currentDocumentUrl = null;
             currentDocumentKey = null;
@@ -3370,6 +3546,151 @@
 
             updateBookmarkUI();
             showBookmarkStatus('');
+        }
+
+        async function openEbookResource(url, triggerElement) {
+            const target = (url || '').trim();
+            if (!target) {
+                return;
+            }
+            const normalizedPath = normalizePDFPath(target) || target;
+            const isMobi = isMobiLikeUrl(normalizedPath);
+
+            flushPendingAutoSave();
+            abortActiveSpeech();
+            hideOverlay();
+
+            currentDocumentUrl = null;
+            currentDocumentKey = null;
+            currentViewerSource = null;
+            pendingFile = null;
+
+            selectExternalElement(triggerElement || null);
+            teardownEbook();
+
+            if (viewer) {
+                viewer.style.display = 'none';
+            }
+            if (externalViewer) {
+                externalViewer.style.display = 'none';
+                try {
+                    externalViewer.src = 'about:blank';
+                } catch (error) {
+                    console.debug('[external] Unable to clear external viewer', error);
+                }
+            }
+
+            placeholder.style.display = 'none';
+
+            if (isMobi) {
+                if (externalViewer) {
+                    const gviewUrl = `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(normalizedPath)}`;
+                    externalViewer.style.display = 'block';
+                    try {
+                        externalViewer.src = gviewUrl;
+                    } catch (error) {
+                        console.warn('[mobi] Unable to load MOBI via external viewer', error);
+                    }
+                }
+                showBookmarkStatus('MOBI files open in an external viewer (may be limited).');
+                updateBookmarkUI();
+                return;
+            }
+
+            if (!ebookViewer || !ebookContainer) {
+                showBookmarkStatus('EPUB viewer unavailable.');
+                return;
+            }
+
+            if (typeof window.ePub !== 'function') {
+                if (ebookStatus) {
+                    ebookStatus.textContent = 'epub.js did not load; check your network.';
+                }
+                ebookViewer.style.display = 'flex';
+                updateBookmarkUI();
+                return;
+            }
+
+            ebookViewer.style.display = 'flex';
+            if (ebookStatus) {
+                ebookStatus.textContent = 'Loading EPUB...';
+            }
+            if (ebookTitle) {
+                ebookTitle.textContent = 'eBook viewer';
+            }
+
+            try {
+                currentEbookUrl = normalizedPath;
+                currentEbook = window.ePub(normalizedPath);
+                currentEbookRendition = currentEbook.renderTo(ebookContainer, {
+                    width: '100%',
+                    height: '100%',
+                    spread: 'always'
+                });
+
+                const updateEbookStatus = (location) => {
+                    if (!ebookStatus) {
+                        return;
+                    }
+                    if (location && typeof location.start?.percentage === 'number') {
+                        const pct = Math.min(100, Math.max(0, Math.round(location.start.percentage * 100)));
+                        ebookStatus.textContent = `Progress: ${pct}%`;
+                    } else {
+                        ebookStatus.textContent = 'Use Next/Prev or arrow keys';
+                    }
+                };
+
+                currentEbookRendition.on('relocated', (location) => {
+                    currentEbookLocation = location;
+                    updateEbookStatus(location);
+                });
+
+                currentEbookRendition.on('rendered', () => {
+                    if (ebookPrev) {
+                        ebookPrev.disabled = false;
+                    }
+                    if (ebookNext) {
+                        ebookNext.disabled = false;
+                    }
+                });
+
+                await currentEbook.ready;
+                const metaTitle = currentEbook?.package?.metadata?.title;
+                if (ebookTitle) {
+                    ebookTitle.textContent = metaTitle || 'EPUB';
+                }
+                if (currentEbookRendition) {
+                    await currentEbookRendition.display();
+                }
+                updateEbookStatus(currentEbookLocation || null);
+            } catch (error) {
+                console.warn('[ebook] Unable to open EPUB', error);
+                teardownEbook();
+                if (ebookStatus) {
+                    ebookStatus.textContent = 'Failed to open EPUB; try downloading instead.';
+                }
+                if (placeholder) {
+                    placeholder.style.display = 'flex';
+                }
+            } finally {
+                updateBookmarkUI();
+            }
+        }
+
+        function loadResource(path, triggerElement, options = {}) {
+            const target = (path || '').trim();
+            if (!target) {
+                return;
+            }
+            if (isEbookLikeUrl(target)) {
+                openEbookResource(target, triggerElement);
+                return;
+            }
+            if (isPdfLikeUrl(target)) {
+                openDocument(target, triggerElement, options);
+                return;
+            }
+            openExternalResource(target, triggerElement);
         }
 
         if (bookmarkSaveButton) {
@@ -3480,6 +3801,22 @@
             });
         }
 
+        if (ebookPrev) {
+            ebookPrev.addEventListener('click', () => {
+                if (currentEbookRendition && typeof currentEbookRendition.prev === 'function') {
+                    currentEbookRendition.prev();
+                }
+            });
+        }
+
+        if (ebookNext) {
+            ebookNext.addEventListener('click', () => {
+                if (currentEbookRendition && typeof currentEbookRendition.next === 'function') {
+                    currentEbookRendition.next();
+                }
+            });
+        }
+
         if (ttsOverlayPlay) {
             ttsOverlayPlay.addEventListener('click', () => {
                 if (!overlayPlayer) {
@@ -3550,8 +3887,9 @@
 
         window.toggleCategory = toggleCategory;
         window.toggleSubcategory = toggleSubcategory;
-        window.loadPDF = openDocument;
+        window.loadPDF = loadResource;
         window.loadExternal = openExternalResource;
+        window.loadResource = loadResource;
     </script>
 </body>
 </html>
