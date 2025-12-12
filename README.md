@@ -11,7 +11,8 @@ This repository is a curated collection of course materials and books to build a
 ## Reader features
 - Library sidebar for quick browsing; mobile drawers and bottom shortcuts.
 - Bookmarks saved in `localStorage`, with auto-save on page changes and quick resume.
-- TTS: read current selection or entire page via tts.rocks, with speed control (0.6–3×) and a mini overlay player.
+- TTS: read current selection or entire page via tts.rocks, with speed control (0.6–3×), mini overlay player, and queue/auto-continue controls.
+- TTS queue: enqueue current/next pages, auto-advance until stopped, skip ahead, and toggle auto-continue; overlay and tools show queue status.
 - EPUB viewer: inline rendering via epub.js with simple prev/next controls; MOBI opens via an embedded external viewer (may be blocked by some hosts—download if it fails).
 - Theme sync between parent and PDF iframe (light/dark).
 

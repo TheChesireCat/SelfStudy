@@ -184,9 +184,12 @@ See https://github.com/adobe-type-tools/cmap-resources
       }
     }
 
-    async function respondWithPageText() {
+    async function respondWithPageText(requestPayload) {
       const app = window.PDFViewerApplication;
-      const pageNumber = app && typeof app.page === 'number' ? app.page : null;
+      const requestedPage = requestPayload && Number.isInteger(Number(requestPayload.pageNumber))
+        ? Math.max(1, Math.floor(Number(requestPayload.pageNumber)))
+        : null;
+      const pageNumber = requestedPage || (app && typeof app.page === 'number' ? app.page : null);
       const url = app && app.url ? app.url : null;
       let text = '';
       if (pageNumber) {
@@ -207,7 +210,9 @@ See https://github.com/adobe-type-tools/cmap-resources
         payload: {
           text,
           pageNumber,
-          url
+          url,
+          context: requestPayload && requestPayload.context ? requestPayload.context : null,
+          queueId: requestPayload && requestPayload.queueId ? requestPayload.queueId : null
         }
       });
     }
@@ -256,7 +261,7 @@ See https://github.com/adobe-type-tools/cmap-resources
         withViewerReady(() => respondWithSelectionText());
       } else if (type === 'requestPageText') {
         withViewerReady(() => {
-          respondWithPageText().catch(error => {
+          respondWithPageText(payload || {}).catch(error => {
             console.error('[Viewer TTS] Failed to send page text', error);
             postMessageToParent({
               type: 'pageText',
@@ -264,6 +269,8 @@ See https://github.com/adobe-type-tools/cmap-resources
                 text: '',
                 pageNumber: null,
                 url: null,
+                context: payload && payload.context ? payload.context : null,
+                queueId: payload && payload.queueId ? payload.queueId : null,
                 error: error && error.message ? String(error.message) : 'Unknown error'
               }
             });

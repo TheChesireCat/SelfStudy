@@ -682,6 +682,78 @@
             background: var(--theme-panel);
         }
 
+        .tts-queue {
+            margin-top: 12px;
+            padding: 10px;
+            border: 1px solid var(--theme-border);
+            border-radius: 8px;
+            background: var(--theme-muted);
+        }
+
+        .tts-queue-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--theme-text);
+            margin-bottom: 8px;
+        }
+
+        .tts-queue-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: var(--theme-panel);
+            border: 1px solid var(--theme-border);
+            font-size: 12px;
+        }
+
+        .tts-queue-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .tts-queue-button {
+            border: 1px solid var(--theme-border);
+            background: var(--theme-panel);
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--theme-text);
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+        }
+
+        .tts-queue-button:hover:not(:disabled) {
+            background: var(--theme-muted);
+            transform: translateY(-1px);
+        }
+
+        .tts-queue-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .tts-queue-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--theme-text-muted);
+        }
+
+        .tts-queue-chip {
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: var(--theme-panel);
+            border: 1px solid var(--theme-border);
+        }
+
         #placeholder {
             display: flex;
             flex-direction: column;
@@ -1270,6 +1342,10 @@
                                 <span class="file-icon">📄</span>
                                 <span>Scale (West)</span>
                             </div>
+                            <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/05-General-Reading/The-Feeling-of-Life-Itself-Christof-Koch.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>The Feeling of Life Itself</span>
+                            </div>
                             <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/05-General-Reading/The-Nature-of-Computation-Moore-Mertens.pdf', this)">
                                 <span class="file-icon">📄</span>
                                 <span>The Nature of Computation</span>
@@ -1416,6 +1492,23 @@
                     </label>
                     <input type="range" id="tts-speed-slider" min="0.6" max="3" step="0.05" value="1">
                 </div>
+                <div class="tools-actions" style="margin-top: 6px;">
+                    <button id="tts-auto-continue-toggle" type="button" class="pill ghost" aria-label="Toggle auto continue">Auto-continue: On</button>
+                </div>
+                <div class="tts-queue" aria-label="Reading queue">
+                    <div class="tts-queue-header">
+                        <span>Reading Queue</span>
+                        <span class="tts-queue-count"><span id="tts-queue-count">0</span> queued</span>
+                    </div>
+                    <div class="tts-queue-actions">
+                        <button id="tts-queue-current" type="button" class="tts-queue-button" disabled>Queue Current</button>
+                        <button id="tts-queue-next" type="button" class="tts-queue-button" disabled>Queue Next</button>
+                        <button id="tts-queue-start" type="button" class="tts-queue-button" disabled>Start Queue</button>
+                        <button id="tts-queue-skip" type="button" class="tts-queue-button" disabled>Skip</button>
+                        <button id="tts-queue-clear" type="button" class="tts-queue-button" disabled>Clear</button>
+                    </div>
+                    <div id="tts-queue-list" class="tts-queue-list" aria-live="polite"></div>
+                </div>
             </div>
 
             <div class="tools-card">
@@ -1452,6 +1545,7 @@
         </div>
         <div class="tts-overlay-controls">
             <button type="button" id="tts-overlay-play" aria-label="Pause narration" disabled>Pause</button>
+            <button type="button" id="tts-overlay-skip" aria-label="Skip to next" disabled>Skip</button>
             <button type="button" id="tts-overlay-stop" aria-label="Stop narration" disabled>Stop</button>
         </div>
     </div>
@@ -1514,11 +1608,20 @@
         const ttsOverlayMeta = document.getElementById('tts-overlay-meta');
         const ttsOverlayProgress = document.getElementById('tts-overlay-progress');
         const ttsOverlayPlay = document.getElementById('tts-overlay-play');
+        const ttsOverlaySkip = document.getElementById('tts-overlay-skip');
         const ttsOverlayStop = document.getElementById('tts-overlay-stop');
         const ttsStatusBanner = document.getElementById('tts-status-banner');
         const ttsStatusText = document.getElementById('tts-status-text');
         const ttsStatusProgress = document.getElementById('tts-status-progress');
         const ttsStatusProgressFill = document.getElementById('tts-status-progress-fill');
+        const ttsQueueCount = document.getElementById('tts-queue-count');
+        const ttsQueueList = document.getElementById('tts-queue-list');
+        const ttsQueueCurrentButton = document.getElementById('tts-queue-current');
+        const ttsQueueNextButton = document.getElementById('tts-queue-next');
+        const ttsQueueStartButton = document.getElementById('tts-queue-start');
+        const ttsQueueClearButton = document.getElementById('tts-queue-clear');
+        const ttsQueueSkipButton = document.getElementById('tts-queue-skip');
+        const ttsAutoContinueToggle = document.getElementById('tts-auto-continue-toggle');
         const STORAGE_KEY = 'pdfBookmarks';
         const LAST_DOCUMENT_KEY = 'pdfLastDocument';
         const THEME_STORAGE_KEY = 'pdfjs-theme';
@@ -1527,6 +1630,7 @@
         const MIN_TTS_SPEED = 0.6;
         const MAX_TTS_SPEED = 3;
         const TTS_SPEED_STEP = 0.05;
+        const AUTO_CONTINUE_KEY = 'ttsAutoContinue';
         const AUTO_SAVE_DEBOUNCE_MS = 2000;
         const AUTO_SAVE_IDLE_TIMEOUT_MS = 5000;
 
@@ -1727,6 +1831,13 @@
         let currentEbookRendition = null;
         let currentEbookUrl = null;
         let currentEbookLocation = null;
+        let currentPageNumber = null;
+        let narrationQueue = [];
+        let queueProcessing = false;
+        let queueCurrentItem = null;
+        let queueIdCounter = 0;
+        let lastQueuedPage = null;
+        let autoContinueEnabled = loadStoredAutoContinue();
 
         initThemeControls();
         if (viewer) {
@@ -1735,6 +1846,7 @@
         initializeFileMetadata();
         updateBookmarkUI();
         updateSpeedUI();
+        updateAutoContinueUI();
         applySpeedToTTS();
 
         function loadBookmarks() {
@@ -1821,6 +1933,30 @@
             return DEFAULT_TTS_SPEED;
         }
 
+        function loadStoredAutoContinue() {
+            try {
+                if (window.localStorage) {
+                    const raw = localStorage.getItem(AUTO_CONTINUE_KEY);
+                    if (raw === 'false') {
+                        return false;
+                    }
+                }
+            } catch (error) {
+                console.warn('Unable to load auto-continue preference:', error);
+            }
+            return true;
+        }
+
+        function storeAutoContinue(value) {
+            try {
+                if (window.localStorage) {
+                    localStorage.setItem(AUTO_CONTINUE_KEY, value ? 'true' : 'false');
+                }
+            } catch (error) {
+                console.warn('Unable to persist auto-continue preference:', error);
+            }
+        }
+
         function storeTtsSpeed(value) {
             try {
                 if (window.localStorage) {
@@ -1844,6 +1980,14 @@
                 ttsSpeedValue.textContent = formatSpeedDisplay(ttsNarrationSpeed);
             }
             refreshOverlayMeta();
+        }
+
+        function updateAutoContinueUI() {
+            if (!ttsAutoContinueToggle) {
+                return;
+            }
+            ttsAutoContinueToggle.textContent = `Auto-continue: ${autoContinueEnabled ? 'On' : 'Off'}`;
+            ttsAutoContinueToggle.setAttribute('aria-pressed', autoContinueEnabled ? 'true' : 'false');
         }
 
         function applySpeedToTTS() {
@@ -2107,6 +2251,10 @@
             parts.push(`${wordCount} word${plural}`);
             const activeSpeed = Number.isFinite(ttsPlaybackSpeed) ? ttsPlaybackSpeed : ttsNarrationSpeed;
             parts.push(formatSpeedDisplay(activeSpeed));
+            const remainingQueue = narrationQueue.length;
+            if (remainingQueue > 0) {
+                parts.push(`${remainingQueue} queued`);
+            }
             ttsOverlayMeta.textContent = parts.join(' • ');
         }
 
@@ -2222,6 +2370,9 @@
             }
             resolvePlaybackAbort();
             hideOverlay();
+            if (ttsOverlaySkip && (!queueProcessing && narrationQueue.length === 0)) {
+                ttsOverlaySkip.disabled = true;
+            }
             if (silent) {
                 ttsPlaybackStart = null;
                 ttsPlaybackEstimateMs = 0;
@@ -2798,12 +2949,38 @@
             return { player, playbackPromise: combinedPromise };
         }
 
+        async function waitForPlaybackCompletion({ player, playbackPromise, estimateMs }) {
+            const start = performance.now();
+            try {
+                await playbackPromise;
+            } catch (error) {
+                console.debug('[TTS] Playback promise rejected early', error);
+            }
+            const elapsed = performance.now() - start;
+            const playerDurationMs = player && Number.isFinite(player.duration) && player.duration > 0
+                ? player.duration * 1000
+                : null;
+            const targetMs = playerDurationMs || estimateMs || 0;
+            if (!targetMs) {
+                return;
+            }
+            const minTarget = Math.max(targetMs, 2000);
+            const threshold = Math.min(minTarget * 0.85, Math.max(minTarget - 400, minTarget * 0.5));
+            if (elapsed < threshold) {
+                const remaining = Math.max(minTarget - elapsed, 800);
+                console.debug('[TTS] Playback ended early; waiting fallback duration', { elapsed, remaining });
+                await delay(remaining);
+            }
+        }
+
         function requestSelectionPlayback() {
             if (!currentDocumentUrl) {
                 console.debug('[TTS] Read request ignored: no current document');
                 showBookmarkStatus('Open a PDF before using read aloud.');
                 return;
             }
+            clearQueue();
+            queueProcessing = false;
             ensureViewerLoaded();
             if (!viewerReady || !viewer.contentWindow) {
                 console.debug('[TTS] Viewer not ready for selection playback', {
@@ -2826,6 +3003,19 @@
                 showBookmarkStatus('Open a PDF before using read aloud.');
                 return;
             }
+            if (autoContinueEnabled) {
+                const page = resolveCurrentPageForQueue();
+                if (page) {
+                    clearQueue();
+                    enqueuePage(page);
+                    enqueuePage(page + 1);
+                    queueProcessing = false;
+                    processQueue();
+                    return;
+                }
+            }
+            clearQueue();
+            queueProcessing = false;
             ensureViewerLoaded();
             if (!viewerReady || !viewer.contentWindow) {
                 console.debug('[TTS] Viewer not ready for page playback', {
@@ -2880,12 +3070,7 @@
                     overlayLabel
                 });
                 const { playbackPromise, player } = await speakText(normalizedText, { ensure: false });
-                if (player) {
-                    await playbackPromise.catch(() => {});
-                } else {
-                    const fallbackPromise = delay(Math.max(estimateMs, 2000) + 500);
-                    await Promise.allSettled([playbackPromise, fallbackPromise]);
-                }
+                await waitForPlaybackCompletion({ player, playbackPromise, estimateMs });
                 stopPlaybackProgress({ success: true });
             } catch (error) {
                 console.error('TTS playback failed:', error);
@@ -2895,6 +3080,68 @@
                 });
                 stopPlaybackProgress({ success: false, message: 'Unable to read selection right now.' });
             }
+        }
+
+        async function handleQueuePageText(payload) {
+            const queueId = payload && Number(payload.queueId);
+            const pageNumberRaw = payload && payload.pageNumber;
+            const pageNumber = Number.isFinite(Number(pageNumberRaw)) ? Math.max(1, Math.floor(Number(pageNumberRaw))) : null;
+            const payloadUrl = payload && payload.url ? normalizePDFPath(payload.url) : null;
+            const payloadError = payload && payload.error ? String(payload.error) : null;
+            if (!queueCurrentItem || queueCurrentItem.id !== queueId) {
+                console.debug('[TTS][queue] Ignoring stale queue payload', { queueId, queueCurrentItem });
+                return;
+            }
+            if (payloadUrl && currentDocumentUrl && payloadUrl !== currentDocumentUrl) {
+                console.debug('[TTS][queue] Payload URL mismatch', { payloadUrl, currentDocumentUrl });
+                queueProcessing = false;
+                queueCurrentItem = null;
+                return;
+            }
+            const rawText = (payload && payload.text ? String(payload.text) : '').trim();
+            if (!rawText) {
+                if (payloadError) {
+                    console.debug('[TTS][queue] Viewer reported error:', payloadError);
+                }
+                showBookmarkStatus('Unable to read this queued page.');
+                queueCurrentItem = null;
+                runNextQueueItem();
+                return;
+            }
+            const normalizedText = normalizeNarrationText(rawText);
+            if (!normalizedText) {
+                showBookmarkStatus('Unable to read this queued page.');
+                queueCurrentItem = null;
+                runNextQueueItem();
+                return;
+            }
+            try {
+                abortActiveSpeech();
+                await ensureTTSReady();
+                const estimateMs = estimateSpeechDurationMs(normalizedText, ttsNarrationSpeed);
+                const statusLabel = pageNumber ? `page ${pageNumber}` : 'page';
+                const overlayLabel = pageNumber ? `Page ${pageNumber}` : 'Page';
+                startPlaybackProgress(normalizedText, estimateMs, { statusLabel, overlayLabel });
+                const { playbackPromise, player } = await speakText(normalizedText, { ensure: false });
+                await waitForPlaybackCompletion({ player, playbackPromise, estimateMs });
+                stopPlaybackProgress({ success: true });
+            } catch (error) {
+                console.error('[TTS][queue] Playback failed:', error);
+                setTTSStatus('Unable to read this queued page.', {
+                    variant: 'error',
+                    timeout: 5200
+                });
+                stopPlaybackProgress({ success: false, message: 'Unable to read this queued page.' });
+                queueProcessing = false;
+                queueCurrentItem = null;
+                updateQueueUI();
+                return;
+            }
+            queueCurrentItem = null;
+            if (pageNumber) {
+                autoEnqueueNext(pageNumber);
+            }
+            runNextQueueItem();
         }
 
         async function handlePageText(payload) {
@@ -2938,12 +3185,7 @@
                 const overlayLabel = pageNumber ? `Page ${pageNumber}` : 'Page';
                 startPlaybackProgress(normalizedText, estimateMs, { statusLabel, overlayLabel });
                 const { playbackPromise, player } = await speakText(normalizedText, { ensure: false });
-                if (player) {
-                    await playbackPromise.catch(() => {});
-                } else {
-                    const fallbackPromise = delay(Math.max(estimateMs, 2000) + 500);
-                    await Promise.allSettled([playbackPromise, fallbackPromise]);
-                }
+                await waitForPlaybackCompletion({ player, playbackPromise, estimateMs });
                 stopPlaybackProgress({ success: true });
             } catch (error) {
                 console.error('TTS page playback failed:', error);
@@ -3155,6 +3397,7 @@
                     sidebarToggle.setAttribute('aria-expanded', sidebar.classList.contains('open') ? 'true' : 'false');
                 }
             }
+            updateQueueUI();
         }
 
         function showBookmarkStatus(message) {
@@ -3243,6 +3486,7 @@
             if (!currentDocumentUrl) {
                 return;
             }
+            currentPageNumber = rawPage;
             saveBookmark(currentDocumentUrl, rawPage);
         }
 
@@ -3258,6 +3502,7 @@
             if (!currentDocumentKey) {
                 return;
             }
+            currentPageNumber = rawPage;
             scheduleAutoSave(sourceUrl, rawPage);
         }
 
@@ -3406,7 +3651,11 @@
                 return;
             }
             if (type === 'pageText') {
-                handlePageText(payload);
+                if (payload && payload.context === 'queue') {
+                    handleQueuePageText(payload);
+                } else {
+                    handlePageText(payload);
+                }
                 return;
             }
             if (type === 'pageChanged') {
@@ -3425,6 +3674,7 @@
             abortActiveSpeech();
             hideOverlay();
             teardownEbook();
+            clearQueue();
 
             if (externalViewer) {
                 externalViewer.style.display = 'none';
@@ -3454,8 +3704,11 @@
             const targetPage = Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : savedPage;
 
             lastAutoSaved = { url: currentDocumentKey, pageNumber: targetPage || null };
+            currentPageNumber = targetPage || null;
             rememberLastDocument(currentDocumentUrl, targetPage);
             updateBookmarkUI();
+            updateQueueUI();
+            clearQueue();
             showBookmarkStatus('');
 
             sendOpenRequest(targetPage != null ? { pageNumber: targetPage } : {});
@@ -3499,6 +3752,156 @@
 
         function isEbookLikeUrl(url) {
             return isEpubLikeUrl(url) || isMobiLikeUrl(url);
+        }
+
+        function updateQueueUI() {
+            const count = narrationQueue.length;
+            if (ttsQueueCount) {
+                ttsQueueCount.textContent = String(count);
+            }
+            if (ttsQueueList) {
+                ttsQueueList.innerHTML = '';
+                narrationQueue.slice(0, 12).forEach(page => {
+                    const chip = document.createElement('span');
+                    chip.className = 'tts-queue-chip';
+                    chip.textContent = `Page ${page}`;
+                    ttsQueueList.appendChild(chip);
+                });
+            }
+            const hasDocument = Boolean(currentDocumentUrl);
+            const enableQueueActions = hasDocument && count >= 0;
+            if (ttsQueueCurrentButton) {
+                ttsQueueCurrentButton.disabled = !hasDocument;
+            }
+            if (ttsQueueNextButton) {
+                ttsQueueNextButton.disabled = !hasDocument;
+            }
+            if (ttsQueueStartButton) {
+                ttsQueueStartButton.disabled = !enableQueueActions || count === 0;
+            }
+            if (ttsQueueClearButton) {
+                ttsQueueClearButton.disabled = !enableQueueActions || count === 0;
+            }
+            if (ttsQueueSkipButton) {
+                ttsQueueSkipButton.disabled = !enableQueueActions || (count === 0 && !queueProcessing);
+            }
+            if (ttsOverlaySkip) {
+                ttsOverlaySkip.disabled = !queueProcessing && narrationQueue.length === 0;
+            }
+            updateAutoContinueUI();
+        }
+
+        function clearQueue() {
+            narrationQueue = [];
+            queueCurrentItem = null;
+            queueProcessing = false;
+            lastQueuedPage = null;
+            updateQueueUI();
+        }
+
+        function enqueuePage(pageNumber) {
+            if (!Number.isInteger(pageNumber) || pageNumber <= 0) {
+                showBookmarkStatus('No page number available to queue.');
+                return false;
+            }
+            const MAX_QUEUE = 10;
+            if (narrationQueue.length >= MAX_QUEUE) {
+                showBookmarkStatus(`Queue limit reached (${MAX_QUEUE}).`);
+                return false;
+            }
+            if (narrationQueue.includes(pageNumber)) {
+                return false;
+            }
+            if (queueCurrentItem && queueCurrentItem.pageNumber === pageNumber) {
+                return false;
+            }
+            narrationQueue.push(pageNumber);
+            if (!lastQueuedPage || pageNumber > lastQueuedPage) {
+                lastQueuedPage = pageNumber;
+            }
+            updateQueueUI();
+            return true;
+        }
+
+        function processQueue() {
+            if (!currentDocumentUrl) {
+                showBookmarkStatus('Open a PDF before starting the queue.');
+                return;
+            }
+            if (!narrationQueue.length) {
+                showBookmarkStatus('Queue is empty.');
+                return;
+            }
+            if (queueProcessing) {
+                return;
+            }
+            queueProcessing = true;
+            if (ttsOverlaySkip) {
+                ttsOverlaySkip.disabled = false;
+            }
+            runNextQueueItem();
+        }
+
+        function runNextQueueItem() {
+            if (!queueProcessing) {
+                return;
+            }
+            if (!narrationQueue.length) {
+                queueProcessing = false;
+                queueCurrentItem = null;
+                showBookmarkStatus('Finished reading queue.');
+                updateQueueUI();
+                if (ttsOverlaySkip) {
+                    ttsOverlaySkip.disabled = true;
+                }
+                return;
+            }
+            const nextPage = narrationQueue.shift();
+            updateQueueUI();
+            queueCurrentItem = {
+                pageNumber: nextPage,
+                id: ++queueIdCounter
+            };
+            requestPageTextForQueue(queueCurrentItem);
+        }
+
+        function requestPageTextForQueue(item) {
+            if (!item || !currentDocumentUrl) {
+                queueProcessing = false;
+                queueCurrentItem = null;
+                updateQueueUI();
+                return;
+            }
+            ensureViewerLoaded();
+            if (!viewerReady || !viewer.contentWindow) {
+                showBookmarkStatus('Viewer is still loading. Try again shortly.');
+                queueProcessing = false;
+                queueCurrentItem = null;
+                updateQueueUI();
+                return;
+            }
+            viewer.contentWindow.postMessage(
+                {
+                    type: 'requestPageText',
+                    payload: {
+                        pageNumber: item.pageNumber,
+                        context: 'queue',
+                        queueId: item.id
+                    }
+                },
+                messageTargetOrigin
+            );
+        }
+
+        function autoEnqueueNext(pageNumber) {
+            if (!autoContinueEnabled) {
+                return;
+            }
+            if (!Number.isInteger(pageNumber) || pageNumber <= 0) {
+                return;
+            }
+            const nextPage = pageNumber + 1;
+            enqueuePage(nextPage);
         }
 
         function openExternalResource(url, triggerElement) {
@@ -3567,6 +3970,7 @@
 
             selectExternalElement(triggerElement || null);
             teardownEbook();
+            clearQueue();
 
             if (viewer) {
                 viewer.style.display = 'none';
@@ -3801,6 +4205,65 @@
             });
         }
 
+        function resolveCurrentPageForQueue() {
+            if (Number.isInteger(currentPageNumber) && currentPageNumber > 0) {
+                return currentPageNumber;
+            }
+            if (lastAutoSaved && Number.isInteger(lastAutoSaved.pageNumber) && lastAutoSaved.pageNumber > 0) {
+                return lastAutoSaved.pageNumber;
+            }
+            return null;
+        }
+
+        if (ttsQueueCurrentButton) {
+            ttsQueueCurrentButton.addEventListener('click', () => {
+                const page = resolveCurrentPageForQueue();
+                if (enqueuePage(page)) {
+                    showBookmarkStatus(`Queued page ${page}.`);
+                }
+            });
+        }
+
+        if (ttsQueueNextButton) {
+            ttsQueueNextButton.addEventListener('click', () => {
+                const page = resolveCurrentPageForQueue();
+                if (!page) {
+                    showBookmarkStatus('No page available to queue.');
+                    return;
+                }
+                if (enqueuePage(page + 1)) {
+                    showBookmarkStatus(`Queued page ${page + 1}.`);
+                }
+            });
+        }
+
+        if (ttsQueueStartButton) {
+            ttsQueueStartButton.addEventListener('click', () => {
+                processQueue();
+            });
+        }
+
+        if (ttsQueueClearButton) {
+            ttsQueueClearButton.addEventListener('click', () => {
+                clearQueue();
+                showBookmarkStatus('Queue cleared.');
+            });
+        }
+
+        if (ttsQueueSkipButton) {
+            ttsQueueSkipButton.addEventListener('click', () => {
+                skipQueueItem();
+            });
+        }
+
+        if (ttsAutoContinueToggle) {
+            ttsAutoContinueToggle.addEventListener('click', () => {
+                autoContinueEnabled = !autoContinueEnabled;
+                updateAutoContinueUI();
+                storeAutoContinue(autoContinueEnabled);
+            });
+        }
+
         if (ebookPrev) {
             ebookPrev.addEventListener('click', () => {
                 if (currentEbookRendition && typeof currentEbookRendition.prev === 'function') {
@@ -3834,12 +4297,33 @@
             });
         }
 
+        if (ttsOverlaySkip) {
+            ttsOverlaySkip.addEventListener('click', () => {
+                skipQueueItem();
+            });
+        }
+
         if (ttsOverlayStop) {
             ttsOverlayStop.addEventListener('click', () => {
                 console.debug('[TTS] Stop button pressed');
                 abortActiveSpeech();
                 stopPlaybackProgress({ success: false, message: 'Playback cancelled.' });
+                queueProcessing = false;
+                queueCurrentItem = null;
+                narrationQueue = [];
+                lastQueuedPage = null;
+                updateQueueUI();
             });
+        }
+
+        function skipQueueItem() {
+            if (!queueProcessing && !narrationQueue.length) {
+                return;
+            }
+            abortActiveSpeech();
+            stopPlaybackProgress({ silent: true });
+            queueProcessing = true;
+            runNextQueueItem();
         }
 
         function restoreLastDocument() {
