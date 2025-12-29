@@ -90,9 +90,19 @@
         }
 
         @media (min-width: 768px) {
+            body.sidebar-hidden .app-shell {
+                grid-template-columns: 1fr 260px;
+                grid-template-areas: "reader tools";
+            }
+
             body.tools-pane-hidden .app-shell {
                 grid-template-columns: 280px 1fr;
                 grid-template-areas: "sidebar reader";
+            }
+
+            body.sidebar-hidden.tools-pane-hidden .app-shell {
+                grid-template-columns: 1fr;
+                grid-template-areas: "reader";
             }
 
             body.tools-pane-hidden #tools-pane {
@@ -240,6 +250,10 @@
             overflow: hidden;
             flex-shrink: 0;
             transition: transform 0.25s ease;
+        }
+
+        body.sidebar-hidden #sidebar {
+            display: none;
         }
 
         #header {
@@ -859,7 +873,23 @@
         }
 
         #sidebar-toggle {
-            display: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border: 1px solid var(--theme-border);
+            border-radius: 10px;
+            background: var(--theme-muted);
+            color: var(--theme-text);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: var(--theme-shadow-soft);
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+        }
+
+        #sidebar-toggle:hover {
+            background: var(--theme-panel);
         }
 
         #tts-floating-controls {
@@ -971,7 +1001,7 @@
             position: fixed;
             left: 50%;
             transform: translateX(-50%);
-            bottom: 12px;
+            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
             display: none;
             gap: 8px;
             padding: 8px 10px;
@@ -987,6 +1017,129 @@
             pointer-events: none;
         }
 
+        body.tools-bottom-bar-hidden #tools-bottom-bar {
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, 16px);
+        }
+
+        #tools-bottom-bubble {
+            position: fixed;
+            left: 12px;
+            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: var(--theme-panel);
+            color: var(--theme-text);
+            border: 1px solid var(--theme-border);
+            box-shadow: var(--theme-shadow-soft);
+            font-weight: 600;
+            font-size: 12px;
+            z-index: 1200;
+            cursor: pointer;
+        }
+
+        body.tools-sheet-open #tools-bottom-bubble {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #shortcuts-backdrop {
+            position: fixed;
+            inset: 0;
+            background: var(--theme-overlay);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 1400;
+        }
+
+        #shortcuts-backdrop.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        #shortcuts-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.98);
+            width: min(420px, 92vw);
+            background: var(--theme-panel);
+            color: var(--theme-text);
+            border: 1px solid var(--theme-border);
+            border-radius: 16px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
+            padding: 18px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 1410;
+        }
+
+        #shortcuts-modal.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .shortcuts-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .shortcuts-title {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .shortcuts-close {
+            border: 1px solid var(--theme-border);
+            background: var(--theme-muted);
+            color: var(--theme-text);
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .shortcuts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .shortcuts-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .shortcuts-keys {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            font-family: "SFMono-Regular", "Menlo", "Consolas", "Liberation Mono", monospace;
+        }
+
+        .shortcuts-keys kbd {
+            padding: 2px 6px;
+            border-radius: 6px;
+            border: 1px solid var(--theme-border);
+            background: var(--theme-muted);
+            font-size: 12px;
+        }
+
         #tools-bottom-bar button {
             border: none;
             background: transparent;
@@ -996,6 +1149,12 @@
             border-radius: 10px;
             cursor: pointer;
             transition: background 0.2s ease;
+        }
+
+        #tools-bottom-bar .text-button {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
         }
 
         #tools-bottom-bar button:hover:not(:disabled) {
@@ -1038,20 +1197,6 @@
             #sidebar.open {
                 display: flex;
                 transform: translateX(0);
-            }
-
-            #sidebar-toggle {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                padding: 8px 12px;
-                border: 1px solid var(--theme-border);
-                border-radius: 10px;
-                background: var(--theme-muted);
-                color: var(--theme-text);
-                font-weight: 600;
-                font-size: 14px;
-                box-shadow: var(--theme-shadow-soft);
             }
 
             #sidebar-backdrop {
@@ -1105,6 +1250,10 @@
             }
 
             #tools-bottom-bar {
+                display: inline-flex;
+            }
+
+            body.tools-bottom-bar-hidden #tools-bottom-bubble {
                 display: inline-flex;
             }
 
@@ -1530,10 +1679,11 @@
         <main id="reader-pane">
             <div class="reader-topbar">
                 <div class="reader-topbar-left">
-                    <button id="sidebar-toggle" type="button" aria-label="Toggle library drawer" aria-controls="sidebar" aria-expanded="false">☰ Library</button>
+                    <button id="sidebar-toggle" type="button" aria-label="Toggle library" aria-controls="sidebar" aria-expanded="false" aria-pressed="false">Library</button>
                 </div>
                 <div class="reader-topbar-right">
                     <button id="tools-sheet-toggle" type="button" class="pill ghost" aria-label="Toggle tools panel" aria-expanded="false">Tools</button>
+                    <button id="shortcuts-toggle" type="button" class="pill ghost" aria-haspopup="dialog" aria-controls="shortcuts-modal" aria-expanded="false">Shortcuts</button>
                     <button id="theme-toggle" class="theme-toggle alt" type="button" aria-pressed="false" aria-label="Toggle theme">
                         <span class="theme-icon" aria-hidden="true">🌗</span>
                         <span class="theme-label">Toggle</span>
@@ -1645,15 +1795,46 @@
     <div id="sidebar-backdrop" aria-hidden="true"></div>
 
     <div id="tools-bottom-bar" role="group" aria-label="Quick reading tools">
+        <button id="quick-library-toggle" type="button" class="text-button" aria-label="Toggle library">Library</button>
         <button id="quick-bookmark-save" type="button" aria-label="Bookmark page">🔖</button>
         <button id="quick-bookmark-resume" type="button" aria-label="Resume bookmark">⏩</button>
         <button id="quick-tts-read-selection" type="button" aria-label="Read selection">🔊</button>
         <button id="quick-tts-read-page" type="button" aria-label="Read page">📖</button>
         <button id="tools-sheet-toggle-mobile" type="button" aria-label="Open tools sheet">⋯</button>
+        <button id="tools-bottom-bar-hide" type="button" class="text-button" aria-label="Hide tools bar">Hide</button>
     </div>
 
+    <button id="tools-bottom-bubble" type="button" aria-label="Show tools bar" aria-hidden="true">Tools</button>
+
     <div id="tools-sheet-backdrop" aria-hidden="true"></div>
-<div id="tts-overlay" role="dialog" aria-live="polite" aria-label="Narration player">
+
+    <div id="shortcuts-backdrop" aria-hidden="true"></div>
+    <div id="shortcuts-modal" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" aria-hidden="true">
+        <div class="shortcuts-header">
+            <div class="shortcuts-title">Keyboard shortcuts</div>
+            <button id="shortcuts-close" type="button" class="shortcuts-close">Close</button>
+        </div>
+        <div class="shortcuts-list">
+            <div class="shortcuts-item">
+                <span>Toggle library pane</span>
+                <span class="shortcuts-keys"><kbd>L</kbd></span>
+            </div>
+            <div class="shortcuts-item">
+                <span>Toggle tools pane</span>
+                <span class="shortcuts-keys"><kbd>T</kbd></span>
+            </div>
+            <div class="shortcuts-item">
+                <span>Show shortcuts</span>
+                <span class="shortcuts-keys"><kbd>?</kbd><kbd>H</kbd></span>
+            </div>
+            <div class="shortcuts-item">
+                <span>Close dialogs</span>
+                <span class="shortcuts-keys"><kbd>Esc</kbd></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="tts-overlay" role="dialog" aria-live="polite" aria-label="Narration player">
         <div class="tts-overlay-header">
             <span>Reading selection</span>
             <span class="tts-overlay-time" id="tts-overlay-time">0:00 / 0:00</span>
@@ -1704,6 +1885,13 @@
         const toolsSheetToggleMobile = document.getElementById('tools-sheet-toggle-mobile');
         const toolsSheetBackdrop = document.getElementById('tools-sheet-backdrop');
         const toolsBottomBar = document.getElementById('tools-bottom-bar');
+        const toolsBottomBarHide = document.getElementById('tools-bottom-bar-hide');
+        const toolsBottomBubble = document.getElementById('tools-bottom-bubble');
+        const libraryToggleMobile = document.getElementById('quick-library-toggle');
+        const shortcutsToggle = document.getElementById('shortcuts-toggle');
+        const shortcutsModal = document.getElementById('shortcuts-modal');
+        const shortcutsBackdrop = document.getElementById('shortcuts-backdrop');
+        const shortcutsClose = document.getElementById('shortcuts-close');
         const tabletQuery = window.matchMedia('(max-width: 1023px)');
         const mobileQuery = window.matchMedia('(max-width: 767px)');
         const isFileProtocol = window.location.protocol === 'file:';
@@ -1756,6 +1944,9 @@
         const AUTO_CONTINUE_KEY = 'ttsAutoContinue';
         const AUTO_SAVE_DEBOUNCE_MS = 2000;
         const AUTO_SAVE_IDLE_TIMEOUT_MS = 5000;
+        const SIDEBAR_HIDDEN_KEY = 'libraryPaneHidden';
+        const TOOLS_PANE_HIDDEN_KEY = 'toolsPaneHidden';
+        const TOOLS_BOTTOM_BAR_HIDDEN_KEY = 'toolsBottomBarHidden';
 
         function getStoredThemePreference() {
             try {
@@ -1764,6 +1955,27 @@
             } catch (error) {
                 console.debug('[theme] Unable to read stored theme', error);
                 return null;
+            }
+        }
+
+        function readStoredBoolean(key, fallback = false) {
+            try {
+                const stored = localStorage.getItem(key);
+                if (stored === null) {
+                    return fallback;
+                }
+                return stored === 'true';
+            } catch (error) {
+                console.debug('[storage] Unable to read stored flag', key, error);
+                return fallback;
+            }
+        }
+
+        function storeBoolean(key, value) {
+            try {
+                localStorage.setItem(key, value ? 'true' : 'false');
+            } catch (error) {
+                console.debug('[storage] Unable to persist flag', key, error);
             }
         }
 
@@ -1873,6 +2085,86 @@
             }
         }
 
+        function syncSidebarToggleUI() {
+            if (!sidebarToggle) {
+                return;
+            }
+            const isDrawerMode = tabletQuery.matches;
+            const isOpen = sidebar && sidebar.classList.contains('open');
+            if (isDrawerMode) {
+                sidebarToggle.textContent = 'Library';
+                sidebarToggle.setAttribute('aria-label', isOpen ? 'Close library' : 'Open library');
+                sidebarToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                if (sidebar) {
+                    sidebar.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+                }
+            } else {
+                sidebarToggle.textContent = sidebarHidden ? 'Show library' : 'Hide library';
+                sidebarToggle.setAttribute('aria-label', sidebarHidden ? 'Show library pane' : 'Hide library pane');
+                sidebarToggle.setAttribute('aria-expanded', sidebarHidden ? 'false' : 'true');
+                if (sidebar) {
+                    sidebar.setAttribute('aria-hidden', sidebarHidden ? 'true' : 'false');
+                }
+            }
+            sidebarToggle.setAttribute('aria-pressed', sidebarHidden ? 'true' : 'false');
+            if (libraryToggleMobile) {
+                libraryToggleMobile.setAttribute('aria-label', isOpen ? 'Close library' : 'Open library');
+            }
+        }
+
+        function setSidebarHidden(hidden, options = {}) {
+            const { persist = true } = options;
+            sidebarHidden = hidden;
+            document.body.classList.toggle('sidebar-hidden', hidden);
+            if (sidebar) {
+                sidebar.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+            }
+            if (hidden) {
+                setSidebarOpen(false);
+            }
+            if (persist) {
+                storeBoolean(SIDEBAR_HIDDEN_KEY, hidden);
+            }
+            syncSidebarToggleUI();
+        }
+
+        function applyBottomBarState() {
+            const isMobile = mobileQuery.matches;
+            const shouldHide = isMobile && toolsBottomBarHidden;
+            document.body.classList.toggle('tools-bottom-bar-hidden', shouldHide);
+            if (toolsBottomBar) {
+                toolsBottomBar.setAttribute('aria-hidden', !isMobile || shouldHide ? 'true' : 'false');
+            }
+            if (toolsBottomBubble) {
+                toolsBottomBubble.setAttribute('aria-hidden', shouldHide ? 'false' : 'true');
+            }
+        }
+
+        function setBottomBarHidden(hidden, options = {}) {
+            const { persist = true } = options;
+            toolsBottomBarHidden = hidden;
+            if (persist) {
+                storeBoolean(TOOLS_BOTTOM_BAR_HIDDEN_KEY, hidden);
+            }
+            if (hidden && mobileQuery.matches) {
+                closeToolsSheet();
+            }
+            applyBottomBarState();
+        }
+
+        function syncBottomBarVisibility() {
+            applyBottomBarState();
+        }
+
+        function initializePaneState() {
+            setSidebarHidden(sidebarHidden, { persist: false });
+            setToolsPaneCollapsed(toolsPaneHidden, { persist: false });
+            setBottomBarHidden(toolsBottomBarHidden, { persist: false });
+            syncSidebarToggleUI();
+            syncToolsPaneToggle();
+            syncBottomBarVisibility();
+        }
+
         function syncToolsPaneToggle() {
             if (!toolsSheetToggle) {
                 return;
@@ -1893,16 +2185,22 @@
             }
         }
 
-        function setToolsPaneCollapsed(collapsed) {
+        function setToolsPaneCollapsed(collapsed, options = {}) {
+            const { persist = true } = options;
             if (!toolsPane) {
                 return;
             }
             if (collapsed) {
                 document.body.classList.add('tools-pane-hidden');
                 toolsPane.setAttribute('aria-hidden', 'true');
+                toolsPaneHidden = true;
             } else {
                 document.body.classList.remove('tools-pane-hidden');
                 toolsPane.setAttribute('aria-hidden', 'false');
+                toolsPaneHidden = false;
+            }
+            if (persist) {
+                storeBoolean(TOOLS_PANE_HIDDEN_KEY, collapsed);
             }
             syncToolsPaneToggle();
         }
@@ -1966,6 +2264,50 @@
             toggleToolsPaneVisibility();
         }
 
+        function openShortcutsModal() {
+            if (!shortcutsModal || !shortcutsBackdrop) {
+                return;
+            }
+            shortcutsModal.classList.add('visible');
+            shortcutsBackdrop.classList.add('visible');
+            shortcutsModal.setAttribute('aria-hidden', 'false');
+            shortcutsBackdrop.setAttribute('aria-hidden', 'false');
+            if (shortcutsToggle) {
+                shortcutsToggle.setAttribute('aria-expanded', 'true');
+            }
+            document.body.classList.add('shortcuts-open');
+            if (shortcutsClose) {
+                shortcutsClose.focus();
+            }
+        }
+
+        function closeShortcutsModal() {
+            if (!shortcutsModal || !shortcutsBackdrop) {
+                return;
+            }
+            shortcutsModal.classList.remove('visible');
+            shortcutsBackdrop.classList.remove('visible');
+            shortcutsModal.setAttribute('aria-hidden', 'true');
+            shortcutsBackdrop.setAttribute('aria-hidden', 'true');
+            if (shortcutsToggle) {
+                shortcutsToggle.setAttribute('aria-expanded', 'false');
+                shortcutsToggle.focus();
+            }
+            document.body.classList.remove('shortcuts-open');
+        }
+
+        function isTextInputTarget(target) {
+            if (!target) {
+                return false;
+            }
+            const element = target.closest ? target.closest('input, textarea, select, [contenteditable="true"]') : null;
+            if (element) {
+                return true;
+            }
+            const tag = (target.tagName || '').toLowerCase();
+            return tag === 'input' || tag === 'textarea' || tag === 'select' || target.isContentEditable;
+        }
+
         let viewerReady = false;
         let pendingFile = null;
         let currentDocumentUrl = null;
@@ -2008,6 +2350,9 @@
         let queueIdCounter = 0;
         let lastQueuedPage = null;
         let autoContinueEnabled = loadStoredAutoContinue();
+        let sidebarHidden = readStoredBoolean(SIDEBAR_HIDDEN_KEY, false);
+        let toolsPaneHidden = readStoredBoolean(TOOLS_PANE_HIDDEN_KEY, false);
+        let toolsBottomBarHidden = readStoredBoolean(TOOLS_BOTTOM_BAR_HIDDEN_KEY, false);
         let searchIndex = null;
         let searchDocuments = [];
         let searchActive = false;
@@ -2024,7 +2369,7 @@
         updateSpeedUI();
         updateAutoContinueUI();
         applySpeedToTTS();
-        syncToolsPaneToggle();
+        initializePaneState();
 
         function loadBookmarks() {
             try {
@@ -3378,6 +3723,12 @@
             if (!sidebar) {
                 return;
             }
+            if (open && sidebarHidden) {
+                setSidebarHidden(false);
+            }
+            if (sidebarHidden) {
+                open = false;
+            }
             if (open) {
                 sidebar.classList.add('open');
                 if (sidebarBackdrop) {
@@ -3397,6 +3748,7 @@
                     sidebarToggle.setAttribute('aria-expanded', 'false');
                 }
             }
+            syncSidebarToggleUI();
         }
 
         function handleViewportChange(event) {
@@ -3410,16 +3762,42 @@
                 closeToolsSheet();
             }
             syncToolsPaneToggle();
+            syncSidebarToggleUI();
+            syncBottomBarVisibility();
         }
 
         function handleMobileQueryChange() {
             closeToolsSheet();
             syncToolsPaneToggle();
+            syncBottomBarVisibility();
+            syncSidebarToggleUI();
         }
 
         if (sidebarToggle) {
             sidebarToggle.addEventListener('click', () => {
+                if (tabletQuery.matches) {
+                    if (sidebarHidden) {
+                        setSidebarHidden(false);
+                        setSidebarOpen(true);
+                        return;
+                    }
+                    const isOpen = sidebar.classList.contains('open');
+                    setSidebarOpen(!isOpen);
+                    return;
+                }
+                setSidebarHidden(!sidebarHidden);
+            });
+        }
+
+        if (libraryToggleMobile) {
+            libraryToggleMobile.addEventListener('click', () => {
                 if (!tabletQuery.matches) {
+                    setSidebarHidden(!sidebarHidden);
+                    return;
+                }
+                if (sidebarHidden) {
+                    setSidebarHidden(false);
+                    setSidebarOpen(true);
                     return;
                 }
                 const isOpen = sidebar.classList.contains('open');
@@ -3444,6 +3822,26 @@
             toolsSheetBackdrop.addEventListener('click', closeToolsSheet);
         }
 
+        if (toolsBottomBarHide) {
+            toolsBottomBarHide.addEventListener('click', () => setBottomBarHidden(true));
+        }
+
+        if (toolsBottomBubble) {
+            toolsBottomBubble.addEventListener('click', () => setBottomBarHidden(false));
+        }
+
+        if (shortcutsToggle) {
+            shortcutsToggle.addEventListener('click', () => openShortcutsModal());
+        }
+
+        if (shortcutsClose) {
+            shortcutsClose.addEventListener('click', () => closeShortcutsModal());
+        }
+
+        if (shortcutsBackdrop) {
+            shortcutsBackdrop.addEventListener('click', () => closeShortcutsModal());
+        }
+
         if (tabletQuery.addEventListener) {
             tabletQuery.addEventListener('change', handleViewportChange);
         } else if (tabletQuery.addListener) {
@@ -3456,12 +3854,48 @@
             mobileQuery.addListener(handleMobileQueryChange);
         }
 
-        document.addEventListener('keydown', (event) => {
+        function handleGlobalKeydown(event) {
+            if (!event) {
+                return;
+            }
             if (event.key === 'Escape') {
+                if (shortcutsModal && shortcutsModal.classList.contains('visible')) {
+                    closeShortcutsModal();
+                    return;
+                }
                 setSidebarOpen(false);
                 closeToolsSheet();
+                return;
             }
-        });
+            if (shortcutsModal && shortcutsModal.classList.contains('visible')) {
+                return;
+            }
+            if (event.ctrlKey || event.metaKey || event.altKey) {
+                return;
+            }
+            if (isTextInputTarget(event.target)) {
+                return;
+            }
+            const key = event.key ? event.key.toLowerCase() : '';
+            if (key === 'l') {
+                event.preventDefault();
+                if (sidebarToggle) {
+                    sidebarToggle.click();
+                }
+                return;
+            }
+            if (key === 't') {
+                event.preventDefault();
+                toggleToolsSheet();
+                return;
+            }
+            if (key === 'h' || event.key === '?') {
+                event.preventDefault();
+                openShortcutsModal();
+            }
+        }
+
+        document.addEventListener('keydown', handleGlobalKeydown);
 
         function normalizePDFPath(path) {
             if (!path) {
@@ -3576,9 +4010,7 @@
                 if (bookmarkControls) {
                     bookmarkControls.setAttribute('aria-live', 'polite');
                 }
-                if (sidebarToggle) {
-                    sidebarToggle.setAttribute('aria-expanded', sidebar.classList.contains('open') ? 'true' : 'false');
-                }
+                syncSidebarToggleUI();
             }
             updateQueueUI();
         }
