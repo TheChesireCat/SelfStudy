@@ -48,6 +48,8 @@ This repository is a curated collection of course materials and books to build a
 #### Computer Science
 - **Algorithms**
   - [Introduction to Algorithms, 4th Edition (CLRS)](./01-Foundations/Computer-Science/Algorithms/Introduction-to-Algorithms-4th-Ed-CLRS.pdf)
+  - [Algorithm Design (Kleinberg & Tardos)](./01-Foundations/Computer-Science/Algorithms/%28KT%29%20Algorithm%20Design%20by%20Jon%20Kleinberg,%20Eva%20Tardos.pdf)
+  - [Algorithms (Jeff Erickson)](./01-Foundations/Computer-Science/Algorithms/Algorithms-JeffE.pdf)
 - **System Design**
   - [System Design Interview: An Insider's Guide (Alex Xu)](./01-Foundations/Computer-Science/System-Design/System-Design-Interview-Xu.pdf)
 
@@ -55,12 +57,10 @@ This repository is a curated collection of course materials and books to build a
 - **Graph Theory**
   - [Graph Theory (Narsingh Deo)](./02-Network-Science/Graph-Theory/Graph-Theory-Deo.pdf)
 - **Complex Networks**
-  - [Modeling and Analysis of Complex Systems (Sayama)](./02-Network-Science/Complex-Networks/Modeling-and-Analysis-of-Complex-Systems-Sayama.pdf)
   - [Networks (Mark Newman, 2018)](./02-Network-Science/Complex-Networks/Networks-Newman-2018.pdf)
-  - [Networks - Alternative Edition (Newman)](./02-Network-Science/Complex-Networks/Networks-Newman-Alt-Edition.pdf)
   - [Networks, Crowds, and Markets (Easley & Kleinberg)](./02-Network-Science/Complex-Networks/Networks-Crowds-and-Markets-Easley-Kleinberg.pdf)
   - [Network Science (Barabási)](./02-Network-Science/Complex-Networks/Network-Science-Barabasi.pdf)
-  - [Modeling Notes](./02-Network-Science/Complex-Networks/01-sayama-modeling.md)
+  - [Handbook of Graph Drawing and Visualization (Tamassia, 2013 draft)](./02-Network-Science/Complex-Networks/Handbook%20of%20Graph%20Drawing%20and%20Visualization_%20Draft%20of%202013%20--%20Tamassia%20R_%20%28Ed_%29%20--%202013%20--%20d6e78ba7a942e1219d1be5b603984547%20--%20Anna%E2%80%99s%20Archive.pdf)
 - **Machine Learning on Graphs**
   - [CS224W: Machine Learning with Graphs (Stanford)](./02-Network-Science/Machine-Learning-on-Graphs/CS224W-Machine-Learning-with-Graphs-Stanford.pdf)
   - [Course README](./02-Network-Science/Machine-Learning-on-Graphs/README.md)
@@ -76,6 +76,7 @@ This repository is a curated collection of course materials and books to build a
 - **Urban Science**
   - [Introduction to Urban Science: Evidence and Theory of Cities as Complex Systems (Bettencourt, 2021)](./03-Complex-Systems/Urban-Science/Introduction-to-Urban-Science-Bettencourt-2021.pdf)
 - **General Complexity**
+  - [Modeling and Analysis of Complex Systems (Sayama)](./03-Complex-Systems/General-Complexity/Modeling-and-Analysis-of-Complex-Systems-Sayama.pdf)
   - More books to add here.
 
 ### 04-Applied-Methods
@@ -89,6 +90,7 @@ This repository is a curated collection of course materials and books to build a
 - [Complexity: A Guided Tour (Melanie Mitchell)](./05-General-Reading/Complexity-A-Guided-Tour-Mitchell.pdf)
 - [Scale (Geoffrey West)](./05-General-Reading/Scale-West.pdf)
 - [The Nature of Computation (Moore & Mertens)](./05-General-Reading/The-Nature-of-Computation-Moore-Mertens.pdf)
+- [The Feeling of Life Itself (Christof Koch)](./05-General-Reading/The-Feeling-of-Life-Itself-Christof-Koch.pdf)
 
 ## 🔗 External resources & online courses
 ### Deep Learning

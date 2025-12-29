@@ -7,6 +7,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext x='12' y='48' font-size='48'%3E%F0%9F%90%B1%3C/text%3E%3C/svg%3E">
     <script src="https://tts.rocks/tts.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/epubjs@0.3/dist/epub.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/minisearch@7.2.0/dist/umd/index.min.js" defer></script>
     
     <!-- PDF.js Viewer CSS -->
     <link href="https://cdn.jsdelivr.net/npm/pdf.js-viewer@0.2.8/viewer.min.css" rel="stylesheet">
@@ -86,6 +87,17 @@
             height: 100vh;
             width: 100%;
             flex: 1 1 auto;
+        }
+
+        @media (min-width: 768px) {
+            body.tools-pane-hidden .app-shell {
+                grid-template-columns: 280px 1fr;
+                grid-template-areas: "sidebar reader";
+            }
+
+            body.tools-pane-hidden #tools-pane {
+                display: none;
+            }
         }
 
         .pane {
@@ -225,11 +237,8 @@
             flex-direction: column;
             height: 100%;
             min-height: 0;
-            overflow-x: hidden;
-            overflow-y: auto;
+            overflow: hidden;
             flex-shrink: 0;
-            scrollbar-gutter: stable;
-            overscroll-behavior: contain;
             transition: transform 0.25s ease;
         }
 
@@ -304,6 +313,81 @@
             -webkit-overflow-scrolling: touch;
             background: var(--theme-panel);
             margin-top: 8px;
+            scrollbar-gutter: stable;
+        }
+
+        #library-search {
+            padding: 10px 15px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .library-search-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--theme-border);
+            background: var(--theme-muted);
+            box-shadow: var(--theme-shadow-soft);
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .library-search-input:focus-within {
+            border-color: var(--theme-accent);
+            box-shadow: var(--theme-focus);
+        }
+
+        #library-search-input {
+            border: none;
+            background: transparent;
+            color: var(--theme-text);
+            font-size: 13px;
+            width: 100%;
+            outline: none;
+        }
+
+        #library-search-input::placeholder {
+            color: var(--theme-text-muted);
+        }
+
+        #library-search-clear {
+            border: none;
+            background: transparent;
+            color: var(--theme-text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, color 0.2s ease;
+        }
+
+        #library-search-clear.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #library-search-clear:hover {
+            color: var(--theme-text);
+        }
+
+        #library-search-status {
+            font-size: 12px;
+            color: var(--theme-text-muted);
+            min-height: 16px;
+        }
+
+        .search-hidden {
+            display: none !important;
+        }
+
+        body.search-active .category-content.search-match,
+        body.search-active .file-list.search-match {
+            display: block;
         }
 
         .category {
@@ -940,19 +1024,19 @@
                 top: 0;
                 left: 0;
                 height: 100vh;
+                height: 100dvh;
                 width: 280px;
                 transform: translateX(-100%);
                 border-right: none;
                 border-bottom: none;
                 box-shadow: 2px 0 16px rgba(0, 0, 0, 0.25);
                 z-index: 1300;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
+                overflow: hidden;
                 display: none;
             }
 
             #sidebar.open {
-                display: block;
+                display: flex;
                 transform: translateX(0);
             }
 
@@ -984,6 +1068,10 @@
             #sidebar-backdrop.visible {
                 opacity: 1;
                 pointer-events: all;
+            }
+
+            #file-tree {
+                padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
             }
         }
 
@@ -1047,7 +1135,14 @@
                     <p style="font-family: 'SFMono-Regular', 'Menlo', 'Consolas', 'Liberation Mono', monospace;">walruses hubs whiskers knots; complex systems network science and beyond</p>
                 </div>
             </div>
-        <div id="file-tree">
+            <div id="library-search">
+                <div class="library-search-input">
+                    <input id="library-search-input" type="search" aria-label="Search library" placeholder="Search titles, categories, or subcategories" autocomplete="off">
+                    <button id="library-search-clear" type="button" aria-label="Clear search">Clear</button>
+                </div>
+                <div id="library-search-status">Type to filter the library.</div>
+            </div>
+            <div id="file-tree">
             <!-- 01-Foundations -->
             <div class="category">
                 <div class="category-header" onclick="toggleCategory(this)">
@@ -1151,6 +1246,10 @@
                                     <span class="file-icon">📄</span>
                                     <span>Introduction to Algorithms (CLRS)</span>
                                 </div>
+                                <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/01-Foundations/Computer-Science/Algorithms/%28KT%29%20Algorithm%20Design%20by%20Jon%20Kleinberg%2C%20Eva%20Tardos.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Algorithm Design (Kleinberg &amp; Tardos)</span>
+                                </div>
                                 <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/01-Foundations/Computer-Science/Algorithms/Algorithms-JeffE.pdf', this)">
                                     <span class="file-icon">📄</span>
                                     <span>Algorithms (Jeff Erickson)</span>
@@ -1195,17 +1294,9 @@
                             Complex Networks
                         </div>
                         <div class="file-list">
-                            <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/02-Network-Science/Complex-Networks/Modeling-and-Analysis-of-Complex-Systems-Sayama.pdf', this)">
-                                <span class="file-icon">📄</span>
-                                <span>Complex Systems (Sayama)</span>
-                            </div>
                             <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/02-Network-Science/Complex-Networks/Networks-Newman-2018.pdf', this)">
                                 <span class="file-icon">📄</span>
                                 <span>Networks (Newman 2018)</span>
-                            </div>
-                            <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/02-Network-Science/Complex-Networks/Networks-Newman-Alt-Edition.pdf', this)">
-                                <span class="file-icon">📄</span>
-                                <span>Networks (Newman Alt)</span>
                             </div>
                             <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/02-Network-Science/Complex-Networks/Networks-Crowds-and-Markets-Easley-Kleinberg.pdf', this)">
                                 <span class="file-icon">📄</span>
@@ -1214,10 +1305,6 @@
                             <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/02-Network-Science/Complex-Networks/Network-Science-Barabasi.pdf', this)">
                                 <span class="file-icon">📄</span>
                                 <span>Network Science (Barabási)</span>
-                            </div>
-                            <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/02-Network-Science/Complex-Networks/Networks-Newman-2018-%20random%20graphs.pdf', this)">
-                                <span class="file-icon">📄</span>
-                                <span>Networks (Newman 2018) - Random Graphs</span>
                             </div>
                             <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/02-Network-Science/Complex-Networks/Handbook%20of%20Graph%20Drawing%20and%20Visualization_%20Draft%20of%202013%20--%20Tamassia%20R_%20%28Ed_%29%20--%202013%20--%20d6e78ba7a942e1219d1be5b603984547%20--%20Anna%E2%80%99s%20Archive.pdf', this)">
                                 <span class="file-icon">📄</span>
@@ -1271,6 +1358,18 @@
                             <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/03-Complex-Systems/Nonlinear-Dynamics-Chaos/Nonlinear-Dynamics-and-Chaos-Solutions-Manual-Strogatz-2024.pdf', this)">
                                 <span class="file-icon">📄</span>
                                 <span>Solutions Manual (Strogatz)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            General Complexity
+                        </div>
+                        <div class="file-list">
+                            <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/03-Complex-Systems/General-Complexity/Modeling-and-Analysis-of-Complex-Systems-Sayama.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Complex Systems (Sayama)</span>
                             </div>
                         </div>
                     </div>
@@ -1577,6 +1676,7 @@
         const ebookPrev = document.getElementById('ebook-prev');
         const ebookNext = document.getElementById('ebook-next');
         const sidebar = document.getElementById('sidebar');
+        const fileTree = document.getElementById('file-tree');
         const sidebarBackdrop = document.getElementById('sidebar-backdrop');
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const toolsPane = document.getElementById('tools-pane');
@@ -1622,6 +1722,9 @@
         const ttsQueueClearButton = document.getElementById('tts-queue-clear');
         const ttsQueueSkipButton = document.getElementById('tts-queue-skip');
         const ttsAutoContinueToggle = document.getElementById('tts-auto-continue-toggle');
+        const searchInput = document.getElementById('library-search-input');
+        const searchClearButton = document.getElementById('library-search-clear');
+        const searchStatus = document.getElementById('library-search-status');
         const STORAGE_KEY = 'pdfBookmarks';
         const LAST_DOCUMENT_KEY = 'pdfLastDocument';
         const THEME_STORAGE_KEY = 'pdfjs-theme';
@@ -1750,6 +1853,48 @@
             }
         }
 
+        function syncToolsPaneToggle() {
+            if (!toolsSheetToggle) {
+                return;
+            }
+            const isMobile = mobileQuery.matches;
+            if (isMobile) {
+                toolsSheetToggle.textContent = 'Tools';
+                toolsSheetToggle.setAttribute('aria-label', 'Toggle tools panel');
+                toolsSheetToggle.setAttribute('aria-expanded', document.body.classList.contains('tools-sheet-open') ? 'true' : 'false');
+                return;
+            }
+            const isHidden = document.body.classList.contains('tools-pane-hidden');
+            toolsSheetToggle.textContent = isHidden ? 'Show tools' : 'Hide tools';
+            toolsSheetToggle.setAttribute('aria-label', isHidden ? 'Show tools panel' : 'Hide tools panel');
+            toolsSheetToggle.setAttribute('aria-expanded', isHidden ? 'false' : 'true');
+            if (toolsPane) {
+                toolsPane.setAttribute('aria-hidden', isHidden ? 'true' : 'false');
+            }
+        }
+
+        function setToolsPaneCollapsed(collapsed) {
+            if (!toolsPane) {
+                return;
+            }
+            if (collapsed) {
+                document.body.classList.add('tools-pane-hidden');
+                toolsPane.setAttribute('aria-hidden', 'true');
+            } else {
+                document.body.classList.remove('tools-pane-hidden');
+                toolsPane.setAttribute('aria-hidden', 'false');
+            }
+            syncToolsPaneToggle();
+        }
+
+        function toggleToolsPaneVisibility() {
+            if (mobileQuery.matches) {
+                return;
+            }
+            const isCollapsed = document.body.classList.contains('tools-pane-hidden');
+            setToolsPaneCollapsed(!isCollapsed);
+        }
+
         function openToolsSheet() {
             if (!mobileQuery.matches) {
                 return;
@@ -1761,6 +1906,13 @@
             if (toolsSheetToggleMobile) {
                 toolsSheetToggleMobile.setAttribute('aria-expanded', 'true');
             }
+            if (toolsSheetBackdrop) {
+                toolsSheetBackdrop.setAttribute('aria-hidden', 'false');
+            }
+            if (toolsPane) {
+                toolsPane.setAttribute('aria-hidden', 'false');
+            }
+            syncToolsPaneToggle();
         }
 
         function closeToolsSheet() {
@@ -1775,25 +1927,23 @@
                 toolsSheetBackdrop.setAttribute('aria-hidden', 'true');
             }
             if (toolsPane) {
-                toolsPane.setAttribute('aria-hidden', 'true');
+                const isCollapsed = document.body.classList.contains('tools-pane-hidden');
+                const shouldHide = mobileQuery.matches || isCollapsed;
+                toolsPane.setAttribute('aria-hidden', shouldHide ? 'true' : 'false');
             }
+            syncToolsPaneToggle();
         }
 
         function toggleToolsSheet() {
-            if (!mobileQuery.matches) {
+            if (mobileQuery.matches) {
+                if (document.body.classList.contains('tools-sheet-open')) {
+                    closeToolsSheet();
+                } else {
+                    openToolsSheet();
+                }
                 return;
             }
-            if (document.body.classList.contains('tools-sheet-open')) {
-                closeToolsSheet();
-            } else {
-                openToolsSheet();
-                if (toolsSheetBackdrop) {
-                    toolsSheetBackdrop.setAttribute('aria-hidden', 'false');
-                }
-                if (toolsPane) {
-                    toolsPane.setAttribute('aria-hidden', 'false');
-                }
-            }
+            toggleToolsPaneVisibility();
         }
 
         let viewerReady = false;
@@ -1838,6 +1988,12 @@
         let queueIdCounter = 0;
         let lastQueuedPage = null;
         let autoContinueEnabled = loadStoredAutoContinue();
+        let searchIndex = null;
+        let searchDocuments = [];
+        let searchActive = false;
+        let searchDebounceId = null;
+        let searchElementMap = new Map();
+        const SEARCH_DEBOUNCE_MS = 140;
 
         initThemeControls();
         if (viewer) {
@@ -1848,6 +2004,7 @@
         updateSpeedUI();
         updateAutoContinueUI();
         applySpeedToTTS();
+        syncToolsPaneToggle();
 
         function loadBookmarks() {
             try {
@@ -3232,6 +3389,12 @@
                 }
                 closeToolsSheet();
             }
+            syncToolsPaneToggle();
+        }
+
+        function handleMobileQueryChange() {
+            closeToolsSheet();
+            syncToolsPaneToggle();
         }
 
         if (sidebarToggle) {
@@ -3268,9 +3431,9 @@
         }
 
         if (mobileQuery.addEventListener) {
-            mobileQuery.addEventListener('change', () => closeToolsSheet());
+            mobileQuery.addEventListener('change', handleMobileQueryChange);
         } else if (mobileQuery.addListener) {
-            mobileQuery.addListener(() => closeToolsSheet());
+            mobileQuery.addListener(handleMobileQueryChange);
         }
 
         document.addEventListener('keydown', (event) => {
@@ -3522,6 +3685,281 @@
                 element.dataset.pdfUrl = normalized;
                 element.dataset.viewerPath = viewerPath;
             });
+        }
+
+        function getFileTitleForElement(element) {
+            if (!element) {
+                return '';
+            }
+            const label = element.querySelector('span:not(.file-icon)') || element;
+            return (label.textContent || '').trim();
+        }
+
+        function getCategoryLabelForElement(element) {
+            if (!element) {
+                return '';
+            }
+            const category = element.closest('.category');
+            if (!category) {
+                return '';
+            }
+            const headerLabel = category.querySelector(':scope > .category-header span:not(.category-icon)');
+            return headerLabel ? headerLabel.textContent.trim() : '';
+        }
+
+        function getSubcategoryPathForElement(element) {
+            if (!element || !fileTree) {
+                return '';
+            }
+            const labels = [];
+            let current = element.parentElement;
+            while (current && current !== fileTree) {
+                if (current.classList.contains('file-list')) {
+                    const header = current.previousElementSibling;
+                    if (header && header.classList.contains('subcategory-header')) {
+                        const text = header.textContent.trim();
+                        if (text) {
+                            labels.push(text);
+                        }
+                    }
+                }
+                if (current.classList.contains('category-content')) {
+                    break;
+                }
+                current = current.parentElement;
+            }
+            return labels.reverse().join(' / ');
+        }
+
+        function buildSearchDocuments() {
+            if (!fileTree) {
+                return [];
+            }
+            searchElementMap = new Map();
+            const docs = [];
+            const fileElements = Array.from(fileTree.querySelectorAll('.file'));
+            fileElements.forEach((element, index) => {
+                const id = element.dataset.searchId || `file-${index}`;
+                element.dataset.searchId = id;
+                searchElementMap.set(id, element);
+                const title = getFileTitleForElement(element);
+                const category = getCategoryLabelForElement(element);
+                const subcategory = getSubcategoryPathForElement(element);
+                const searchText = [title, category, subcategory].filter(Boolean).join(' ').toLowerCase();
+                docs.push({
+                    id,
+                    title,
+                    category,
+                    subcategory,
+                    searchText
+                });
+            });
+            return docs;
+        }
+
+        function createSearchIndex(docs) {
+            if (window.MiniSearch) {
+                const miniSearch = new MiniSearch({
+                    fields: ['title', 'category', 'subcategory'],
+                    storeFields: ['title', 'category', 'subcategory']
+                });
+                miniSearch.addAll(docs);
+                return { type: 'mini', engine: miniSearch };
+            }
+            return { type: 'fallback', docs };
+        }
+
+        function updateSearchStatusText(count, query) {
+            if (!searchStatus) {
+                return;
+            }
+            if (!query) {
+                searchStatus.textContent = 'Type to filter the library.';
+                return;
+            }
+            if (!count) {
+                searchStatus.textContent = `No matches for \"${query}\".`;
+                return;
+            }
+            searchStatus.textContent = `${count} match${count === 1 ? '' : 'es'}`;
+        }
+
+        function updateSearchClearButton(query) {
+            if (!searchClearButton) {
+                return;
+            }
+            searchClearButton.classList.toggle('visible', Boolean(query));
+        }
+
+        function snapshotSearchState() {
+            if (!fileTree) {
+                return;
+            }
+            fileTree.querySelectorAll('.category-content, .file-list').forEach((element) => {
+                element.dataset.searchOpen = element.classList.contains('open') ? 'true' : 'false';
+            });
+            fileTree.querySelectorAll('.category-header').forEach((header) => {
+                const icon = header.querySelector('.category-icon');
+                if (icon) {
+                    icon.dataset.searchIcon = icon.textContent;
+                }
+            });
+        }
+
+        function restoreSearchState() {
+            if (!fileTree) {
+                return;
+            }
+            fileTree.querySelectorAll('.category-content, .file-list').forEach((element) => {
+                const wasOpen = element.dataset.searchOpen === 'true';
+                element.classList.toggle('open', wasOpen);
+                delete element.dataset.searchOpen;
+            });
+            fileTree.querySelectorAll('.category-header').forEach((header) => {
+                const icon = header.querySelector('.category-icon');
+                if (icon && icon.dataset.searchIcon) {
+                    icon.textContent = icon.dataset.searchIcon;
+                    delete icon.dataset.searchIcon;
+                }
+            });
+        }
+
+        function markSearchNode(node, shouldOpen = false) {
+            if (!node) {
+                return;
+            }
+            node.classList.remove('search-hidden');
+            node.classList.add('search-match');
+            if (shouldOpen) {
+                node.classList.add('open');
+            }
+        }
+
+        function revealSearchMatch(element) {
+            if (!element || !fileTree) {
+                return;
+            }
+            markSearchNode(element);
+            let parent = element.parentElement;
+            while (parent && parent !== fileTree) {
+                if (parent.classList.contains('file-list')) {
+                    markSearchNode(parent, true);
+                    const header = parent.previousElementSibling;
+                    if (header && header.classList.contains('subcategory-header')) {
+                        markSearchNode(header);
+                    }
+                }
+                if (parent.classList.contains('category-content')) {
+                    markSearchNode(parent, true);
+                    const header = parent.previousElementSibling;
+                    if (header && header.classList.contains('category-header')) {
+                        markSearchNode(header);
+                        updateCategoryIcon(header, true);
+                    }
+                }
+                if (parent.classList.contains('category') || parent.classList.contains('subcategory')) {
+                    markSearchNode(parent);
+                }
+                parent = parent.parentElement;
+            }
+        }
+
+        function clearSearchFilter() {
+            if (!fileTree) {
+                return;
+            }
+            fileTree.querySelectorAll('.search-hidden, .search-match').forEach((element) => {
+                element.classList.remove('search-hidden', 'search-match');
+            });
+            if (searchActive) {
+                document.body.classList.remove('search-active');
+                restoreSearchState();
+                searchActive = false;
+            }
+        }
+
+        function applySearchResults(matchIds) {
+            if (!fileTree) {
+                return;
+            }
+            if (!searchActive) {
+                snapshotSearchState();
+                document.body.classList.add('search-active');
+                searchActive = true;
+            }
+            const nodes = fileTree.querySelectorAll('.category, .category-header, .category-content, .subcategory, .subcategory-header, .file-list, .file');
+            nodes.forEach((node) => {
+                node.classList.remove('search-match');
+                node.classList.add('search-hidden');
+            });
+            matchIds.forEach((id) => {
+                const element = searchElementMap.get(id);
+                if (element) {
+                    revealSearchMatch(element);
+                }
+            });
+        }
+
+        function runSearch(rawQuery) {
+            if (!searchIndex) {
+                return;
+            }
+            const query = (rawQuery || '').trim();
+            updateSearchClearButton(query);
+            if (!query) {
+                clearSearchFilter();
+                updateSearchStatusText(0, '');
+                return;
+            }
+            let results = [];
+            if (searchIndex.type === 'mini') {
+                results = searchIndex.engine.search(query, { prefix: true });
+            } else {
+                const normalized = query.toLowerCase();
+                results = searchIndex.docs.filter(doc => doc.searchText.includes(normalized));
+            }
+            const matchIds = new Set(results.map(result => result.id));
+            applySearchResults(matchIds);
+            updateSearchStatusText(matchIds.size, query);
+        }
+
+        function initializeSearch() {
+            if (!searchInput || !fileTree) {
+                return;
+            }
+            searchDocuments = buildSearchDocuments();
+            searchIndex = createSearchIndex(searchDocuments);
+            updateSearchStatusText(0, '');
+            updateSearchClearButton(searchInput.value.trim());
+
+            searchInput.addEventListener('input', () => {
+                if (searchDebounceId) {
+                    clearTimeout(searchDebounceId);
+                }
+                searchDebounceId = setTimeout(() => {
+                    runSearch(searchInput.value);
+                }, SEARCH_DEBOUNCE_MS);
+            });
+
+            searchInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    searchInput.value = '';
+                    runSearch('');
+                    searchInput.blur();
+                }
+            });
+
+            if (searchClearButton) {
+                searchClearButton.addEventListener('click', () => {
+                    searchInput.value = '';
+                    runSearch('');
+                    searchInput.focus();
+                });
+            }
+
+            runSearch(searchInput.value);
         }
 
         function findFileElementByUrl(url) {
@@ -4359,6 +4797,7 @@
         });
 
         window.addEventListener('load', () => {
+            initializeSearch();
             setSidebarOpen(false);
             const restored = restoreLastDocument();
             if (!restored) {
