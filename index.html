@@ -622,10 +622,10 @@
         .tts-overlay-progress {
             position: relative;
             width: 100%;
-            height: 6px;
+            height: 8px;
             background: var(--theme-muted);
             border-radius: 999px;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .tts-overlay-progress-fill {
@@ -636,42 +636,126 @@
             transition: width 0.2s ease;
         }
 
+        #tts-overlay-scrubber {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 20px;
+            margin: 0;
+            background: transparent;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        #tts-overlay-scrubber:focus {
+            outline: none;
+        }
+
+        #tts-overlay-scrubber::-webkit-slider-runnable-track {
+            height: 8px;
+            background: transparent;
+            border-radius: 999px;
+        }
+
+        #tts-overlay-scrubber::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 999px;
+            background: var(--theme-accent);
+            border: 2px solid var(--theme-panel);
+            box-shadow: var(--theme-shadow-soft);
+            margin-top: -3px;
+        }
+
+        #tts-overlay-scrubber::-moz-range-track {
+            height: 8px;
+            background: transparent;
+            border-radius: 999px;
+        }
+
+        #tts-overlay-scrubber::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 999px;
+            background: var(--theme-accent);
+            border: 2px solid var(--theme-panel);
+            box-shadow: var(--theme-shadow-soft);
+        }
+
+        #tts-overlay-scrubber:disabled {
+            cursor: not-allowed;
+            opacity: 0.45;
+        }
+
         .tts-overlay-controls {
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .tts-overlay-controls button {
-            background: var(--theme-accent);
-            border: 1px solid var(--theme-accent);
-            color: var(--theme-accent-foreground);
-            font-size: 13px;
-            font-weight: 500;
+        .tts-overlay-button {
+            width: 36px;
+            height: 36px;
             border-radius: 999px;
-            padding: 6px 14px;
+            border: 1px solid var(--theme-border);
+            background: var(--theme-muted);
+            color: var(--theme-text);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
         }
 
-        .tts-overlay-controls button:hover:not(:disabled) {
-            background: linear-gradient(135deg, var(--theme-accent) 0%, #3b82f6 100%);
-            transform: translateY(-1px);
+        .tts-overlay-button svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .tts-overlay-button.primary {
+            width: 44px;
+            height: 44px;
+            background: var(--theme-accent);
+            border-color: var(--theme-accent);
+            color: var(--theme-accent-foreground);
             box-shadow: 0 12px 26px rgba(37, 99, 235, 0.28);
         }
 
-        .tts-overlay-controls button:disabled {
+        .tts-overlay-button.primary svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .tts-overlay-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--theme-accent) 0%, #3b82f6 100%);
+            color: var(--theme-accent-foreground);
+            border-color: var(--theme-accent);
+            transform: translateY(-1px);
+        }
+
+        .tts-overlay-button.primary:hover:not(:disabled) {
+            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.3);
+        }
+
+        .tts-overlay-button:disabled {
             background: var(--theme-muted);
             color: var(--theme-text-muted);
             border-color: var(--theme-border);
             box-shadow: none;
-        }
-
-        .tts-overlay-controls button:disabled {
             cursor: not-allowed;
             opacity: 0.6;
+        }
+
+        #tts-overlay-play[data-state="paused"] .icon-pause,
+        #tts-overlay-play[data-state="playing"] .icon-play {
+            display: none;
         }
 
         .tts-overlay-time {
@@ -778,78 +862,6 @@
             width: 100%;
             overflow: auto;
             background: var(--theme-panel);
-        }
-
-        .tts-queue {
-            margin-top: 12px;
-            padding: 10px;
-            border: 1px solid var(--theme-border);
-            border-radius: 8px;
-            background: var(--theme-muted);
-        }
-
-        .tts-queue-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--theme-text);
-            margin-bottom: 8px;
-        }
-
-        .tts-queue-count {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: var(--theme-panel);
-            border: 1px solid var(--theme-border);
-            font-size: 12px;
-        }
-
-        .tts-queue-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-
-        .tts-queue-button {
-            border: 1px solid var(--theme-border);
-            background: var(--theme-panel);
-            padding: 6px 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 12px;
-            color: var(--theme-text);
-            transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
-        }
-
-        .tts-queue-button:hover:not(:disabled) {
-            background: var(--theme-muted);
-            transform: translateY(-1px);
-        }
-
-        .tts-queue-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .tts-queue-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            font-size: 12px;
-            color: var(--theme-text-muted);
-        }
-
-        .tts-queue-chip {
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: var(--theme-panel);
-            border: 1px solid var(--theme-border);
         }
 
         #placeholder {
@@ -1316,6 +1328,10 @@
                                     <span class="file-icon">📄</span>
                                     <span>Single & Multivariable Calculus</span>
                                 </div>
+                                <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/01-Foundations/Mathematics/Calculus/Differential-Equations-An-Introduction-for-Engineers-Matthew-Charnley.pdf', this)">
+                                    <span class="file-icon">📄</span>
+                                    <span>Differential Equations: An Introduction for Engineers</span>
+                                </div>
                             </div>
 
                             <div class="subcategory-header" onclick="toggleSubcategory(this)" style="margin-left: 10px;">
@@ -1413,6 +1429,34 @@
                                     <span class="file-icon">📄</span>
                                     <span>System Design Interview (Xu)</span>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subcategory">
+                        <div class="subcategory-header" onclick="toggleSubcategory(this)">
+                            Physics
+                        </div>
+                        <div class="file-list">
+                            <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/01-Foundations/Physics/Fundamentals-of-Physics-Extended-10th-Ed-Halliday-Resnick.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Fundamentals of Physics (Halliday &amp; Resnick, 10th Ed)</span>
+                            </div>
+                            <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/01-Foundations/Physics/Classical-Mechanics-Leonard-Susskind.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Classical Mechanics (Susskind)</span>
+                            </div>
+                            <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/01-Foundations/Physics/Introduction-to-Electrodynamics-Griffiths-1999.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Introduction to Electrodynamics (Griffiths, 1999)</span>
+                            </div>
+                            <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/01-Foundations/Physics/Statistical-Mechanics-Daniel-F-Styer.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>Statistical Mechanics (Styer)</span>
+                            </div>
+                            <div class="file" onclick="loadPDF('https://media.githubusercontent.com/media/TheChesireCat/SelfStudy/main/01-Foundations/Physics/The-Road-to-Reality-A-Complete-Guide-to-the-Laws-of-the-Universe-Roger-Penrose-2006.pdf', this)">
+                                <span class="file-icon">📄</span>
+                                <span>The Road to Reality (Penrose, 2006)</span>
                             </div>
                         </div>
                     </div>
@@ -1762,21 +1806,7 @@
                     <input type="range" id="tts-speed-slider" min="0.6" max="3" step="0.05" value="1">
                 </div>
                 <div class="tools-actions" style="margin-top: 6px;">
-                    <button id="tts-auto-continue-toggle" type="button" class="pill ghost" aria-label="Toggle auto continue">Auto-continue: On</button>
-                </div>
-                <div class="tts-queue" aria-label="Reading queue">
-                    <div class="tts-queue-header">
-                        <span>Reading Queue</span>
-                        <span class="tts-queue-count"><span id="tts-queue-count">0</span> queued</span>
-                    </div>
-                    <div class="tts-queue-actions">
-                        <button id="tts-queue-current" type="button" class="tts-queue-button" disabled>Queue Current</button>
-                        <button id="tts-queue-next" type="button" class="tts-queue-button" disabled>Queue Next</button>
-                        <button id="tts-queue-start" type="button" class="tts-queue-button" disabled>Start Queue</button>
-                        <button id="tts-queue-skip" type="button" class="tts-queue-button" disabled>Skip</button>
-                        <button id="tts-queue-clear" type="button" class="tts-queue-button" disabled>Clear</button>
-                    </div>
-                    <div id="tts-queue-list" class="tts-queue-list" aria-live="polite"></div>
+                    <div class="muted-text">Continuous narration with automatic page turns.</div>
                 </div>
             </div>
 
@@ -1836,17 +1866,41 @@
 
     <div id="tts-overlay" role="dialog" aria-live="polite" aria-label="Narration player">
         <div class="tts-overlay-header">
-            <span>Reading selection</span>
-            <span class="tts-overlay-time" id="tts-overlay-time">0:00 / 0:00</span>
+            <span id="tts-overlay-title">Narration</span>
+            <span class="tts-overlay-time" id="tts-overlay-time">0:00 elapsed • 0:00 remaining</span>
         </div>
         <div class="tts-overlay-meta" id="tts-overlay-meta">0 words • 1.0×</div>
         <div class="tts-overlay-progress">
             <div class="tts-overlay-progress-fill" id="tts-overlay-progress"></div>
+            <input type="range" id="tts-overlay-scrubber" min="0" max="0" step="0.1" value="0" aria-label="Seek narration">
         </div>
         <div class="tts-overlay-controls">
-            <button type="button" id="tts-overlay-play" aria-label="Pause narration" disabled>Pause</button>
-            <button type="button" id="tts-overlay-skip" aria-label="Skip to next" disabled>Skip</button>
-            <button type="button" id="tts-overlay-stop" aria-label="Stop narration" disabled>Stop</button>
+            <button type="button" id="tts-overlay-prev" class="tts-overlay-button" aria-label="Previous segment" disabled>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M6 5h2v14H6z"></path>
+                    <path d="M18 5l-8 7 8 7V5z"></path>
+                </svg>
+            </button>
+            <button type="button" id="tts-overlay-play" class="tts-overlay-button primary" aria-label="Pause narration" disabled data-state="paused">
+                <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M8 5v14l11-7z"></path>
+                </svg>
+                <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <rect x="6" y="5" width="4" height="14"></rect>
+                    <rect x="14" y="5" width="4" height="14"></rect>
+                </svg>
+            </button>
+            <button type="button" id="tts-overlay-skip" class="tts-overlay-button" aria-label="Next segment" disabled>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M16 5h2v14h-2z"></path>
+                    <path d="M6 5l8 7-8 7V5z"></path>
+                </svg>
+            </button>
+            <button type="button" id="tts-overlay-stop" class="tts-overlay-button" aria-label="Stop narration" disabled>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <rect x="6" y="6" width="12" height="12"></rect>
+                </svg>
+            </button>
         </div>
     </div>
 
@@ -1913,8 +1967,11 @@
         const ttsSpeedValue = document.getElementById('tts-speed-value');
         const ttsOverlay = document.getElementById('tts-overlay');
         const ttsOverlayTime = document.getElementById('tts-overlay-time');
+        const ttsOverlayTitle = document.getElementById('tts-overlay-title');
         const ttsOverlayMeta = document.getElementById('tts-overlay-meta');
         const ttsOverlayProgress = document.getElementById('tts-overlay-progress');
+        const ttsOverlayScrubber = document.getElementById('tts-overlay-scrubber');
+        const ttsOverlayPrev = document.getElementById('tts-overlay-prev');
         const ttsOverlayPlay = document.getElementById('tts-overlay-play');
         const ttsOverlaySkip = document.getElementById('tts-overlay-skip');
         const ttsOverlayStop = document.getElementById('tts-overlay-stop');
@@ -1922,14 +1979,6 @@
         const ttsStatusText = document.getElementById('tts-status-text');
         const ttsStatusProgress = document.getElementById('tts-status-progress');
         const ttsStatusProgressFill = document.getElementById('tts-status-progress-fill');
-        const ttsQueueCount = document.getElementById('tts-queue-count');
-        const ttsQueueList = document.getElementById('tts-queue-list');
-        const ttsQueueCurrentButton = document.getElementById('tts-queue-current');
-        const ttsQueueNextButton = document.getElementById('tts-queue-next');
-        const ttsQueueStartButton = document.getElementById('tts-queue-start');
-        const ttsQueueClearButton = document.getElementById('tts-queue-clear');
-        const ttsQueueSkipButton = document.getElementById('tts-queue-skip');
-        const ttsAutoContinueToggle = document.getElementById('tts-auto-continue-toggle');
         const searchInput = document.getElementById('library-search-input');
         const searchClearButton = document.getElementById('library-search-clear');
         const searchStatus = document.getElementById('library-search-status');
@@ -1941,7 +1990,10 @@
         const MIN_TTS_SPEED = 0.6;
         const MAX_TTS_SPEED = 3;
         const TTS_SPEED_STEP = 0.05;
-        const AUTO_CONTINUE_KEY = 'ttsAutoContinue';
+        const NARRATION_MAX_WORDS = 150;
+        const NARRATION_BUFFER_SIZE = 3;
+        const NARRATION_CONTEXT = 'narration';
+        const NARRATION_EMPTY_PAGE_LIMIT = 3;
         const AUTO_SAVE_DEBOUNCE_MS = 2000;
         const AUTO_SAVE_IDLE_TIMEOUT_MS = 5000;
         const SIDEBAR_HIDDEN_KEY = 'libraryPaneHidden';
@@ -2327,11 +2379,14 @@
         let ttsPlaybackStart = null;
         let ttsPlaybackWordCount = 0;
         let ttsPlaybackStatusLabel = 'selection';
-        let ttsOverlayLabel = 'Selection';
+        let ttsOverlayLabel = 'Narration';
         let overlayPlayer = null;
         let overlayPlayerHandlers = null;
         let overlayProgressTimer = null;
         let overlayUsingFallback = false;
+        let overlayScrubbing = false;
+        let overlayScrubTargetSeconds = 0;
+        let overlayScrubWasPlaying = false;
         let playbackAbortResolver = null;
         let playbackCancelled = false;
         let ttsPlaybackSpeed = DEFAULT_TTS_SPEED;
@@ -2344,12 +2399,9 @@
         let currentEbookUrl = null;
         let currentEbookLocation = null;
         let currentPageNumber = null;
-        let narrationQueue = [];
-        let queueProcessing = false;
-        let queueCurrentItem = null;
-        let queueIdCounter = 0;
-        let lastQueuedPage = null;
-        let autoContinueEnabled = loadStoredAutoContinue();
+        let narrationSession = null;
+        let narrationSessionIdCounter = 0;
+        let narrationAutoAdvanceTarget = null;
         let sidebarHidden = readStoredBoolean(SIDEBAR_HIDDEN_KEY, false);
         let toolsPaneHidden = readStoredBoolean(TOOLS_PANE_HIDDEN_KEY, false);
         let toolsBottomBarHidden = readStoredBoolean(TOOLS_BOTTOM_BAR_HIDDEN_KEY, false);
@@ -2367,7 +2419,6 @@
         initializeFileMetadata();
         updateBookmarkUI();
         updateSpeedUI();
-        updateAutoContinueUI();
         applySpeedToTTS();
         initializePaneState();
 
@@ -2455,30 +2506,6 @@
             return DEFAULT_TTS_SPEED;
         }
 
-        function loadStoredAutoContinue() {
-            try {
-                if (window.localStorage) {
-                    const raw = localStorage.getItem(AUTO_CONTINUE_KEY);
-                    if (raw === 'false') {
-                        return false;
-                    }
-                }
-            } catch (error) {
-                console.warn('Unable to load auto-continue preference:', error);
-            }
-            return true;
-        }
-
-        function storeAutoContinue(value) {
-            try {
-                if (window.localStorage) {
-                    localStorage.setItem(AUTO_CONTINUE_KEY, value ? 'true' : 'false');
-                }
-            } catch (error) {
-                console.warn('Unable to persist auto-continue preference:', error);
-            }
-        }
-
         function storeTtsSpeed(value) {
             try {
                 if (window.localStorage) {
@@ -2502,14 +2529,6 @@
                 ttsSpeedValue.textContent = formatSpeedDisplay(ttsNarrationSpeed);
             }
             refreshOverlayMeta();
-        }
-
-        function updateAutoContinueUI() {
-            if (!ttsAutoContinueToggle) {
-                return;
-            }
-            ttsAutoContinueToggle.textContent = `Auto-continue: ${autoContinueEnabled ? 'On' : 'Off'}`;
-            ttsAutoContinueToggle.setAttribute('aria-pressed', autoContinueEnabled ? 'true' : 'false');
         }
 
         function applySpeedToTTS() {
@@ -2691,6 +2710,98 @@
             return collapsedLines.replace(/\s{2,}/g, ' ').trim();
         }
 
+        function splitTextIntoParagraphs(rawText) {
+            if (!rawText) {
+                return [];
+            }
+            const withoutSoftHyphen = rawText.replace(/\u00ad/g, '');
+            const joinedHyphenation = withoutSoftHyphen.replace(/(\w)-\s*\n\s*(\w)/g, '$1$2');
+            const normalizedNewlines = joinedHyphenation.replace(/\r\n/g, '\n');
+            const trimmedNewlines = normalizedNewlines
+                .replace(/[ \t]+\n/g, '\n')
+                .replace(/\n[ \t]+/g, '\n');
+            const paragraphs = trimmedNewlines
+                .split(/\n{2,}/)
+                .map(block => block.replace(/\n+/g, ' ').replace(/\s{2,}/g, ' ').trim())
+                .filter(Boolean);
+            if (paragraphs.length) {
+                return paragraphs;
+            }
+            const fallback = trimmedNewlines.replace(/\n+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+            return fallback ? [fallback] : [];
+        }
+
+        function countWords(text) {
+            if (!text) {
+                return 0;
+            }
+            return text.trim().split(/\s+/).filter(Boolean).length;
+        }
+
+        function splitParagraphIntoFragments(paragraph, maxWords) {
+            const wordCount = countWords(paragraph);
+            if (!paragraph || wordCount === 0) {
+                return [];
+            }
+            if (wordCount <= maxWords) {
+                return [paragraph.trim()];
+            }
+            const sentences = paragraph.split(/(?<=\.)\s+/);
+            if (sentences.length === 1) {
+                return chunkWords(paragraph, maxWords);
+            }
+            const fragments = [];
+            let current = '';
+            for (const sentence of sentences) {
+                const candidate = current ? `${current} ${sentence}` : sentence;
+                if (countWords(candidate) > maxWords) {
+                    if (current) {
+                        fragments.push(current.trim());
+                        current = sentence;
+                    } else {
+                        fragments.push(...chunkWords(sentence, maxWords));
+                        current = '';
+                    }
+                } else {
+                    current = candidate;
+                }
+            }
+            if (current.trim()) {
+                fragments.push(current.trim());
+            }
+            return fragments;
+        }
+
+        function chunkWords(text, maxWords) {
+            const words = text.trim().split(/\s+/).filter(Boolean);
+            if (!words.length) {
+                return [];
+            }
+            const chunks = [];
+            for (let i = 0; i < words.length; i += maxWords) {
+                chunks.push(words.slice(i, i + maxWords).join(' '));
+            }
+            return chunks;
+        }
+
+        function buildFragmentsFromText(text, pageNumber) {
+            const paragraphs = splitTextIntoParagraphs(text);
+            const fragments = [];
+            paragraphs.forEach(paragraph => {
+                splitParagraphIntoFragments(paragraph, NARRATION_MAX_WORDS).forEach(fragment => {
+                    if (fragment && fragment.trim()) {
+                        const trimmed = fragment.trim();
+                        fragments.push({
+                            text: trimmed,
+                            pageNumber,
+                            estimateMs: estimateSpeechDurationMs(trimmed, ttsNarrationSpeed)
+                        });
+                    }
+                });
+            });
+            return fragments;
+        }
+
         function formatTime(seconds) {
             if (!Number.isFinite(seconds) || seconds < 0) {
                 return '0:00';
@@ -2721,6 +2832,9 @@
                 clearInterval(overlayProgressTimer);
                 overlayProgressTimer = null;
             }
+            overlayScrubbing = false;
+            overlayScrubTargetSeconds = 0;
+            overlayScrubWasPlaying = false;
             detachOverlayPlayer();
             overlayUsingFallback = false;
             if (ttsOverlay) {
@@ -2730,29 +2844,338 @@
                 ttsOverlayProgress.style.width = '0%';
             }
             if (ttsOverlayTime) {
-                ttsOverlayTime.textContent = '0:00 / 0:00';
+                ttsOverlayTime.textContent = '0:00 elapsed • 0:00 remaining';
             }
-            ttsOverlayLabel = 'Selection';
+            ttsOverlayLabel = 'Narration';
+            if (ttsOverlayTitle) {
+                ttsOverlayTitle.textContent = ttsOverlayLabel;
+            }
             refreshOverlayMeta();
             if (ttsOverlayPlay) {
                 ttsOverlayPlay.disabled = true;
-                ttsOverlayPlay.textContent = 'Play';
                 ttsOverlayPlay.setAttribute('aria-label', 'Play narration');
                 ttsOverlayPlay.dataset.state = 'paused';
             }
             if (ttsOverlayStop) {
                 ttsOverlayStop.disabled = true;
             }
+            if (ttsOverlayPrev) {
+                ttsOverlayPrev.disabled = true;
+            }
+            if (ttsOverlaySkip) {
+                ttsOverlaySkip.disabled = true;
+            }
+            if (ttsOverlayScrubber) {
+                ttsOverlayScrubber.value = '0';
+                ttsOverlayScrubber.max = '0';
+                ttsOverlayScrubber.disabled = true;
+            }
         }
 
         function updateOverlayProgress(percent, currentSeconds, totalSeconds) {
+            const hasTotal = Number.isFinite(totalSeconds);
+            const safeTotal = hasTotal ? Math.max(0, totalSeconds) : ttsPlaybackEstimateMs / 1000;
+            const safeCurrent = Number.isFinite(currentSeconds) && currentSeconds > 0 ? currentSeconds : 0;
+            const computedPercent = Number.isFinite(percent)
+                ? percent
+                : (safeTotal > 0 ? (safeCurrent / safeTotal) * 100 : 0);
             if (ttsOverlayProgress) {
-                ttsOverlayProgress.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+                ttsOverlayProgress.style.width = `${Math.min(100, Math.max(0, computedPercent))}%`;
             }
             if (ttsOverlayTime) {
-                const total = Number.isFinite(totalSeconds) && totalSeconds > 0 ? totalSeconds : ttsPlaybackEstimateMs / 1000;
-                ttsOverlayTime.textContent = `${formatTime(currentSeconds)} / ${formatTime(total)}`;
+                const total = Number.isFinite(safeTotal) && safeTotal > 0 ? safeTotal : 0;
+                const remaining = Math.max(0, total - safeCurrent);
+                ttsOverlayTime.textContent = `${formatTime(safeCurrent)} elapsed • ${formatTime(remaining)} remaining`;
             }
+            updateOverlayScrubber(safeCurrent, safeTotal);
+        }
+
+        function updateOverlayScrubber(currentSeconds, totalSeconds) {
+            if (!ttsOverlayScrubber) {
+                return;
+            }
+            const safeTotal = Number.isFinite(totalSeconds) && totalSeconds > 0 ? totalSeconds : 0;
+            const safeCurrent = Number.isFinite(currentSeconds) && currentSeconds > 0 ? currentSeconds : 0;
+            ttsOverlayScrubber.max = safeTotal.toFixed(2);
+            if (!overlayScrubbing) {
+                ttsOverlayScrubber.value = Math.min(safeCurrent, safeTotal).toFixed(2);
+            }
+            ttsOverlayScrubber.disabled = safeTotal <= 0;
+        }
+
+        function getFragmentEstimateMs(fragment) {
+            if (!fragment) {
+                return 0;
+            }
+            if (!fragment.estimateMs) {
+                fragment.estimateMs = estimateSpeechDurationMs(fragment.text, ttsNarrationSpeed);
+            }
+            return fragment.estimateMs || 0;
+        }
+
+        function updateNarrationBufferEstimate(session) {
+            if (!session) {
+                return;
+            }
+            let total = 0;
+            session.fragmentQueue.forEach(fragment => {
+                total += getFragmentEstimateMs(fragment);
+            });
+            session.bufferedEstimateMs = total;
+        }
+
+        function getNarrationTotalEstimateMs(session) {
+            if (!session) {
+                return 0;
+            }
+            const currentEstimate = session.currentSegmentEstimateMs || 0;
+            return session.playedMs + currentEstimate + (session.bufferedEstimateMs || 0);
+        }
+
+        function buildNarrationTimeline(session) {
+            if (!session) {
+                return { entries: [], totalMs: 0 };
+            }
+            const entries = [];
+            let cursor = 0;
+            const pushEntry = (fragment, kind, durationOverride) => {
+                if (!fragment) {
+                    return;
+                }
+                const durationMs = Number.isFinite(durationOverride) && durationOverride > 0
+                    ? durationOverride
+                    : getFragmentEstimateMs(fragment);
+                entries.push({
+                    fragment,
+                    kind,
+                    startMs: cursor,
+                    endMs: cursor + durationMs,
+                    durationMs
+                });
+                cursor += durationMs;
+            };
+            session.segmentHistory.forEach(fragment => {
+                pushEntry(fragment, 'history', null);
+            });
+            const hasActiveSegment = session.currentFragment
+                && (session.playbackInFlight || session.currentSegmentEstimateMs > 0 || session.currentSegmentElapsedMs > 0 || session.seekFromCurrent);
+            if (hasActiveSegment) {
+                pushEntry(session.currentFragment, 'current', session.currentSegmentEstimateMs || null);
+            }
+            session.fragmentQueue.forEach(fragment => {
+                pushEntry(fragment, 'buffer', null);
+            });
+            return { entries, totalMs: cursor };
+        }
+
+        function rebuildNarrationCompletion(session) {
+            if (!session) {
+                return;
+            }
+            session.segmentsPlayed = session.segmentHistory.length;
+            session.pagesCompleted = new Set();
+            session.segmentHistory.forEach(fragment => {
+                if (fragment.pageNumber && fragment.total && fragment.index === fragment.total) {
+                    session.pagesCompleted.add(fragment.pageNumber);
+                }
+            });
+        }
+
+        function updateNarrationTimelineProgress({ elapsedMs } = {}) {
+            const session = narrationSession;
+            if (!session) {
+                return;
+            }
+            const currentEstimate = session.currentSegmentEstimateMs || 0;
+            let currentElapsed = Number.isFinite(elapsedMs) ? elapsedMs : session.currentSegmentElapsedMs || 0;
+            if (currentEstimate > 0) {
+                currentElapsed = Math.min(Math.max(0, currentElapsed), currentEstimate);
+            } else {
+                currentElapsed = Math.max(0, currentElapsed);
+            }
+            session.currentSegmentElapsedMs = currentElapsed;
+            const currentMs = session.playedMs + currentElapsed;
+            const totalMs = getNarrationTotalEstimateMs(session);
+            if (overlayScrubbing) {
+                updateOverlayScrubber(currentMs / 1000, totalMs / 1000);
+            } else {
+                const percent = totalMs > 0 ? (currentMs / totalMs) * 100 : 0;
+                updateOverlayProgress(percent, currentMs / 1000, totalMs / 1000);
+            }
+            syncOverlayPrevState(session);
+        }
+
+        function recalculateNarrationEstimates() {
+            const session = narrationSession;
+            if (!session) {
+                return;
+            }
+            if (session.currentFragment) {
+                session.currentSegmentEstimateMs = estimateSpeechDurationMs(session.currentFragment.text, ttsNarrationSpeed);
+            }
+            session.fragmentQueue.forEach(fragment => {
+                fragment.estimateMs = estimateSpeechDurationMs(fragment.text, ttsNarrationSpeed);
+            });
+            session.pageFragments.forEach(fragmentList => {
+                fragmentList.forEach(fragment => {
+                    fragment.estimateMs = estimateSpeechDurationMs(fragment.text, ttsNarrationSpeed);
+                });
+            });
+            updateNarrationBufferEstimate(session);
+            updateNarrationTimelineProgress({ elapsedMs: session.currentSegmentElapsedMs || 0 });
+        }
+
+        function syncOverlayPrevState(session) {
+            if (!ttsOverlayPrev) {
+                return;
+            }
+            if (!session || !session.currentFragment) {
+                ttsOverlayPrev.disabled = true;
+                return;
+            }
+            const elapsed = session.currentSegmentElapsedMs || 0;
+            const hasHistory = session.segmentHistory && session.segmentHistory.length > 0;
+            ttsOverlayPrev.disabled = !(hasHistory || elapsed >= 2500);
+        }
+
+        function recordCompletedFragment(session, fragment) {
+            if (!session || !fragment) {
+                return;
+            }
+            const stored = { ...fragment };
+            stored.estimateMs = stored.estimateMs || getFragmentEstimateMs(stored);
+            session.segmentHistory.push(stored);
+            session.segmentsPlayed += 1;
+            if (fragment.pageNumber && fragment.total && fragment.index === fragment.total) {
+                session.pagesCompleted.add(fragment.pageNumber);
+            }
+        }
+
+        function applyNarrationSeekOffset(player, session) {
+            if (!session) {
+                return;
+            }
+            const offsetMs = session.seekOffsetMs || 0;
+            if (!offsetMs) {
+                return;
+            }
+            session.seekOffsetMs = 0;
+            if (!player) {
+                return;
+            }
+            const applyOffset = () => {
+                const durationMs = Number.isFinite(player.duration) && player.duration > 0
+                    ? player.duration * 1000
+                    : session.currentSegmentEstimateMs || 0;
+                const clamped = durationMs > 0 ? Math.min(offsetMs, durationMs) : offsetMs;
+                try {
+                    player.currentTime = clamped / 1000;
+                } catch (error) {
+                    console.debug('[TTS] Unable to apply seek offset', error);
+                    return;
+                }
+                session.currentSegmentElapsedMs = clamped;
+                updateNarrationTimelineProgress({ elapsedMs: clamped });
+            };
+            if (player.readyState >= 1) {
+                applyOffset();
+            } else {
+                player.addEventListener('loadedmetadata', applyOffset, { once: true });
+            }
+        }
+
+        function seekNarrationToMs(targetMs, { autoplay = true } = {}) {
+            const session = narrationSession;
+            if (!session) {
+                return;
+            }
+            const { entries, totalMs } = buildNarrationTimeline(session);
+            if (!entries.length || totalMs <= 0) {
+                return;
+            }
+            const clampedTarget = Math.min(Math.max(0, targetMs || 0), totalMs);
+            let targetIndex = entries.findIndex(entry => clampedTarget <= entry.endMs);
+            if (targetIndex < 0) {
+                targetIndex = entries.length - 1;
+            }
+            const entry = entries[targetIndex];
+            const offsetMs = Math.min(Math.max(0, clampedTarget - entry.startMs), entry.durationMs || 0);
+            abortActiveSpeech({ keepOverlay: true });
+            session.playbackInFlight = false;
+            session.segmentHistory = entries.slice(0, targetIndex).map(entry => entry.fragment);
+            session.currentFragment = entry.fragment;
+            session.fragmentQueue = entries.slice(targetIndex + 1).map(entry => entry.fragment);
+            session.currentSegmentEstimateMs = entry.durationMs || getFragmentEstimateMs(entry.fragment);
+            session.currentSegmentElapsedMs = offsetMs;
+            session.playedMs = entry.startMs;
+            session.seekOffsetMs = offsetMs;
+            session.seekFromCurrent = true;
+            rebuildNarrationCompletion(session);
+            updateNarrationBufferEstimate(session);
+            updateNarrationTimelineProgress({ elapsedMs: offsetMs });
+            refreshOverlayMeta();
+            if (autoplay) {
+                session.paused = false;
+                maybeStartNarrationPlayback();
+            } else {
+                session.paused = true;
+                setOverlayPlayState(true);
+            }
+        }
+
+        function restartCurrentNarrationFragment(session) {
+            if (!session || !session.currentFragment) {
+                return;
+            }
+            session.currentSegmentElapsedMs = 0;
+            session.currentSegmentEstimateMs = 0;
+            session.seekOffsetMs = 0;
+            session.seekFromCurrent = false;
+            session.fragmentQueue.unshift(session.currentFragment);
+            session.currentFragment = null;
+            abortActiveSpeech({ keepOverlay: true });
+            session.playbackInFlight = false;
+            updateNarrationTimelineProgress({ elapsedMs: 0 });
+            maybeStartNarrationPlayback();
+        }
+
+        function seekPreviousNarrationFragment() {
+            const session = narrationSession;
+            if (!session || !session.currentFragment) {
+                return;
+            }
+            const elapsed = session.currentSegmentElapsedMs || 0;
+            if (elapsed >= 2500) {
+                restartCurrentNarrationFragment(session);
+                return;
+            }
+            const previous = session.segmentHistory.pop();
+            if (!previous) {
+                restartCurrentNarrationFragment(session);
+                return;
+            }
+            const rewindEstimate = getFragmentEstimateMs(previous);
+            session.playedMs = Math.max(0, session.playedMs - rewindEstimate);
+            session.currentSegmentEstimateMs = 0;
+            session.currentSegmentElapsedMs = 0;
+            session.seekOffsetMs = 0;
+            session.seekFromCurrent = false;
+            session.fragmentQueue.unshift(session.currentFragment);
+            session.currentFragment = null;
+            session.fragmentQueue.unshift(previous);
+            abortActiveSpeech({ keepOverlay: true });
+            session.playbackInFlight = false;
+            rebuildNarrationCompletion(session);
+            updateNarrationBufferEstimate(session);
+            updateNarrationTimelineProgress({ elapsedMs: 0 });
+            maybeStartNarrationPlayback();
+        }
+
+        function formatCount(value, singular, plural) {
+            if (value === 1) {
+                return `${value} ${singular}`;
+            }
+            return `${value} ${plural}`;
         }
 
         function refreshOverlayMeta() {
@@ -2761,6 +3184,30 @@
             }
             if (!ttsOverlay || !ttsOverlay.classList.contains('show')) {
                 ttsOverlayMeta.textContent = `0 words • ${formatSpeedDisplay(ttsNarrationSpeed)}`;
+                if (ttsOverlayPrev) {
+                    ttsOverlayPrev.disabled = true;
+                }
+                return;
+            }
+            if (narrationSession) {
+                const fragment = narrationSession.currentFragment;
+                const pageLabel = fragment && fragment.pageNumber ? `Page ${fragment.pageNumber}` : 'Narration';
+                const parts = [pageLabel];
+                if (fragment && fragment.total) {
+                    parts.push(`Segment ${fragment.index}/${fragment.total}`);
+                }
+                const pagesPlayed = narrationSession.pagesCompleted ? narrationSession.pagesCompleted.size : 0;
+                const segmentsPlayed = narrationSession.segmentsPlayed || 0;
+                parts.push(formatCount(pagesPlayed, 'page played', 'pages played'));
+                parts.push(formatCount(segmentsPlayed, 'segment played', 'segments played'));
+                parts.push(formatCount(narrationSession.fragmentQueue.length, 'segment buffered', 'segments buffered'));
+                const activeSpeed = Number.isFinite(ttsNarrationSpeed) ? ttsNarrationSpeed : ttsPlaybackSpeed;
+                parts.push(formatSpeedDisplay(activeSpeed));
+                ttsOverlayMeta.textContent = parts.join(' • ');
+                if (ttsOverlayTitle) {
+                    ttsOverlayTitle.textContent = pageLabel;
+                }
+                syncOverlayPrevState(narrationSession);
                 return;
             }
             const wordCount = ttsPlaybackWordCount;
@@ -2773,11 +3220,13 @@
             parts.push(`${wordCount} word${plural}`);
             const activeSpeed = Number.isFinite(ttsPlaybackSpeed) ? ttsPlaybackSpeed : ttsNarrationSpeed;
             parts.push(formatSpeedDisplay(activeSpeed));
-            const remainingQueue = narrationQueue.length;
-            if (remainingQueue > 0) {
-                parts.push(`${remainingQueue} queued`);
-            }
             ttsOverlayMeta.textContent = parts.join(' • ');
+            if (ttsOverlayTitle) {
+                ttsOverlayTitle.textContent = label || 'Narration';
+            }
+            if (ttsOverlayPrev) {
+                ttsOverlayPrev.disabled = true;
+            }
         }
 
         function showOverlay(wordCount, estimateMs, speed = DEFAULT_TTS_SPEED, label = '') {
@@ -2793,6 +3242,9 @@
             ttsOverlay.classList.add('show');
             const overlayTitle = label || 'Selection';
             ttsOverlayLabel = overlayTitle;
+            if (ttsOverlayTitle) {
+                ttsOverlayTitle.textContent = overlayTitle;
+            }
             if (ttsOverlayMeta) {
                 const plural = wordCount === 1 ? '' : 's';
                 const parts = [];
@@ -2803,15 +3255,13 @@
                 parts.push(formatSpeedDisplay(speed));
                 ttsOverlayMeta.textContent = parts.join(' • ');
             }
-            if (ttsOverlayTime) {
-                ttsOverlayTime.textContent = `0:00 / ${formatTime(estimateMs / 1000)}`;
-            }
-            if (ttsOverlayProgress) {
-                ttsOverlayProgress.style.width = '0%';
+            if (narrationSession) {
+                updateNarrationTimelineProgress({ elapsedMs: narrationSession.currentSegmentElapsedMs || 0 });
+            } else {
+                updateOverlayProgress(0, 0, estimateMs / 1000);
             }
             if (ttsOverlayPlay) {
                 ttsOverlayPlay.disabled = true;
-                ttsOverlayPlay.textContent = 'Pause';
                 ttsOverlayPlay.setAttribute('aria-label', 'Pause narration');
                 ttsOverlayPlay.dataset.state = 'playing';
             }
@@ -2824,9 +3274,85 @@
             if (!ttsOverlayPlay) {
                 return;
             }
-            ttsOverlayPlay.textContent = paused ? 'Play' : 'Pause';
             ttsOverlayPlay.setAttribute('aria-label', paused ? 'Play narration' : 'Pause narration');
             ttsOverlayPlay.dataset.state = paused ? 'paused' : 'playing';
+        }
+
+        function getOverlayTotalSeconds() {
+            if (narrationSession) {
+                return getNarrationTotalEstimateMs(narrationSession) / 1000;
+            }
+            if (overlayPlayer && Number.isFinite(overlayPlayer.duration) && overlayPlayer.duration > 0) {
+                return overlayPlayer.duration;
+            }
+            return ttsPlaybackEstimateMs ? ttsPlaybackEstimateMs / 1000 : 0;
+        }
+
+        function startOverlayScrub() {
+            if (overlayScrubbing) {
+                return;
+            }
+            overlayScrubbing = true;
+            overlayScrubTargetSeconds = ttsOverlayScrubber ? Number(ttsOverlayScrubber.value) || 0 : 0;
+            overlayScrubWasPlaying = false;
+            if (narrationSession) {
+                overlayScrubWasPlaying = !narrationSession.paused;
+                if (overlayScrubWasPlaying) {
+                    pauseNarration({ silent: true });
+                }
+                return;
+            }
+            if (overlayPlayer && !overlayPlayer.paused) {
+                overlayScrubWasPlaying = true;
+                overlayPlayer.pause();
+                setOverlayPlayState(true);
+            }
+        }
+
+        function updateOverlayScrubPreview(valueSeconds) {
+            const totalSeconds = getOverlayTotalSeconds();
+            const clamped = Math.min(Math.max(0, valueSeconds || 0), totalSeconds || valueSeconds || 0);
+            const percent = totalSeconds > 0 ? (clamped / totalSeconds) * 100 : 0;
+            updateOverlayProgress(percent, clamped, totalSeconds || 0);
+        }
+
+        function commitOverlayScrub() {
+            if (!overlayScrubbing) {
+                return;
+            }
+            overlayScrubbing = false;
+            const totalSeconds = getOverlayTotalSeconds();
+            if (!totalSeconds && !overlayScrubTargetSeconds) {
+                overlayScrubTargetSeconds = 0;
+                overlayScrubWasPlaying = false;
+                return;
+            }
+            const clamped = Math.min(Math.max(0, overlayScrubTargetSeconds || 0), totalSeconds || overlayScrubTargetSeconds || 0);
+            overlayScrubTargetSeconds = 0;
+            if (narrationSession) {
+                seekNarrationToMs(clamped * 1000, { autoplay: overlayScrubWasPlaying });
+                overlayScrubWasPlaying = false;
+                return;
+            }
+            if (overlayPlayer && Number.isFinite(overlayPlayer.duration) && overlayPlayer.duration > 0) {
+                try {
+                    overlayPlayer.currentTime = clamped;
+                } catch (error) {
+                    console.debug('[TTS] Unable to scrub player time', error);
+                }
+                if (!overlayScrubWasPlaying) {
+                    const duration = Number.isFinite(overlayPlayer.duration) && overlayPlayer.duration > 0
+                        ? overlayPlayer.duration
+                        : ttsPlaybackEstimateMs / 1000;
+                    const percent = duration ? (clamped / duration) * 100 : 0;
+                    updateOverlayProgress(percent, clamped, duration);
+                }
+                if (overlayScrubWasPlaying) {
+                    overlayPlayer.play().catch(err => console.debug('[TTS] Unable to resume after scrub', err));
+                }
+                setOverlayPlayState(!overlayScrubWasPlaying);
+            }
+            overlayScrubWasPlaying = false;
         }
 
         function attachOverlayPlayer(player) {
@@ -2841,10 +3367,20 @@
                 setOverlayPlayState(player.paused ? true : false);
             }
             const updateFromPlayer = () => {
+                if (overlayScrubbing) {
+                    return;
+                }
                 const current = Number.isFinite(player.currentTime) ? player.currentTime : 0;
                 const duration = Number.isFinite(player.duration) && player.duration > 0 ? player.duration : ttsPlaybackEstimateMs / 1000;
-                const percent = duration ? (current / duration) * 100 : 0;
-                updateOverlayProgress(percent, current, duration);
+                if (narrationSession) {
+                    if (Number.isFinite(player.duration) && player.duration > 0) {
+                        narrationSession.currentSegmentEstimateMs = player.duration * 1000;
+                    }
+                    updateNarrationTimelineProgress({ elapsedMs: current * 1000 });
+                } else {
+                    const percent = duration ? (current / duration) * 100 : 0;
+                    updateOverlayProgress(percent, current, duration);
+                }
             };
             const handleEnded = () => {
                 setOverlayPlayState(true);
@@ -2885,15 +3421,14 @@
             }
         }
 
-        function stopPlaybackProgress({ success = false, message = '', silent = false } = {}) {
+        function stopPlaybackProgress({ success = false, message = '', silent = false, keepOverlay = false } = {}) {
             if (ttsPlaybackInterval) {
                 clearInterval(ttsPlaybackInterval);
                 ttsPlaybackInterval = null;
             }
             resolvePlaybackAbort();
-            hideOverlay();
-            if (ttsOverlaySkip && (!queueProcessing && narrationQueue.length === 0)) {
-                ttsOverlaySkip.disabled = true;
+            if (!keepOverlay) {
+                hideOverlay();
             }
             if (silent) {
                 ttsPlaybackStart = null;
@@ -2922,10 +3457,16 @@
             ttsPlaybackStatusLabel = 'selection';
         }
 
-        function startPlaybackProgress(text, estimateMs, { statusLabel = 'selection', overlayLabel = '' } = {}) {
-            stopPlaybackProgress({ silent: true });
+        function startPlaybackProgress(text, estimateMs, {
+            statusLabel = 'selection',
+            overlayLabel = '',
+            keepOverlay = false,
+            elapsedOffsetMs = 0
+        } = {}) {
+            stopPlaybackProgress({ silent: true, keepOverlay });
             ttsPlaybackEstimateMs = estimateMs;
-            ttsPlaybackStart = performance.now();
+            const clampedOffset = Math.max(0, Math.min(elapsedOffsetMs || 0, estimateMs || 0));
+            ttsPlaybackStart = performance.now() - clampedOffset;
             ttsPlaybackWordCount = text.trim().split(/\s+/).filter(Boolean).length;
             ttsPlaybackSpeed = clampTtsSpeed(ttsNarrationSpeed);
             ttsPlaybackStatusLabel = statusLabel || 'selection';
@@ -2948,13 +3489,23 @@
                 if (!ttsPlaybackStart || !ttsPlaybackEstimateMs) {
                     return;
                 }
+                if (narrationSession && narrationSession.paused) {
+                    return;
+                }
                 const elapsed = performance.now() - ttsPlaybackStart;
                 const percent = Math.min(99, Math.round((elapsed / ttsPlaybackEstimateMs) * 100));
                 const remainingMs = Math.max(0, ttsPlaybackEstimateMs - elapsed);
                 const remainingSeconds = (remainingMs / 1000).toFixed(1);
                 showBookmarkStatus(`${baseMessage} ${percent}% (~${remainingSeconds}s remaining)`);
                 if (overlayUsingFallback) {
-                    updateOverlayProgress(percent, elapsed / 1000, ttsPlaybackEstimateMs / 1000);
+                    if (overlayScrubbing) {
+                        return;
+                    }
+                    if (narrationSession) {
+                        updateNarrationTimelineProgress({ elapsedMs: elapsed });
+                    } else {
+                        updateOverlayProgress(percent, elapsed / 1000, ttsPlaybackEstimateMs / 1000);
+                    }
                 }
             }, 300);
         }
@@ -2987,7 +3538,8 @@
             return Array.from(players);
         }
 
-        function abortActiveSpeech() {
+        function abortActiveSpeech(options = {}) {
+            const { keepOverlay = false } = options;
             const players = collectActivePlayers();
             players.forEach(player => {
                 try {
@@ -3010,7 +3562,7 @@
                 }
             });
 
-            stopPlaybackProgress({ silent: true });
+            stopPlaybackProgress({ silent: true, keepOverlay });
 
             if (typeof window.TTS !== 'undefined') {
                 const stopFn = typeof TTS.stop === 'function' ? TTS.stop : (typeof TTS.cancel === 'function' ? TTS.cancel : null);
@@ -3495,14 +4047,445 @@
             }
         }
 
+        function createNarrationSession(startPage) {
+            return {
+                id: ++narrationSessionIdCounter,
+                documentUrl: currentDocumentUrl,
+                startPage,
+                nextPageToQueue: startPage,
+                fragmentQueue: [],
+                pageFragments: new Map(),
+                pageFragmentCursor: new Map(),
+                pendingPages: new Set(),
+                awaitingViewer: false,
+                emptyPagesSeen: 0,
+                paused: false,
+                playbackInFlight: false,
+                currentFragment: null,
+                activePlayer: null,
+                pagesCompleted: new Set(),
+                segmentsPlayed: 0,
+                segmentHistory: [],
+                playedMs: 0,
+                currentSegmentEstimateMs: 0,
+                currentSegmentElapsedMs: 0,
+                bufferedEstimateMs: 0,
+                seekOffsetMs: 0,
+                seekFromCurrent: false
+            };
+        }
+
+        function resolveNarrationStartPage() {
+            if (Number.isInteger(currentPageNumber) && currentPageNumber > 0) {
+                return currentPageNumber;
+            }
+            if (lastAutoSaved && Number.isInteger(lastAutoSaved.pageNumber) && lastAutoSaved.pageNumber > 0) {
+                return lastAutoSaved.pageNumber;
+            }
+            return 1;
+        }
+
+        function setViewerPageForNarration(pageNumber) {
+            if (!viewerReady || !viewer.contentWindow) {
+                return;
+            }
+            const numericPage = Math.floor(Number(pageNumber));
+            if (!Number.isInteger(numericPage) || numericPage <= 0) {
+                return;
+            }
+            narrationAutoAdvanceTarget = numericPage;
+            viewer.contentWindow.postMessage(
+                { type: 'setPage', payload: { pageNumber: numericPage } },
+                messageTargetOrigin
+            );
+        }
+
+        function startNarrationFromCurrentPage() {
+            if (!currentDocumentUrl) {
+                console.debug('[TTS] Narration start ignored: no current document');
+                showBookmarkStatus('Open a PDF before using read aloud.');
+                return;
+            }
+            const startPage = resolveNarrationStartPage();
+            if (!Number.isInteger(startPage) || startPage <= 0) {
+                showBookmarkStatus('No page available to start narration.');
+                return;
+            }
+            startNarrationFromPage(startPage);
+        }
+
+        function startNarrationFromPage(pageNumber) {
+            stopNarration({ silent: true });
+            ensureViewerLoaded();
+            narrationSession = createNarrationSession(pageNumber);
+            setTTSStatus('Buffering narration…', { busy: true });
+            requestNarrationPageText(pageNumber);
+            requestNarrationPageText(pageNumber + 1);
+            ensureNarrationBuffer();
+            maybeStartNarrationPlayback();
+        }
+
+        function requestNarrationPageText(pageNumber) {
+            const session = narrationSession;
+            const numericPage = Math.floor(Number(pageNumber));
+            if (!session || !Number.isInteger(numericPage) || numericPage <= 0) {
+                return;
+            }
+            if (session.pendingPages.has(numericPage) || session.pageFragments.has(numericPage)) {
+                return;
+            }
+            session.pendingPages.add(numericPage);
+            ensureViewerLoaded();
+            if (!viewerReady || !viewer.contentWindow) {
+                session.awaitingViewer = true;
+                return;
+            }
+            viewer.contentWindow.postMessage(
+                {
+                    type: 'requestPageText',
+                    payload: {
+                        pageNumber: numericPage,
+                        context: NARRATION_CONTEXT,
+                        sessionId: session.id
+                    }
+                },
+                messageTargetOrigin
+            );
+        }
+
+        function flushPendingNarrationRequests() {
+            const session = narrationSession;
+            if (!session || !session.awaitingViewer || !viewerReady || !viewer.contentWindow) {
+                return;
+            }
+            session.awaitingViewer = false;
+            session.pendingPages.forEach(pageNumber => {
+                viewer.contentWindow.postMessage(
+                    {
+                        type: 'requestPageText',
+                        payload: {
+                            pageNumber,
+                            context: NARRATION_CONTEXT,
+                            sessionId: session.id
+                        }
+                    },
+                    messageTargetOrigin
+                );
+            });
+        }
+
+        function ensureNarrationBuffer() {
+            const session = narrationSession;
+            if (!session) {
+                return;
+            }
+            let safetyCounter = 0;
+            while (session.fragmentQueue.length < NARRATION_BUFFER_SIZE && safetyCounter < 20) {
+                safetyCounter += 1;
+                const pageNumber = session.nextPageToQueue;
+                if (!Number.isInteger(pageNumber) || pageNumber <= 0) {
+                    break;
+                }
+                const fragments = session.pageFragments.get(pageNumber);
+                if (!fragments) {
+                    requestNarrationPageText(pageNumber);
+                    break;
+                }
+                if (fragments.length === 0) {
+                    session.emptyPagesSeen += 1;
+                    session.pageFragments.delete(pageNumber);
+                    session.pageFragmentCursor.delete(pageNumber);
+                    session.nextPageToQueue = pageNumber + 1;
+                    if (session.emptyPagesSeen >= NARRATION_EMPTY_PAGE_LIMIT) {
+                        stopNarration({ message: 'Reached the end of readable text.' });
+                        return;
+                    }
+                    continue;
+                }
+                session.emptyPagesSeen = 0;
+                const cursor = session.pageFragmentCursor.get(pageNumber) || 0;
+                if (cursor >= fragments.length) {
+                    session.pageFragments.delete(pageNumber);
+                    session.pageFragmentCursor.delete(pageNumber);
+                    session.nextPageToQueue = pageNumber + 1;
+                    requestNarrationPageText(pageNumber + 1);
+                    continue;
+                }
+                session.fragmentQueue.push(fragments[cursor]);
+                session.pageFragmentCursor.set(pageNumber, cursor + 1);
+                if (cursor + 1 === fragments.length) {
+                    session.nextPageToQueue = pageNumber + 1;
+                    requestNarrationPageText(pageNumber + 1);
+                }
+            }
+            updateNarrationBufferEstimate(session);
+            updateNarrationTimelineProgress({ elapsedMs: session.currentSegmentElapsedMs || 0 });
+            refreshOverlayMeta();
+        }
+
+        function maybeStartNarrationPlayback() {
+            const session = narrationSession;
+            if (!session || session.playbackInFlight || session.paused) {
+                return;
+            }
+            ensureNarrationBuffer();
+            if (!session.fragmentQueue.length && !(session.seekFromCurrent && session.currentFragment)) {
+                setTTSStatus('Buffering next section…', { busy: true });
+                return;
+            }
+            if (ttsOverlaySkip) {
+                ttsOverlaySkip.disabled = false;
+            }
+            clearTTSStatus();
+            playNextNarrationFragment();
+        }
+
+        async function playNextNarrationFragment() {
+            const session = narrationSession;
+            if (!session || session.playbackInFlight || session.paused) {
+                return;
+            }
+            session.playbackInFlight = true;
+            const useCurrent = session.seekFromCurrent && session.currentFragment;
+            const fragment = useCurrent ? session.currentFragment : session.fragmentQueue.shift();
+            if (!fragment) {
+                session.playbackInFlight = false;
+                maybeStartNarrationPlayback();
+                return;
+            }
+            session.seekFromCurrent = false;
+            session.currentFragment = fragment;
+            const estimateMs = session.currentSegmentEstimateMs && session.currentSegmentEstimateMs > 0
+                ? session.currentSegmentEstimateMs
+                : getFragmentEstimateMs(fragment);
+            session.currentSegmentEstimateMs = estimateMs;
+            const seekOffsetMs = session.seekOffsetMs || 0;
+            session.currentSegmentElapsedMs = seekOffsetMs ? Math.min(seekOffsetMs, estimateMs) : 0;
+            updateNarrationBufferEstimate(session);
+            refreshOverlayMeta();
+            updateNarrationTimelineProgress({ elapsedMs: session.currentSegmentElapsedMs });
+            if (Number.isInteger(fragment.pageNumber) && fragment.pageNumber > 0 && fragment.pageNumber !== currentPageNumber) {
+                setViewerPageForNarration(fragment.pageNumber);
+            }
+            try {
+                await ensureTTSReady();
+                const overlayLabel = fragment.pageNumber ? `Page ${fragment.pageNumber}` : 'Page';
+                startPlaybackProgress(fragment.text, estimateMs, {
+                    statusLabel: fragment.pageNumber ? `page ${fragment.pageNumber}` : 'page',
+                    overlayLabel,
+                    keepOverlay: true,
+                    elapsedOffsetMs: session.currentSegmentElapsedMs
+                });
+                const { playbackPromise, player } = await speakText(fragment.text, { ensure: false });
+                session.activePlayer = player;
+                applyNarrationSeekOffset(player, session);
+                await waitForPlaybackCompletion({ player, playbackPromise, estimateMs });
+                stopPlaybackProgress({ silent: true, keepOverlay: true });
+            } catch (error) {
+                console.error('[TTS] Narration fragment failed:', error);
+                stopNarration({ message: 'Unable to continue narration.' });
+                return;
+            }
+            if (!narrationSession || narrationSession.id !== session.id) {
+                return;
+            }
+            if (session.currentFragment !== fragment) {
+                session.playbackInFlight = false;
+                return;
+            }
+            session.activePlayer = null;
+            session.playbackInFlight = false;
+            fragment.estimateMs = session.currentSegmentEstimateMs || fragment.estimateMs;
+            session.playedMs += session.currentSegmentEstimateMs || 0;
+            session.currentSegmentEstimateMs = 0;
+            session.currentSegmentElapsedMs = 0;
+            session.seekOffsetMs = 0;
+            recordCompletedFragment(session, fragment);
+            updateNarrationTimelineProgress({ elapsedMs: 0 });
+            refreshOverlayMeta();
+            if (session.paused) {
+                return;
+            }
+            ensureNarrationBuffer();
+            maybeStartNarrationPlayback();
+        }
+
+        function pauseNarration(options = {}) {
+            const { silent = false } = options;
+            const session = narrationSession;
+            if (!session || session.paused) {
+                return;
+            }
+            session.paused = true;
+            const players = collectActivePlayers();
+            players.forEach(player => {
+                try {
+                    player.pause();
+                } catch (error) {
+                    console.debug('[TTS] Unable to pause player', error);
+                }
+            });
+            setOverlayPlayState(true);
+            if (!silent) {
+                showBookmarkStatus('Narration paused.');
+            }
+        }
+
+        function resumeNarration() {
+            const session = narrationSession;
+            if (!session || !session.paused) {
+                return;
+            }
+            session.paused = false;
+            if (overlayPlayer && overlayPlayer.paused) {
+                overlayPlayer.play().catch(err => console.debug('[TTS] Unable to resume playback', err));
+                setOverlayPlayState(false);
+                return;
+            }
+            maybeStartNarrationPlayback();
+        }
+
+        function toggleNarrationPlayPause() {
+            if (!narrationSession) {
+                if (overlayPlayer) {
+                    try {
+                        if (overlayPlayer.paused) {
+                            overlayPlayer.play().catch(err => console.debug('[TTS] Unable to resume playback', err));
+                        } else {
+                            overlayPlayer.pause();
+                        }
+                    } catch (error) {
+                        console.debug('[TTS] Play/pause toggle failed', error);
+                    }
+                    return;
+                }
+                startNarrationFromCurrentPage();
+                return;
+            }
+            if (narrationSession.paused || (overlayPlayer && overlayPlayer.paused)) {
+                resumeNarration();
+            } else {
+                pauseNarration();
+            }
+        }
+
+        function skipNarrationFragment() {
+            const session = narrationSession;
+            if (!session) {
+                return;
+            }
+            const fragment = session.currentFragment;
+            session.playedMs += session.currentSegmentEstimateMs || 0;
+            session.currentSegmentEstimateMs = 0;
+            session.currentSegmentElapsedMs = 0;
+            session.seekOffsetMs = 0;
+            session.seekFromCurrent = false;
+            if (fragment) {
+                fragment.estimateMs = fragment.estimateMs || getFragmentEstimateMs(fragment);
+                recordCompletedFragment(session, fragment);
+            }
+            session.currentFragment = null;
+            session.playbackInFlight = false;
+            session.paused = false;
+            abortActiveSpeech({ keepOverlay: true });
+            updateNarrationTimelineProgress({ elapsedMs: 0 });
+            ensureNarrationBuffer();
+            maybeStartNarrationPlayback();
+        }
+
+        function stopNarration(options = {}) {
+            const { silent = false, message = '' } = options;
+            const hadSession = Boolean(narrationSession);
+            narrationSession = null;
+            narrationAutoAdvanceTarget = null;
+            abortActiveSpeech();
+            if (ttsOverlaySkip) {
+                ttsOverlaySkip.disabled = true;
+            }
+            if (!silent && hadSession) {
+                showBookmarkStatus(message || 'Narration stopped.');
+            }
+            clearTTSStatus();
+        }
+
+        function handleNarrationPageText(payload) {
+            const session = narrationSession;
+            if (!session || !payload) {
+                return;
+            }
+            if (payload.sessionId != null && payload.sessionId !== session.id) {
+                return;
+            }
+            const payloadUrl = payload.url ? normalizePDFPath(payload.url) : null;
+            if (payloadUrl && session.documentUrl && payloadUrl !== session.documentUrl) {
+                return;
+            }
+            const pageNumberRaw = payload.pageNumber;
+            const pageNumber = Number.isFinite(Number(pageNumberRaw)) ? Math.max(1, Math.floor(Number(pageNumberRaw))) : null;
+            if (!pageNumber) {
+                return;
+            }
+            session.pendingPages.delete(pageNumber);
+            const payloadError = payload.error ? String(payload.error) : null;
+            const rawText = (payload.text ? String(payload.text) : '').trim();
+            if (!rawText) {
+                if (payloadError) {
+                    console.debug('[TTS] Viewer reported page extraction error:', payloadError);
+                }
+                session.pageFragments.set(pageNumber, []);
+                session.pageFragmentCursor.set(pageNumber, 0);
+                ensureNarrationBuffer();
+                maybeStartNarrationPlayback();
+                return;
+            }
+            const fragments = buildFragmentsFromText(rawText, pageNumber);
+            if (!fragments.length) {
+                session.pageFragments.set(pageNumber, []);
+                session.pageFragmentCursor.set(pageNumber, 0);
+                ensureNarrationBuffer();
+                maybeStartNarrationPlayback();
+                return;
+            }
+            fragments.forEach((fragment, index) => {
+                fragment.index = index + 1;
+                fragment.total = fragments.length;
+            });
+            session.pageFragments.set(pageNumber, fragments);
+            session.pageFragmentCursor.set(pageNumber, 0);
+            requestNarrationPageText(pageNumber + 1);
+            ensureNarrationBuffer();
+            maybeStartNarrationPlayback();
+        }
+
+        function handleNarrationPageChange(pageNumber, sourceUrl) {
+            const session = narrationSession;
+            if (!session) {
+                return;
+            }
+            const normalizedSource = sourceUrl ? normalizePDFPath(sourceUrl) : null;
+            if (normalizedSource && session.documentUrl && normalizedSource !== session.documentUrl) {
+                return;
+            }
+            if (narrationAutoAdvanceTarget && pageNumber === narrationAutoAdvanceTarget) {
+                narrationAutoAdvanceTarget = null;
+                return;
+            }
+            if (!session.currentFragment) {
+                return;
+            }
+            if (session.currentFragment && session.currentFragment.pageNumber === pageNumber) {
+                return;
+            }
+            // Manual scrolling should not stop narration.
+        }
+
         function requestSelectionPlayback() {
             if (!currentDocumentUrl) {
                 console.debug('[TTS] Read request ignored: no current document');
                 showBookmarkStatus('Open a PDF before using read aloud.');
                 return;
             }
-            clearQueue();
-            queueProcessing = false;
+            stopNarration({ silent: true });
             ensureViewerLoaded();
             if (!viewerReady || !viewer.contentWindow) {
                 console.debug('[TTS] Viewer not ready for selection playback', {
@@ -3520,39 +4503,7 @@
         }
 
         function requestPagePlayback() {
-            if (!currentDocumentUrl) {
-                console.debug('[TTS] Page read request ignored: no current document');
-                showBookmarkStatus('Open a PDF before using read aloud.');
-                return;
-            }
-            if (autoContinueEnabled) {
-                const page = resolveCurrentPageForQueue();
-                if (page) {
-                    clearQueue();
-                    enqueuePage(page);
-                    enqueuePage(page + 1);
-                    queueProcessing = false;
-                    processQueue();
-                    return;
-                }
-            }
-            clearQueue();
-            queueProcessing = false;
-            ensureViewerLoaded();
-            if (!viewerReady || !viewer.contentWindow) {
-                console.debug('[TTS] Viewer not ready for page playback', {
-                    viewerReady,
-                    hasContentWindow: Boolean(viewer && viewer.contentWindow)
-                });
-                showBookmarkStatus('Viewer is still loading. Try again shortly.');
-                return;
-            }
-            console.debug('[TTS] Requesting page text from viewer');
-            showBookmarkStatus('Gathering page text…');
-            viewer.contentWindow.postMessage(
-                { type: 'requestPageText' },
-                messageTargetOrigin
-            );
+            startNarrationFromCurrentPage();
         }
 
         async function handleSelectionText(payload) {
@@ -3601,121 +4552,6 @@
                     timeout: 5200
                 });
                 stopPlaybackProgress({ success: false, message: 'Unable to read selection right now.' });
-            }
-        }
-
-        async function handleQueuePageText(payload) {
-            const queueId = payload && Number(payload.queueId);
-            const pageNumberRaw = payload && payload.pageNumber;
-            const pageNumber = Number.isFinite(Number(pageNumberRaw)) ? Math.max(1, Math.floor(Number(pageNumberRaw))) : null;
-            const payloadUrl = payload && payload.url ? normalizePDFPath(payload.url) : null;
-            const payloadError = payload && payload.error ? String(payload.error) : null;
-            if (!queueCurrentItem || queueCurrentItem.id !== queueId) {
-                console.debug('[TTS][queue] Ignoring stale queue payload', { queueId, queueCurrentItem });
-                return;
-            }
-            if (payloadUrl && currentDocumentUrl && payloadUrl !== currentDocumentUrl) {
-                console.debug('[TTS][queue] Payload URL mismatch', { payloadUrl, currentDocumentUrl });
-                queueProcessing = false;
-                queueCurrentItem = null;
-                return;
-            }
-            const rawText = (payload && payload.text ? String(payload.text) : '').trim();
-            if (!rawText) {
-                if (payloadError) {
-                    console.debug('[TTS][queue] Viewer reported error:', payloadError);
-                }
-                showBookmarkStatus('Unable to read this queued page.');
-                queueCurrentItem = null;
-                runNextQueueItem();
-                return;
-            }
-            const normalizedText = normalizeNarrationText(rawText);
-            if (!normalizedText) {
-                showBookmarkStatus('Unable to read this queued page.');
-                queueCurrentItem = null;
-                runNextQueueItem();
-                return;
-            }
-            try {
-                abortActiveSpeech();
-                await ensureTTSReady();
-                const estimateMs = estimateSpeechDurationMs(normalizedText, ttsNarrationSpeed);
-                const statusLabel = pageNumber ? `page ${pageNumber}` : 'page';
-                const overlayLabel = pageNumber ? `Page ${pageNumber}` : 'Page';
-                startPlaybackProgress(normalizedText, estimateMs, { statusLabel, overlayLabel });
-                const { playbackPromise, player } = await speakText(normalizedText, { ensure: false });
-                await waitForPlaybackCompletion({ player, playbackPromise, estimateMs });
-                stopPlaybackProgress({ success: true });
-            } catch (error) {
-                console.error('[TTS][queue] Playback failed:', error);
-                setTTSStatus('Unable to read this queued page.', {
-                    variant: 'error',
-                    timeout: 5200
-                });
-                stopPlaybackProgress({ success: false, message: 'Unable to read this queued page.' });
-                queueProcessing = false;
-                queueCurrentItem = null;
-                updateQueueUI();
-                return;
-            }
-            queueCurrentItem = null;
-            if (pageNumber) {
-                autoEnqueueNext(pageNumber);
-            }
-            runNextQueueItem();
-        }
-
-        async function handlePageText(payload) {
-            const rawText = (payload && payload.text ? String(payload.text) : '').trim();
-            const pageNumberRaw = payload && payload.pageNumber;
-            const pageNumber = Number.isFinite(Number(pageNumberRaw)) ? Math.max(1, Math.floor(Number(pageNumberRaw))) : null;
-            const payloadUrl = payload && payload.url ? normalizePDFPath(payload.url) : null;
-            const payloadError = payload && payload.error ? String(payload.error) : null;
-            if (payloadUrl && currentDocumentUrl && payloadUrl !== currentDocumentUrl) {
-                console.debug('[TTS] Page payload ignored due to document mismatch', {
-                    payloadUrl,
-                    currentDocumentUrl
-                });
-                return;
-            }
-            if (!rawText) {
-                if (payloadError) {
-                    console.debug('[TTS] Viewer reported page extraction error:', payloadError);
-                }
-                showBookmarkStatus('Unable to read this page right now.');
-                return;
-            }
-            const normalizedText = normalizeNarrationText(rawText);
-            if (!normalizedText) {
-                if (payloadError) {
-                    console.debug('[TTS] Viewer reported page extraction error:', payloadError);
-                }
-                showBookmarkStatus('Unable to read this page right now.');
-                return;
-            }
-            console.debug('[TTS] Received page payload', {
-                length: normalizedText.length,
-                pageNumber,
-                preview: normalizedText.slice(0, 80)
-            });
-            try {
-                abortActiveSpeech();
-                await ensureTTSReady();
-                const estimateMs = estimateSpeechDurationMs(normalizedText, ttsNarrationSpeed);
-                const statusLabel = pageNumber ? `page ${pageNumber}` : 'page';
-                const overlayLabel = pageNumber ? `Page ${pageNumber}` : 'Page';
-                startPlaybackProgress(normalizedText, estimateMs, { statusLabel, overlayLabel });
-                const { playbackPromise, player } = await speakText(normalizedText, { ensure: false });
-                await waitForPlaybackCompletion({ player, playbackPromise, estimateMs });
-                stopPlaybackProgress({ success: true });
-            } catch (error) {
-                console.error('TTS page playback failed:', error);
-                setTTSStatus('Unable to read this page right now.', {
-                    variant: 'error',
-                    timeout: 5200
-                });
-                stopPlaybackProgress({ success: false, message: 'Unable to read this page right now.' });
             }
         }
 
@@ -4012,7 +4848,6 @@
                 }
                 syncSidebarToggleUI();
             }
-            updateQueueUI();
         }
 
         function showBookmarkStatus(message) {
@@ -4119,6 +4954,7 @@
             }
             currentPageNumber = rawPage;
             scheduleAutoSave(sourceUrl, rawPage);
+            handleNarrationPageChange(rawPage, sourceUrl);
         }
 
         function initializeFileMetadata() {
@@ -4530,6 +5366,8 @@
                     postOpenRequest(pendingFile);
                     pendingFile = null;
                 }
+                flushPendingNarrationRequests();
+                maybeStartNarrationPlayback();
                 return;
             }
             if (type === 'currentPage') {
@@ -4541,10 +5379,8 @@
                 return;
             }
             if (type === 'pageText') {
-                if (payload && payload.context === 'queue') {
-                    handleQueuePageText(payload);
-                } else {
-                    handlePageText(payload);
+                if (payload && payload.context === NARRATION_CONTEXT) {
+                    handleNarrationPageText(payload);
                 }
                 return;
             }
@@ -4561,10 +5397,8 @@
             const viewerPath = normalizedPath.startsWith('http') ? normalizedPath : normalizedPath.replace(/^\/+/, '');
 
             flushPendingAutoSave();
-            abortActiveSpeech();
-            hideOverlay();
+            stopNarration({ silent: true });
             teardownEbook();
-            clearQueue();
 
             if (externalViewer) {
                 externalViewer.style.display = 'none';
@@ -4597,8 +5431,6 @@
             currentPageNumber = targetPage || null;
             rememberLastDocument(currentDocumentUrl, targetPage);
             updateBookmarkUI();
-            updateQueueUI();
-            clearQueue();
             showBookmarkStatus('');
 
             sendOpenRequest(targetPage != null ? { pageNumber: targetPage } : {});
@@ -4644,156 +5476,6 @@
             return isEpubLikeUrl(url) || isMobiLikeUrl(url);
         }
 
-        function updateQueueUI() {
-            const count = narrationQueue.length;
-            if (ttsQueueCount) {
-                ttsQueueCount.textContent = String(count);
-            }
-            if (ttsQueueList) {
-                ttsQueueList.innerHTML = '';
-                narrationQueue.slice(0, 12).forEach(page => {
-                    const chip = document.createElement('span');
-                    chip.className = 'tts-queue-chip';
-                    chip.textContent = `Page ${page}`;
-                    ttsQueueList.appendChild(chip);
-                });
-            }
-            const hasDocument = Boolean(currentDocumentUrl);
-            const enableQueueActions = hasDocument && count >= 0;
-            if (ttsQueueCurrentButton) {
-                ttsQueueCurrentButton.disabled = !hasDocument;
-            }
-            if (ttsQueueNextButton) {
-                ttsQueueNextButton.disabled = !hasDocument;
-            }
-            if (ttsQueueStartButton) {
-                ttsQueueStartButton.disabled = !enableQueueActions || count === 0;
-            }
-            if (ttsQueueClearButton) {
-                ttsQueueClearButton.disabled = !enableQueueActions || count === 0;
-            }
-            if (ttsQueueSkipButton) {
-                ttsQueueSkipButton.disabled = !enableQueueActions || (count === 0 && !queueProcessing);
-            }
-            if (ttsOverlaySkip) {
-                ttsOverlaySkip.disabled = !queueProcessing && narrationQueue.length === 0;
-            }
-            updateAutoContinueUI();
-        }
-
-        function clearQueue() {
-            narrationQueue = [];
-            queueCurrentItem = null;
-            queueProcessing = false;
-            lastQueuedPage = null;
-            updateQueueUI();
-        }
-
-        function enqueuePage(pageNumber) {
-            if (!Number.isInteger(pageNumber) || pageNumber <= 0) {
-                showBookmarkStatus('No page number available to queue.');
-                return false;
-            }
-            const MAX_QUEUE = 10;
-            if (narrationQueue.length >= MAX_QUEUE) {
-                showBookmarkStatus(`Queue limit reached (${MAX_QUEUE}).`);
-                return false;
-            }
-            if (narrationQueue.includes(pageNumber)) {
-                return false;
-            }
-            if (queueCurrentItem && queueCurrentItem.pageNumber === pageNumber) {
-                return false;
-            }
-            narrationQueue.push(pageNumber);
-            if (!lastQueuedPage || pageNumber > lastQueuedPage) {
-                lastQueuedPage = pageNumber;
-            }
-            updateQueueUI();
-            return true;
-        }
-
-        function processQueue() {
-            if (!currentDocumentUrl) {
-                showBookmarkStatus('Open a PDF before starting the queue.');
-                return;
-            }
-            if (!narrationQueue.length) {
-                showBookmarkStatus('Queue is empty.');
-                return;
-            }
-            if (queueProcessing) {
-                return;
-            }
-            queueProcessing = true;
-            if (ttsOverlaySkip) {
-                ttsOverlaySkip.disabled = false;
-            }
-            runNextQueueItem();
-        }
-
-        function runNextQueueItem() {
-            if (!queueProcessing) {
-                return;
-            }
-            if (!narrationQueue.length) {
-                queueProcessing = false;
-                queueCurrentItem = null;
-                showBookmarkStatus('Finished reading queue.');
-                updateQueueUI();
-                if (ttsOverlaySkip) {
-                    ttsOverlaySkip.disabled = true;
-                }
-                return;
-            }
-            const nextPage = narrationQueue.shift();
-            updateQueueUI();
-            queueCurrentItem = {
-                pageNumber: nextPage,
-                id: ++queueIdCounter
-            };
-            requestPageTextForQueue(queueCurrentItem);
-        }
-
-        function requestPageTextForQueue(item) {
-            if (!item || !currentDocumentUrl) {
-                queueProcessing = false;
-                queueCurrentItem = null;
-                updateQueueUI();
-                return;
-            }
-            ensureViewerLoaded();
-            if (!viewerReady || !viewer.contentWindow) {
-                showBookmarkStatus('Viewer is still loading. Try again shortly.');
-                queueProcessing = false;
-                queueCurrentItem = null;
-                updateQueueUI();
-                return;
-            }
-            viewer.contentWindow.postMessage(
-                {
-                    type: 'requestPageText',
-                    payload: {
-                        pageNumber: item.pageNumber,
-                        context: 'queue',
-                        queueId: item.id
-                    }
-                },
-                messageTargetOrigin
-            );
-        }
-
-        function autoEnqueueNext(pageNumber) {
-            if (!autoContinueEnabled) {
-                return;
-            }
-            if (!Number.isInteger(pageNumber) || pageNumber <= 0) {
-                return;
-            }
-            const nextPage = pageNumber + 1;
-            enqueuePage(nextPage);
-        }
-
         function openExternalResource(url, triggerElement) {
             const target = (url || '').trim();
             if (!target) {
@@ -4809,8 +5491,7 @@
             }
 
             flushPendingAutoSave();
-            abortActiveSpeech();
-            hideOverlay();
+            stopNarration({ silent: true });
             teardownEbook();
 
             currentDocumentUrl = null;
@@ -4850,8 +5531,7 @@
             const isMobi = isMobiLikeUrl(normalizedPath);
 
             flushPendingAutoSave();
-            abortActiveSpeech();
-            hideOverlay();
+            stopNarration({ silent: true });
 
             currentDocumentUrl = null;
             currentDocumentKey = null;
@@ -4860,7 +5540,6 @@
 
             selectExternalElement(triggerElement || null);
             teardownEbook();
-            clearQueue();
 
             if (viewer) {
                 viewer.style.display = 'none';
@@ -5060,6 +5739,7 @@
                     ttsPlaybackSpeed = value;
                 }
                 refreshOverlayMeta();
+                recalculateNarrationEstimates();
             });
         }
 
@@ -5095,65 +5775,6 @@
             });
         }
 
-        function resolveCurrentPageForQueue() {
-            if (Number.isInteger(currentPageNumber) && currentPageNumber > 0) {
-                return currentPageNumber;
-            }
-            if (lastAutoSaved && Number.isInteger(lastAutoSaved.pageNumber) && lastAutoSaved.pageNumber > 0) {
-                return lastAutoSaved.pageNumber;
-            }
-            return null;
-        }
-
-        if (ttsQueueCurrentButton) {
-            ttsQueueCurrentButton.addEventListener('click', () => {
-                const page = resolveCurrentPageForQueue();
-                if (enqueuePage(page)) {
-                    showBookmarkStatus(`Queued page ${page}.`);
-                }
-            });
-        }
-
-        if (ttsQueueNextButton) {
-            ttsQueueNextButton.addEventListener('click', () => {
-                const page = resolveCurrentPageForQueue();
-                if (!page) {
-                    showBookmarkStatus('No page available to queue.');
-                    return;
-                }
-                if (enqueuePage(page + 1)) {
-                    showBookmarkStatus(`Queued page ${page + 1}.`);
-                }
-            });
-        }
-
-        if (ttsQueueStartButton) {
-            ttsQueueStartButton.addEventListener('click', () => {
-                processQueue();
-            });
-        }
-
-        if (ttsQueueClearButton) {
-            ttsQueueClearButton.addEventListener('click', () => {
-                clearQueue();
-                showBookmarkStatus('Queue cleared.');
-            });
-        }
-
-        if (ttsQueueSkipButton) {
-            ttsQueueSkipButton.addEventListener('click', () => {
-                skipQueueItem();
-            });
-        }
-
-        if (ttsAutoContinueToggle) {
-            ttsAutoContinueToggle.addEventListener('click', () => {
-                autoContinueEnabled = !autoContinueEnabled;
-                updateAutoContinueUI();
-                storeAutoContinue(autoContinueEnabled);
-            });
-        }
-
         if (ebookPrev) {
             ebookPrev.addEventListener('click', () => {
                 if (currentEbookRendition && typeof currentEbookRendition.prev === 'function') {
@@ -5172,48 +5793,46 @@
 
         if (ttsOverlayPlay) {
             ttsOverlayPlay.addEventListener('click', () => {
-                if (!overlayPlayer) {
-                    return;
-                }
-                try {
-                    if (overlayPlayer.paused) {
-                        overlayPlayer.play().catch(err => console.debug('[TTS] Unable to resume playback', err));
-                    } else {
-                        overlayPlayer.pause();
-                    }
-                } catch (error) {
-                    console.debug('[TTS] Play/pause toggle failed', error);
-                }
+                toggleNarrationPlayPause();
+            });
+        }
+
+        if (ttsOverlayPrev) {
+            ttsOverlayPrev.addEventListener('click', () => {
+                seekPreviousNarrationFragment();
             });
         }
 
         if (ttsOverlaySkip) {
             ttsOverlaySkip.addEventListener('click', () => {
-                skipQueueItem();
+                skipNarrationFragment();
             });
         }
 
         if (ttsOverlayStop) {
             ttsOverlayStop.addEventListener('click', () => {
                 console.debug('[TTS] Stop button pressed');
-                abortActiveSpeech();
-                stopPlaybackProgress({ success: false, message: 'Playback cancelled.' });
-                queueProcessing = false;
-                queueCurrentItem = null;
-                narrationQueue = [];
-                lastQueuedPage = null;
-                updateQueueUI();
+                stopNarration({ message: 'Playback cancelled.' });
             });
         }
 
-        function skipQueueItem() {
-            if (!queueProcessing && !narrationQueue.length) {
-                return;
-            }
-            abortActiveSpeech();
-            stopPlaybackProgress({ silent: true });
-            queueProcessing = true;
-            runNextQueueItem();
+        if (ttsOverlayScrubber) {
+            ttsOverlayScrubber.addEventListener('pointerdown', () => {
+                startOverlayScrub();
+            });
+            ttsOverlayScrubber.addEventListener('input', () => {
+                if (!overlayScrubbing) {
+                    startOverlayScrub();
+                }
+                overlayScrubTargetSeconds = Number(ttsOverlayScrubber.value) || 0;
+                updateOverlayScrubPreview(overlayScrubTargetSeconds);
+            });
+            ttsOverlayScrubber.addEventListener('pointerup', () => {
+                commitOverlayScrub();
+            });
+            ttsOverlayScrubber.addEventListener('change', () => {
+                commitOverlayScrub();
+            });
         }
 
         function restoreLastDocument() {

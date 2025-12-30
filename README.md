@@ -11,8 +11,8 @@ This repository is a curated collection of course materials and books to build a
 ## Reader features
 - Library sidebar for quick browsing; mobile drawers and bottom shortcuts.
 - Bookmarks saved in `localStorage`, with auto-save on page changes and quick resume.
-- TTS: read current selection or entire page via tts.rocks, with speed control (0.6–3×), mini overlay player, and queue/auto-continue controls.
-- TTS queue: enqueue current/next pages, auto-advance until stopped, skip ahead, and toggle auto-continue; overlay and tools show queue status.
+- TTS: read current selection or start continuous narration from the current page via tts.rocks, with speed control (0.6–3×), mini overlay player, and automatic page switching.
+- TTS buffering: page text is split into paragraph fragments (max 150 words) with a small buffer so playback stays smooth without generating long audio chunks.
 - EPUB viewer: inline rendering via epub.js with simple prev/next controls; MOBI opens via an embedded external viewer (may be blocked by some hosts—download if it fails).
 - Theme sync between parent and PDF iframe (light/dark).
 
@@ -30,6 +30,7 @@ This repository is a curated collection of course materials and books to build a
 - **Calculus**
   - [Crash Course in Vector Calculus](./01-Foundations/Mathematics/Calculus/Crash-Course-in-Vector-Calculus.pdf)
   - [Single and Multivariable Calculus: Early Transcendentals](./01-Foundations/Mathematics/Calculus/Single-and-Multivariable-Calculus-Early-Transcendentals.pdf)
+  - [Differential Equations: An Introduction for Engineers (Matthew Charnley)](./01-Foundations/Mathematics/Calculus/Differential-Equations-An-Introduction-for-Engineers-Matthew-Charnley.pdf)
 - **Linear Algebra**
   - [Linear Algebra and Multivariable Calculus - MIT 18.02 (Evan Chen)](./01-Foundations/Mathematics/Linear-Algebra/Linear-Algebra-and-Multivariable-Calculus-Chen-MIT-18.02.pdf)
   - [Linear Algebra (Cherney, Denton, Thomas, Waldron)](./01-Foundations/Mathematics/Linear-Algebra/Linear-Algebra-Cherney-Denton-Thomas-Waldron.pdf)
@@ -52,6 +53,13 @@ This repository is a curated collection of course materials and books to build a
   - [Algorithms (Jeff Erickson)](./01-Foundations/Computer-Science/Algorithms/Algorithms-JeffE.pdf)
 - **System Design**
   - [System Design Interview: An Insider's Guide (Alex Xu)](./01-Foundations/Computer-Science/System-Design/System-Design-Interview-Xu.pdf)
+
+#### Physics
+- [Fundamentals of Physics, Extended 10th Ed (Halliday & Resnick)](./01-Foundations/Physics/Fundamentals-of-Physics-Extended-10th-Ed-Halliday-Resnick.pdf)
+- [Classical Mechanics (Leonard Susskind)](./01-Foundations/Physics/Classical-Mechanics-Leonard-Susskind.pdf)
+- [Introduction to Electrodynamics (David J. Griffiths, 1999)](./01-Foundations/Physics/Introduction-to-Electrodynamics-Griffiths-1999.pdf)
+- [Statistical Mechanics (Daniel F. Styer)](./01-Foundations/Physics/Statistical-Mechanics-Daniel-F-Styer.pdf)
+- [The Road to Reality (Roger Penrose, 2006)](./01-Foundations/Physics/The-Road-to-Reality-A-Complete-Guide-to-the-Laws-of-the-Universe-Roger-Penrose-2006.pdf)
 
 ### 02-Network-Science
 - **Graph Theory**

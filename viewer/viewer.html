@@ -174,10 +174,19 @@ See https://github.com/adobe-type-tools/cmap-resources
       try {
         const page = await app.pdfDocument.getPage(pageNumber);
         const content = await page.getTextContent({ normalizeWhitespace: true });
-        const strings = (content && Array.isArray(content.items))
-          ? content.items.map(item => item.str).filter(Boolean)
-          : [];
-        return strings.join(' ');
+        const items = content && Array.isArray(content.items) ? content.items : [];
+        const parts = [];
+        for (const item of items) {
+          if (!item || !item.str) {
+            continue;
+          }
+          parts.push(item.str);
+          if (item.hasEOL) {
+            parts.push('\n');
+          }
+        }
+        const rawText = parts.join(' ');
+        return rawText.replace(/[ \t]*\n[ \t]*/g, '\n').replace(/[ \t]{2,}/g, ' ').trim();
       } catch (error) {
         console.warn('[Viewer TTS] Failed to extract page text', error);
         return '';
@@ -212,7 +221,8 @@ See https://github.com/adobe-type-tools/cmap-resources
           pageNumber,
           url,
           context: requestPayload && requestPayload.context ? requestPayload.context : null,
-          queueId: requestPayload && requestPayload.queueId ? requestPayload.queueId : null
+          queueId: requestPayload && requestPayload.queueId ? requestPayload.queueId : null,
+          sessionId: requestPayload && requestPayload.sessionId ? requestPayload.sessionId : null
         }
       });
     }
@@ -240,6 +250,15 @@ See https://github.com/adobe-type-tools/cmap-resources
         }
       });
     });
+
+    function setViewerPage(pageNumber) {
+      const app = window.PDFViewerApplication;
+      const numericPage = Number(pageNumber);
+      if (!app || !Number.isFinite(numericPage) || numericPage <= 0) {
+        return;
+      }
+      app.page = Math.floor(numericPage);
+    }
 
     window.addEventListener('message', (event) => {
       if (!isFileProtocol && event.origin !== window.location.origin) {
@@ -271,11 +290,14 @@ See https://github.com/adobe-type-tools/cmap-resources
                 url: null,
                 context: payload && payload.context ? payload.context : null,
                 queueId: payload && payload.queueId ? payload.queueId : null,
+                sessionId: payload && payload.sessionId ? payload.sessionId : null,
                 error: error && error.message ? String(error.message) : 'Unknown error'
               }
             });
           });
         });
+      } else if (type === 'setPage') {
+        withViewerReady(() => setViewerPage(payload && payload.pageNumber));
       }
     });
   </script>
