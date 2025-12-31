@@ -89,6 +89,7 @@ This repository is a curated collection of course materials and books to build a
   - [Introduction to Urban Science: Evidence and Theory of Cities as Complex Systems (Bettencourt, 2021)](./03-Complex-Systems/Urban-Science/Introduction-to-Urban-Science-Bettencourt-2021.pdf)
 - **General Complexity**
   - [Modeling and Analysis of Complex Systems (Sayama)](./03-Complex-Systems/General-Complexity/Modeling-and-Analysis-of-Complex-Systems-Sayama.pdf)
+  - [Introduction to the Theory of Complex Systems (Thurner, Hanel, Klimek, 2018)](./03-Complex-Systems/General-Complexity/Introduction-to-the-Theory-of-Complex-Systems-Thurner-Hanel-Klimek-2018.pdf)
   - More books to add here.
 
 ### 04-Applied-Methods
