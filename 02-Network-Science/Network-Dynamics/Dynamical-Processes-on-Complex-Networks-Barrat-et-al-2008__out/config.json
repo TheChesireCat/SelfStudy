@@ -1,0 +1,996 @@
+{
+  "source_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008.pdf",
+  "source_name": "Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008.pdf",
+  "page_count": 367,
+  "toc_found": true,
+  "toc_level_requested": 1,
+  "toc_level_used": 1,
+  "toc": [
+    {
+      "level": 1,
+      "title": "Cover",
+      "page": 1
+    },
+    {
+      "level": 1,
+      "title": "Half-title",
+      "page": 3
+    },
+    {
+      "level": 1,
+      "title": "Title",
+      "page": 5
+    },
+    {
+      "level": 1,
+      "title": "Copyright",
+      "page": 6
+    },
+    {
+      "level": 1,
+      "title": "Dedication",
+      "page": 7
+    },
+    {
+      "level": 1,
+      "title": "Contents",
+      "page": 9
+    },
+    {
+      "level": 1,
+      "title": "Preface",
+      "page": 13
+    },
+    {
+      "level": 1,
+      "title": "Acknowledgements",
+      "page": 17
+    },
+    {
+      "level": 1,
+      "title": "List of abbreviations",
+      "page": 19
+    },
+    {
+      "level": 1,
+      "title": "1 Preliminaries: networks and graphs",
+      "page": 21
+    },
+    {
+      "level": 2,
+      "title": "1.1 What is a network?",
+      "page": 21
+    },
+    {
+      "level": 2,
+      "title": "1.2 Basic concepts in graph theory",
+      "page": 22
+    },
+    {
+      "level": 3,
+      "title": "1.2.1 Graphs and subgraphs",
+      "page": 22
+    },
+    {
+      "level": 3,
+      "title": "1.2.2 Paths and connectivity",
+      "page": 25
+    },
+    {
+      "level": 3,
+      "title": "1.2.3 Degree and centrality measures",
+      "page": 28
+    },
+    {
+      "level": 4,
+      "title": "Degree centrality",
+      "page": 29
+    },
+    {
+      "level": 4,
+      "title": "Closeness centrality",
+      "page": 29
+    },
+    {
+      "level": 4,
+      "title": "Betweenness centrality",
+      "page": 29
+    },
+    {
+      "level": 3,
+      "title": "1.2.4 Clustering",
+      "page": 30
+    },
+    {
+      "level": 2,
+      "title": "1.3 Statistical characterization of networks",
+      "page": 31
+    },
+    {
+      "level": 3,
+      "title": "1.3.1 Degree distribution",
+      "page": 32
+    },
+    {
+      "level": 3,
+      "title": "1.3.2 Betweenness distribution",
+      "page": 32
+    },
+    {
+      "level": 3,
+      "title": "1.3.3 Mixing patterns and degree correlations",
+      "page": 33
+    },
+    {
+      "level": 3,
+      "title": "1.3.4 Clustering spectrum",
+      "page": 37
+    },
+    {
+      "level": 3,
+      "title": "1.3.5 Rich-club phenomenon",
+      "page": 38
+    },
+    {
+      "level": 2,
+      "title": "1.4 Weighted networks",
+      "page": 39
+    },
+    {
+      "level": 1,
+      "title": "2 Networks and complexity",
+      "page": 44
+    },
+    {
+      "level": 2,
+      "title": "2.1 Real-world systems",
+      "page": 44
+    },
+    {
+      "level": 3,
+      "title": "2.1.1 Networks everywhere",
+      "page": 45
+    },
+    {
+      "level": 4,
+      "title": "Social networks",
+      "page": 46
+    },
+    {
+      "level": 4,
+      "title": "Transportation networks",
+      "page": 47
+    },
+    {
+      "level": 4,
+      "title": "Internet",
+      "page": 49
+    },
+    {
+      "level": 4,
+      "title": "World Wide Web",
+      "page": 51
+    },
+    {
+      "level": 4,
+      "title": "Biological networks",
+      "page": 52
+    },
+    {
+      "level": 3,
+      "title": "2.1.2 Measurements and biases",
+      "page": 53
+    },
+    {
+      "level": 2,
+      "title": "2.2 Network classes",
+      "page": 54
+    },
+    {
+      "level": 3,
+      "title": "2.2.1 Small-world yet clustered",
+      "page": 55
+    },
+    {
+      "level": 3,
+      "title": "2.2.2 Heterogeneity and heavy tails",
+      "page": 57
+    },
+    {
+      "level": 3,
+      "title": "2.2.3 Higher order statistical properties of networks",
+      "page": 63
+    },
+    {
+      "level": 2,
+      "title": "2.3 The complicated and the complex",
+      "page": 67
+    },
+    {
+      "level": 1,
+      "title": "3 Network models",
+      "page": 70
+    },
+    {
+      "level": 2,
+      "title": "3.1 Randomness and network models",
+      "page": 70
+    },
+    {
+      "level": 3,
+      "title": "3.1.1 Generalized random graphs",
+      "page": 72
+    },
+    {
+      "level": 3,
+      "title": "3.1.2 Fitness or \u201chidden variables\u201d models",
+      "page": 73
+    },
+    {
+      "level": 3,
+      "title": "3.1.3 The Watts\u2013Strogatz model",
+      "page": 75
+    },
+    {
+      "level": 2,
+      "title": "3.2 Exponential random graphs",
+      "page": 78
+    },
+    {
+      "level": 2,
+      "title": "3.3 Evolving networks and the non-equilibrium approach",
+      "page": 80
+    },
+    {
+      "level": 3,
+      "title": "3.3.1 The preferential attachment class of models",
+      "page": 84
+    },
+    {
+      "level": 3,
+      "title": "3.3.2 Copy and duplication models",
+      "page": 88
+    },
+    {
+      "level": 3,
+      "title": "3.3.3 Trade-off and optimization models",
+      "page": 90
+    },
+    {
+      "level": 2,
+      "title": "3.4 Modeling higher order statistics and other attributes",
+      "page": 92
+    },
+    {
+      "level": 2,
+      "title": "3.5 Modeling frameworks and model validation",
+      "page": 94
+    },
+    {
+      "level": 1,
+      "title": "4 Introduction to dynamical processes: theory and simulation",
+      "page": 97
+    },
+    {
+      "level": 2,
+      "title": "4.1 A microscopic approach to dynamical phenomena",
+      "page": 97
+    },
+    {
+      "level": 2,
+      "title": "4.2 Equilibrium and non-equilibrium systems",
+      "page": 99
+    },
+    {
+      "level": 2,
+      "title": "4.3 Approximate solutions of the Master Equation",
+      "page": 102
+    },
+    {
+      "level": 2,
+      "title": "4.4 Agent-based modeling and numerical simulations",
+      "page": 105
+    },
+    {
+      "level": 1,
+      "title": "5 Phase transitions on complex networks",
+      "page": 112
+    },
+    {
+      "level": 2,
+      "title": "5.1 Phase transitions and the Ising model",
+      "page": 112
+    },
+    {
+      "level": 2,
+      "title": "5.2 Equilibrium statistical physics of critical phenomena",
+      "page": 116
+    },
+    {
+      "level": 3,
+      "title": "5.2.1 Mean-field theory of phase transitions",
+      "page": 119
+    },
+    {
+      "level": 2,
+      "title": "5.3 The Ising model in complex networks",
+      "page": 121
+    },
+    {
+      "level": 3,
+      "title": "5.3.1 Small-world networks",
+      "page": 121
+    },
+    {
+      "level": 3,
+      "title": "5.3.2 Networks with generic degree distributions",
+      "page": 124
+    },
+    {
+      "level": 2,
+      "title": "5.4 Dynamics of ordering processes",
+      "page": 128
+    },
+    {
+      "level": 2,
+      "title": "5.5 Phenomenological theory of phase transitions",
+      "page": 131
+    },
+    {
+      "level": 1,
+      "title": "6 Resilience and robustness of networks",
+      "page": 136
+    },
+    {
+      "level": 2,
+      "title": "6.1 Damaging networks",
+      "page": 136
+    },
+    {
+      "level": 2,
+      "title": "6.2 Percolation phenomena as critical phase transitions",
+      "page": 140
+    },
+    {
+      "level": 2,
+      "title": "6.3 Percolation in complex networks",
+      "page": 144
+    },
+    {
+      "level": 2,
+      "title": "6.4 Damage and resilience in networks",
+      "page": 146
+    },
+    {
+      "level": 2,
+      "title": "6.5 Targeted attacks on large degree nodes",
+      "page": 149
+    },
+    {
+      "level": 3,
+      "title": "6.5.1 Alternative ranking strategies",
+      "page": 152
+    },
+    {
+      "level": 3,
+      "title": "6.5.2 Weighted networks",
+      "page": 154
+    },
+    {
+      "level": 2,
+      "title": "6.6 Damage in real-world networks",
+      "page": 155
+    },
+    {
+      "level": 1,
+      "title": "7 Synchronization phenomena in networks",
+      "page": 156
+    },
+    {
+      "level": 2,
+      "title": "7.1 General framework",
+      "page": 156
+    },
+    {
+      "level": 2,
+      "title": "7.2 Linearly coupled identical oscillators",
+      "page": 158
+    },
+    {
+      "level": 3,
+      "title": "7.2.1 Small-world networks",
+      "page": 161
+    },
+    {
+      "level": 3,
+      "title": "7.2.2 Degree fluctuations: the paradox of heterogeneity",
+      "page": 163
+    },
+    {
+      "level": 3,
+      "title": "7.2.3 Degree-related asymmetry",
+      "page": 166
+    },
+    {
+      "level": 2,
+      "title": "7.3 Non-linear coupling: firing and pulse",
+      "page": 168
+    },
+    {
+      "level": 2,
+      "title": "7.4 Non-identical oscillators: the Kuramoto model",
+      "page": 171
+    },
+    {
+      "level": 3,
+      "title": "7.4.1 The mean-field Kuramoto model",
+      "page": 173
+    },
+    {
+      "level": 3,
+      "title": "7.4.2 The Kuramoto model on complex networks",
+      "page": 174
+    },
+    {
+      "level": 2,
+      "title": "7.5 Synchronization paths in complex networks",
+      "page": 176
+    },
+    {
+      "level": 2,
+      "title": "7.6 Synchronization phenomena as a topology probing tool",
+      "page": 178
+    },
+    {
+      "level": 1,
+      "title": "8 Walking and searching on networks",
+      "page": 180
+    },
+    {
+      "level": 2,
+      "title": "8.1 Diffusion processes and random walks",
+      "page": 180
+    },
+    {
+      "level": 2,
+      "title": "8.2 Diffusion in directed networks and ranking algorithms",
+      "page": 186
+    },
+    {
+      "level": 2,
+      "title": "8.3 Searching strategies in complex networks",
+      "page": 190
+    },
+    {
+      "level": 3,
+      "title": "8.3.1 Search strategies",
+      "page": 192
+    },
+    {
+      "level": 3,
+      "title": "8.3.2 Search in a small world",
+      "page": 194
+    },
+    {
+      "level": 3,
+      "title": "8.3.3 Taking advantage of complexity",
+      "page": 197
+    },
+    {
+      "level": 1,
+      "title": "9 Epidemic spreading in population networks",
+      "page": 200
+    },
+    {
+      "level": 2,
+      "title": "9.1 Epidemic models",
+      "page": 200
+    },
+    {
+      "level": 3,
+      "title": "9.1.1 Compartmental models and the homogeneous assumption",
+      "page": 202
+    },
+    {
+      "level": 3,
+      "title": "9.1.2 The linear approximation and the epidemic threshold",
+      "page": 206
+    },
+    {
+      "level": 2,
+      "title": "9.2 Epidemics in heterogeneous networks",
+      "page": 209
+    },
+    {
+      "level": 3,
+      "title": "9.2.1 The SI model",
+      "page": 210
+    },
+    {
+      "level": 3,
+      "title": "9.2.2 The SIR and SIS models",
+      "page": 212
+    },
+    {
+      "level": 3,
+      "title": "9.2.3 The effect of mixing patterns",
+      "page": 213
+    },
+    {
+      "level": 3,
+      "title": "9.2.4 Numerical simulations",
+      "page": 215
+    },
+    {
+      "level": 2,
+      "title": "9.3 The large time limit of epidemic outbreaks",
+      "page": 217
+    },
+    {
+      "level": 3,
+      "title": "9.3.1 The SIS model",
+      "page": 218
+    },
+    {
+      "level": 3,
+      "title": "9.3.2 The SIR model",
+      "page": 221
+    },
+    {
+      "level": 3,
+      "title": "9.3.3 Epidemic models and phase transitions",
+      "page": 223
+    },
+    {
+      "level": 3,
+      "title": "9.3.4 Finite size and correlations",
+      "page": 224
+    },
+    {
+      "level": 2,
+      "title": "9.4 Immunization of heterogeneous networks",
+      "page": 227
+    },
+    {
+      "level": 3,
+      "title": "9.4.1 Uniform immunization",
+      "page": 227
+    },
+    {
+      "level": 3,
+      "title": "9.4.2 Targeted immunization",
+      "page": 228
+    },
+    {
+      "level": 3,
+      "title": "9.4.3 Immunization without global knowledge",
+      "page": 230
+    },
+    {
+      "level": 1,
+      "title": "10 Social networks and collective behavior",
+      "page": 236
+    },
+    {
+      "level": 2,
+      "title": "10.1 Social influence",
+      "page": 236
+    },
+    {
+      "level": 2,
+      "title": "10.2 Rumor and information spreading",
+      "page": 238
+    },
+    {
+      "level": 2,
+      "title": "10.3 Opinion formation and the Voter model",
+      "page": 245
+    },
+    {
+      "level": 2,
+      "title": "10.4 The Axelrod model",
+      "page": 252
+    },
+    {
+      "level": 2,
+      "title": "10.5 Prisoner\u2019s dilemma",
+      "page": 255
+    },
+    {
+      "level": 2,
+      "title": "10.6 Coevolution of opinions and network",
+      "page": 258
+    },
+    {
+      "level": 1,
+      "title": "11 Traffic on complex networks",
+      "page": 262
+    },
+    {
+      "level": 2,
+      "title": "11.1 Traffic and congestion",
+      "page": 262
+    },
+    {
+      "level": 2,
+      "title": "11.2 Traffic and congestion in distributed routing",
+      "page": 266
+    },
+    {
+      "level": 3,
+      "title": "11.2.1 Heterogeneity and routing policies",
+      "page": 270
+    },
+    {
+      "level": 3,
+      "title": "11.2.2 Adaptive (traffic-aware) routing policies",
+      "page": 273
+    },
+    {
+      "level": 2,
+      "title": "11.3 Avalanches",
+      "page": 276
+    },
+    {
+      "level": 3,
+      "title": "11.3.1 Breakdown models",
+      "page": 277
+    },
+    {
+      "level": 3,
+      "title": "11.3.2 Avalanches by local failures",
+      "page": 279
+    },
+    {
+      "level": 3,
+      "title": "11.3.3 Avalanche and routing dynamics",
+      "page": 280
+    },
+    {
+      "level": 3,
+      "title": "11.3.4 Partial failures and recovery",
+      "page": 281
+    },
+    {
+      "level": 3,
+      "title": "11.3.5 Reinforcement mechanisms",
+      "page": 283
+    },
+    {
+      "level": 2,
+      "title": "11.4 Stylized models and real-world infrastructures",
+      "page": 284
+    },
+    {
+      "level": 1,
+      "title": "12 Networks in biology: from the cell to ecosystems",
+      "page": 287
+    },
+    {
+      "level": 2,
+      "title": "12.1 Cell biology and networks",
+      "page": 288
+    },
+    {
+      "level": 2,
+      "title": "12.2 Flux-balance approaches and the metabolic activity",
+      "page": 291
+    },
+    {
+      "level": 2,
+      "title": "12.3 Boolean networks and gene regulation",
+      "page": 294
+    },
+    {
+      "level": 2,
+      "title": "12.4 The brain as a network",
+      "page": 299
+    },
+    {
+      "level": 2,
+      "title": "12.5 Ecosystems and food webs",
+      "page": 302
+    },
+    {
+      "level": 3,
+      "title": "12.5.1 Dynamics and stability of ecosystems",
+      "page": 307
+    },
+    {
+      "level": 3,
+      "title": "12.5.2 Coupling topology and dynamics",
+      "page": 311
+    },
+    {
+      "level": 2,
+      "title": "12.6 Future directions",
+      "page": 313
+    },
+    {
+      "level": 1,
+      "title": "13 Postface: critically examining complex networks science",
+      "page": 314
+    },
+    {
+      "level": 1,
+      "title": "Appendix 1 Random graphs",
+      "page": 318
+    },
+    {
+      "level": 1,
+      "title": "Appendix 2 Generating functions formalism",
+      "page": 323
+    },
+    {
+      "level": 1,
+      "title": "Appendix 3 Percolation in directed networks",
+      "page": 326
+    },
+    {
+      "level": 2,
+      "title": "A3.1 Purely directed networks",
+      "page": 326
+    },
+    {
+      "level": 2,
+      "title": "A3.2 General case",
+      "page": 328
+    },
+    {
+      "level": 1,
+      "title": "Appendix 4 Laplacian matrix of a graph",
+      "page": 330
+    },
+    {
+      "level": 1,
+      "title": "Appendix 5 Return probability and spectral density",
+      "page": 331
+    },
+    {
+      "level": 1,
+      "title": "References",
+      "page": 333
+    },
+    {
+      "level": 1,
+      "title": "Index",
+      "page": 364
+    }
+  ],
+  "sections": [
+    {
+      "index": 1,
+      "title": "Cover",
+      "slug": "cover",
+      "start_page": 1,
+      "end_page": 2,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/01_cover.pdf"
+    },
+    {
+      "index": 2,
+      "title": "Half-title",
+      "slug": "half-title",
+      "start_page": 3,
+      "end_page": 4,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/02_half-title.pdf"
+    },
+    {
+      "index": 3,
+      "title": "Title",
+      "slug": "title",
+      "start_page": 5,
+      "end_page": 5,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/03_title.pdf"
+    },
+    {
+      "index": 4,
+      "title": "Copyright",
+      "slug": "copyright",
+      "start_page": 6,
+      "end_page": 6,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/04_copyright.pdf"
+    },
+    {
+      "index": 5,
+      "title": "Dedication",
+      "slug": "dedication",
+      "start_page": 7,
+      "end_page": 8,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/05_dedication.pdf"
+    },
+    {
+      "index": 6,
+      "title": "Contents",
+      "slug": "contents",
+      "start_page": 9,
+      "end_page": 12,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/06_contents.pdf"
+    },
+    {
+      "index": 7,
+      "title": "Preface",
+      "slug": "preface",
+      "start_page": 13,
+      "end_page": 16,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/07_preface.pdf"
+    },
+    {
+      "index": 8,
+      "title": "Acknowledgements",
+      "slug": "acknowledgements",
+      "start_page": 17,
+      "end_page": 18,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/08_acknowledgements.pdf"
+    },
+    {
+      "index": 9,
+      "title": "List of abbreviations",
+      "slug": "list-of-abbreviations",
+      "start_page": 19,
+      "end_page": 20,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/09_list-of-abbreviations.pdf"
+    },
+    {
+      "index": 10,
+      "title": "1 Preliminaries: networks and graphs",
+      "slug": "1-preliminaries-networks-and-graphs",
+      "start_page": 21,
+      "end_page": 43,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/10_1-preliminaries-networks-and-graphs.pdf"
+    },
+    {
+      "index": 11,
+      "title": "2 Networks and complexity",
+      "slug": "2-networks-and-complexity",
+      "start_page": 44,
+      "end_page": 69,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/11_2-networks-and-complexity.pdf"
+    },
+    {
+      "index": 12,
+      "title": "3 Network models",
+      "slug": "3-network-models",
+      "start_page": 70,
+      "end_page": 96,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/12_3-network-models.pdf"
+    },
+    {
+      "index": 13,
+      "title": "4 Introduction to dynamical processes: theory and simulation",
+      "slug": "4-introduction-to-dynamical-processes-theory-and-simulation",
+      "start_page": 97,
+      "end_page": 111,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/13_4-introduction-to-dynamical-processes-theory-and-simulation.pdf"
+    },
+    {
+      "index": 14,
+      "title": "5 Phase transitions on complex networks",
+      "slug": "5-phase-transitions-on-complex-networks",
+      "start_page": 112,
+      "end_page": 135,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/14_5-phase-transitions-on-complex-networks.pdf"
+    },
+    {
+      "index": 15,
+      "title": "6 Resilience and robustness of networks",
+      "slug": "6-resilience-and-robustness-of-networks",
+      "start_page": 136,
+      "end_page": 155,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/15_6-resilience-and-robustness-of-networks.pdf"
+    },
+    {
+      "index": 16,
+      "title": "7 Synchronization phenomena in networks",
+      "slug": "7-synchronization-phenomena-in-networks",
+      "start_page": 156,
+      "end_page": 179,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/16_7-synchronization-phenomena-in-networks.pdf"
+    },
+    {
+      "index": 17,
+      "title": "8 Walking and searching on networks",
+      "slug": "8-walking-and-searching-on-networks",
+      "start_page": 180,
+      "end_page": 199,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/17_8-walking-and-searching-on-networks.pdf"
+    },
+    {
+      "index": 18,
+      "title": "9 Epidemic spreading in population networks",
+      "slug": "9-epidemic-spreading-in-population-networks",
+      "start_page": 200,
+      "end_page": 235,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/18_9-epidemic-spreading-in-population-networks.pdf"
+    },
+    {
+      "index": 19,
+      "title": "10 Social networks and collective behavior",
+      "slug": "10-social-networks-and-collective-behavior",
+      "start_page": 236,
+      "end_page": 261,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/19_10-social-networks-and-collective-behavior.pdf"
+    },
+    {
+      "index": 20,
+      "title": "11 Traffic on complex networks",
+      "slug": "11-traffic-on-complex-networks",
+      "start_page": 262,
+      "end_page": 286,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/20_11-traffic-on-complex-networks.pdf"
+    },
+    {
+      "index": 21,
+      "title": "12 Networks in biology: from the cell to ecosystems",
+      "slug": "12-networks-in-biology-from-the-cell-to-ecosystems",
+      "start_page": 287,
+      "end_page": 313,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/21_12-networks-in-biology-from-the-cell-to-ecosystems.pdf"
+    },
+    {
+      "index": 22,
+      "title": "13 Postface: critically examining complex networks science",
+      "slug": "13-postface-critically-examining-complex-networks-science",
+      "start_page": 314,
+      "end_page": 317,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/22_13-postface-critically-examining-complex-networks-science.pdf"
+    },
+    {
+      "index": 23,
+      "title": "Appendix 1 Random graphs",
+      "slug": "appendix-1-random-graphs",
+      "start_page": 318,
+      "end_page": 322,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/23_appendix-1-random-graphs.pdf"
+    },
+    {
+      "index": 24,
+      "title": "Appendix 2 Generating functions formalism",
+      "slug": "appendix-2-generating-functions-formalism",
+      "start_page": 323,
+      "end_page": 325,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/24_appendix-2-generating-functions-formalism.pdf"
+    },
+    {
+      "index": 25,
+      "title": "Appendix 3 Percolation in directed networks",
+      "slug": "appendix-3-percolation-in-directed-networks",
+      "start_page": 326,
+      "end_page": 329,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/25_appendix-3-percolation-in-directed-networks.pdf"
+    },
+    {
+      "index": 26,
+      "title": "Appendix 4 Laplacian matrix of a graph",
+      "slug": "appendix-4-laplacian-matrix-of-a-graph",
+      "start_page": 330,
+      "end_page": 330,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/26_appendix-4-laplacian-matrix-of-a-graph.pdf"
+    },
+    {
+      "index": 27,
+      "title": "Appendix 5 Return probability and spectral density",
+      "slug": "appendix-5-return-probability-and-spectral-density",
+      "start_page": 331,
+      "end_page": 332,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/27_appendix-5-return-probability-and-spectral-density.pdf"
+    },
+    {
+      "index": 28,
+      "title": "References",
+      "slug": "references",
+      "start_page": 333,
+      "end_page": 363,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/28_references.pdf"
+    },
+    {
+      "index": 29,
+      "title": "Index",
+      "slug": "index",
+      "start_page": 364,
+      "end_page": 367,
+      "output_pdf": "/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy/02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections/29_index.pdf"
+    }
+  ],
+  "created_at": "2026-01-09T02:38:54.982159+00:00",
+  "notes": ""
+}
