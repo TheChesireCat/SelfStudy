@@ -70,9 +70,9 @@ This repository is a curated collection of course materials and books to build a
   - [Network Science (Barabási)](./02-Network-Science/Complex-Networks/Network-Science-Barabasi.pdf)
   - [Handbook of Graph Drawing and Visualization (Tamassia, 2013 draft)](./02-Network-Science/Complex-Networks/Handbook%20of%20Graph%20Drawing%20and%20Visualization_%20Draft%20of%202013%20--%20Tamassia%20R_%20%28Ed_%29%20--%202013%20--%20d6e78ba7a942e1219d1be5b603984547%20--%20Anna%E2%80%99s%20Archive.pdf)
 - **Network Science 2**
-  - [NETS2 - Complex Networks: Principles, Methods and Applications (Latora, Nicosia, Russo)](./02-Network-Science/NETS2%20-%20Complex%20Networks%3A%20Principles%2C%20Methods%20and%20Applications%20%28Latora%2C%20Nicosia%2C%20Russo%29.pdf)
-  - [NETS2 - Random Graphs and Complex Networks (van der Hofstad) [Vol 1]](./02-Network-Science/NETS2%20-%20Random%20Graphs%20and%20Complex%20Networks%20%28van%20der%20Hofstad%29%20%5BVol%201%5D.pdf)
-  - [NETS2 - Random Graphs and Complex Networks (van der Hofstad) [Vol 2]](./02-Network-Science/NETS2%20-%20Random%20Graphs%20and%20Complex%20Networks%20%28van%20der%20Hofstad%29%20%5BVol%202%5D.pdf)
+  - [NETS2 - Complex Networks: Principles, Methods and Applications (Latora, Nicosia, Russo)](./02-Network-Science/NETS2/NETS2%20-%20Complex%20Networks%3A%20Principles%2C%20Methods%20and%20Applications%20%28Latora%2C%20Nicosia%2C%20Russo%29.pdf)
+  - [NETS2 - Random Graphs and Complex Networks (van der Hofstad) [Vol 1]](./02-Network-Science/NETS2/NETS2%20-%20Random%20Graphs%20and%20Complex%20Networks%20%28van%20der%20Hofstad%29%20%5BVol%201%5D.pdf)
+  - [NETS2 - Random Graphs and Complex Networks (van der Hofstad) [Vol 2]](./02-Network-Science/NETS2/NETS2%20-%20Random%20Graphs%20and%20Complex%20Networks%20%28van%20der%20Hofstad%29%20%5BVol%202%5D.pdf)
 - **Machine Learning on Graphs**
   - [CS224W: Machine Learning with Graphs (Stanford)](./02-Network-Science/Machine-Learning-on-Graphs/CS224W-Machine-Learning-with-Graphs-Stanford.pdf)
   - [Course README](./02-Network-Science/Machine-Learning-on-Graphs/README.md)

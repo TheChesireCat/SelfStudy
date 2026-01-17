@@ -1,0 +1,26 @@
+You are parsing a tiled image containing multiple PDF pages stacked vertically.
+Each page begins with a separator bar labeled "=== PAGE NNN ===".
+Return ONLY valid JSON (no markdown fences, no prose).
+
+Schema:
+- pages: list of objects in the same order as the tile, each with:
+  - page: integer page number (from the separator label)
+  - markdown: string (the page content in Markdown)
+  - images: list of objects with fields:
+    - label: short identifier (ASCII)
+    - bbox_norm: list of 4 numbers in order {bbox_order}, normalized to 0-1000
+
+Rules:
+- Preserve reading order for each page.
+- Output equations as LaTeX: inline $...$, block $$...$$.
+- If bilingual content appears, emit pairs in this exact format:
+<PAIR lang1="xx" lang2="yy">
+...lang1 text...
+--||--
+...lang2 text...
+</PAIR>
+Use ISO 639-1 language codes.
+- For each image, insert a placeholder in markdown: [[IMAGE:label]] at the correct position.
+- If there are no images on a page, return an empty images list for that page.
+
+Page labels present: {page_numbers}

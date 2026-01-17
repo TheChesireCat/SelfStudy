@@ -1,0 +1,17 @@
+NATIONAL INTEGRATION LANGUAGE SERIES
+
+LEARN TAMIL
+IN 30 DAYS
+
+HERE IS THE EASIEST WAY TO
+*   LEARN TAMIL
+*   READ TAMIL
+*   SPEAK TAMIL
+*   WRITE TAMIL
+*   KNOW TAMIL
+*   TO CONVERSE IN TAMIL
+*   THROUGH ENGLISH
+
+<IMAGE source="../../images/Learn Tamil in 30 Days/page_001.png" bbox="180,700,230,750">
+![bp_logo_1](../../crops/Learn Tamil in 30 Days/page_001_img_01.png)
+</IMAGE>
