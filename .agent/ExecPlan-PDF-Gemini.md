@@ -43,7 +43,7 @@ Pending implementation.
 
 The repository is a PDF library. The target PDFs for initial validation are:
 1) `0X-lobia-texts/Learn Tamil in 30 Days.pdf` (bilingual Tamil/English textbook for parsing).
-2) `02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008.pdf` (network dynamics textbook for TOC splitting and per-chapter parsing).
+2) `02-Network-Science/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008.pdf` (network dynamics textbook for TOC splitting and per-chapter parsing).
 
 Definitions used in this plan:
 - TOC (table of contents): The PDF outline entries returned by PyMuPDF `doc.get_toc()`, each entry being `[level, title, page]` with page numbers starting at 1.
@@ -99,7 +99,7 @@ Work from `/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy`.
 
 1) Inventory PDFs and confirm target paths:
    - `ls "0X-lobia-texts"`
-   - `ls "02-Network-Science/Network-Dynamics"`
+   - `ls "02-Network-Science"`
 
 2) Create the tooling layout:
    - `mkdir -p tools/prompts`
@@ -121,14 +121,14 @@ Work from `/Users/natkite/Documents/2025/netsi25/PhD/phd-dev/SelfStudy`.
    - `tools/prompts/tile_prompt.txt` for multi-page tiled parse with required page separators.
 
 6) Validate splitting on Barrat PDF:
-   - `python tools/pdf_split.py --pdf "02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008.pdf"`
+   - `python tools/pdf_split.py --pdf "02-Network-Science/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008.pdf"`
    - Inspect `.../__out/config.json` and `.../__out/sections/*.pdf` to confirm chapter boundaries.
 
 7) Validate parsing:
    - Tamil textbook:
      - `python tools/pdf_parse.py --pdf "0X-lobia-texts/Learn Tamil in 30 Days.pdf" --dpi 200`
    - Barrat chapters:
-     - `python tools/pdf_parse.py --sections-dir "02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections" --dpi 200`
+     - `python tools/pdf_parse.py --sections-dir "02-Network-Science/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008__out/sections" --dpi 200`
 
 8) Iterate prompts based on output quality, update `config.json` with prompt version, and rerun until the Markdown, equations, bilingual pairs, and image crops look correct.
 

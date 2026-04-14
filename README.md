@@ -63,33 +63,34 @@ This repository is a curated collection of course materials and books to build a
 
 ### 02-Network-Science
 - **Graph Theory**
-  - [Graph Theory (Narsingh Deo)](./02-Network-Science/Graph-Theory/Graph-Theory-Deo.pdf)
+  - [Graph Theory (Narsingh Deo)](./02-Network-Science/Graph-Theory-Deo.pdf)
 - **Complex Networks**
-  - [Networks (Mark Newman, 2018)](./02-Network-Science/Complex-Networks/Networks-Newman-2018.pdf)
-  - [Networks, Crowds, and Markets (Easley & Kleinberg)](./02-Network-Science/Complex-Networks/Networks-Crowds-and-Markets-Easley-Kleinberg.pdf)
-  - [Network Science (Barabási)](./02-Network-Science/Complex-Networks/Network-Science-Barabasi.pdf)
-  - [Handbook of Graph Drawing and Visualization (Tamassia, 2013 draft)](./02-Network-Science/Complex-Networks/Handbook%20of%20Graph%20Drawing%20and%20Visualization_%20Draft%20of%202013%20--%20Tamassia%20R_%20%28Ed_%29%20--%202013%20--%20d6e78ba7a942e1219d1be5b603984547%20--%20Anna%E2%80%99s%20Archive.pdf)
+  - [Networks (Mark Newman, 2018)](./02-Network-Science/Networks-Newman-2018.pdf)
+  - [Networks, Crowds, and Markets (Easley & Kleinberg)](./02-Network-Science/Networks-Crowds-and-Markets-Easley-Kleinberg.pdf)
+  - [Network Science (Barabási)](./02-Network-Science/Network-Science-Barabasi.pdf)
+  - [Handbook of Graph Drawing and Visualization (Tamassia, 2013 draft)](./02-Network-Science/Handbook%20of%20Graph%20Drawing%20and%20Visualization_%20Draft%20of%202013%20--%20Tamassia%20R_%20%28Ed_%29%20--%202013%20--%20d6e78ba7a942e1219d1be5b603984547%20--%20Anna%E2%80%99s%20Archive.pdf)
 - **Network Science 2**
-  - [NETS2 - Complex Networks: Principles, Methods and Applications (Latora, Nicosia, Russo)](./02-Network-Science/NETS2/NETS2-Complex-Networks-Principles-Methods-and-Applications-Latora-Nicosia-Russo.pdf)
-  - [NETS2 - Random Graphs and Complex Networks (van der Hofstad) [Vol 1]](./02-Network-Science/NETS2/NETS2-Random-Graphs-and-Complex-Networks-van-der-Hofstad-Vol-1.pdf)
-  - [NETS2 - Random Graphs and Complex Networks (van der Hofstad) [Vol 2]](./02-Network-Science/NETS2/NETS2-Random-Graphs-and-Complex-Networks-van-der-Hofstad-Vol-2.pdf)
+  - [NETS2 - Complex Networks: Principles, Methods and Applications (Latora, Nicosia, Russo)](./02-Network-Science/NETS2-Complex-Networks-Principles-Methods-and-Applications-Latora-Nicosia-Russo.pdf)
+  - [NETS2 - Random Graphs and Complex Networks (van der Hofstad) [Vol 1]](./02-Network-Science/NETS2-Random-Graphs-and-Complex-Networks-van-der-Hofstad-Vol-1.pdf)
+  - [NETS2 - Random Graphs and Complex Networks (van der Hofstad) [Vol 2]](./02-Network-Science/NETS2-Random-Graphs-and-Complex-Networks-van-der-Hofstad-Vol-2.pdf)
 - **Machine Learning on Graphs**
-  - [CS224W: Machine Learning with Graphs (Stanford)](./02-Network-Science/Machine-Learning-on-Graphs/CS224W-Machine-Learning-with-Graphs-Stanford.pdf)
-  - [Course README](./02-Network-Science/Machine-Learning-on-Graphs/README.md)
+  - [CS224W: Machine Learning with Graphs (Stanford)](./02-Network-Science/CS224W-Machine-Learning-with-Graphs-Stanford.pdf)
+  - [Course README](./02-Network-Science/Machine-Learning-on-Graphs-README.md)
   - [Geometric Deep Learning](https://geometricdeeplearning.com/lectures/)
 - **Network Dynamics**
-  - [Dynamical Processes on Complex Networks (Barrat et al., 2008)](./02-Network-Science/Network-Dynamics/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008.pdf)
+  - [Dynamical Processes on Complex Networks (Barrat et al., 2008)](./02-Network-Science/Dynamical-Processes-on-Complex-Networks-Barrat-et-al-2008.pdf)
+  - [Lectures on Network Systems (Francesco Bullo)](./02-Network-Science/Lectures-on-Network-Systems-Bullo.pdf)
 
 ### 03-Complex-Systems
 - **Nonlinear Dynamics & Chaos**
-  - [Nonlinear Dynamics and Chaos (Strogatz, 2024)](./03-Complex-Systems/Nonlinear-Dynamics-Chaos/Nonlinear-Dynamics-and-Chaos-Strogatz-2024.pdf)
-  - [Nonlinear Dynamics and Chaos - Solutions Manual (Strogatz, 2024)](./03-Complex-Systems/Nonlinear-Dynamics-Chaos/Nonlinear-Dynamics-and-Chaos-Solutions-Manual-Strogatz-2024.pdf)
-  - [Study Notes](./03-Complex-Systems/Nonlinear-Dynamics-Chaos/notes/)
+  - [Nonlinear Dynamics and Chaos (Strogatz, 2024)](./03-Complex-Systems/Nonlinear-Dynamics-and-Chaos-Strogatz-2024.pdf)
+  - [Nonlinear Dynamics and Chaos - Solutions Manual (Strogatz, 2024)](./03-Complex-Systems/Nonlinear-Dynamics-and-Chaos-Solutions-Manual-Strogatz-2024.pdf)
+  - [Study Notes](./03-Complex-Systems/Nonlinear-Dynamics-Chaos-notes/)
 - **Urban Science**
-  - [Introduction to Urban Science: Evidence and Theory of Cities as Complex Systems (Bettencourt, 2021)](./03-Complex-Systems/Urban-Science/Introduction-to-Urban-Science-Bettencourt-2021.pdf)
+  - [Introduction to Urban Science: Evidence and Theory of Cities as Complex Systems (Bettencourt, 2021)](./03-Complex-Systems/Introduction-to-Urban-Science-Bettencourt-2021.pdf)
 - **General Complexity**
-  - [Modeling and Analysis of Complex Systems (Sayama)](./03-Complex-Systems/General-Complexity/Modeling-and-Analysis-of-Complex-Systems-Sayama.pdf)
-  - [Introduction to the Theory of Complex Systems (Thurner, Hanel, Klimek, 2018)](./03-Complex-Systems/General-Complexity/Introduction-to-the-Theory-of-Complex-Systems-Thurner-Hanel-Klimek-2018.pdf)
+  - [Modeling and Analysis of Complex Systems (Sayama)](./03-Complex-Systems/Modeling-and-Analysis-of-Complex-Systems-Sayama.pdf)
+  - [Introduction to the Theory of Complex Systems (Thurner, Hanel, Klimek, 2018)](./03-Complex-Systems/Introduction-to-the-Theory-of-Complex-Systems-Thurner-Hanel-Klimek-2018.pdf)
   - More books to add here.
 
 ### 04-Applied-Methods
